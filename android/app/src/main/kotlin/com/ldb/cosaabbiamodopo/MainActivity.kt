@@ -1,4 +1,4 @@
-package com.example.cosa_abbiamo_dopo
+package com.ldb.cosaabbiamodopo
 
 import io.flutter.embedding.android.FlutterActivity
 
