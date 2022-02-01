@@ -1,3 +1,4 @@
+import 'package:cosa_abbiamo_dopo/globals/extensions/time_of_day_extension.dart';
 import 'package:cosa_abbiamo_dopo/globals/marconi_hour.dart';
 import 'package:cosa_abbiamo_dopo/globals/marconi_lesson.dart';
 import 'package:cosa_abbiamo_dopo/globals/marconi_teacher.dart';
@@ -90,6 +91,14 @@ class Utils {
 
   static List<MarconiHour> hoursListMonThuSecondGroup = [
     MarconiHour(
+      const TimeOfDay(hour: 8, minute: 0),
+      const TimeOfDay(hour: 8, minute: 45),
+    ),
+    MarconiHour(
+      const TimeOfDay(hour: 8, minute: 45),
+      const TimeOfDay(hour: 9, minute: 30),
+    ),
+    MarconiHour(
       const TimeOfDay(hour: 9, minute: 30),
       const TimeOfDay(hour: 10, minute: 20),
     ),
@@ -149,18 +158,7 @@ class Utils {
     return prefs.getString('classe') ?? '';
   }
 
-  static Future<List<MarconiLesson>> getSavedData() async {
-    String rawSavedData = await getRawSavedData();
-
-    return decodeData(rawSavedData);
-  }
-
-  static Future<String> getRawSavedData() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('data') ?? '';
-  }
-
-  static List<String> getClasses(String s) {
+  static List<String> getClasses() {
     return [
       "1AI",
       "1BI",
@@ -234,15 +232,50 @@ class Utils {
   }
 
   static Future<List<MarconiLesson>> getData() async {
+    String data = await getRawData();
+
+    return decodeData(data);
+  }
+
+  static Future<List<MarconiLesson>> getSavedData() async {
+    String rawSavedData = await getRawSavedData();
+
+    return decodeData(rawSavedData);
+  }
+
+  static Future<String> getRawSavedData() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('data') ?? '';
+  }
+
+  static Future<String> getRawData() async {
+    String data = await updateData();
+
+    return data;
+  }
+
+  static void setData(String s) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString('data', s);
+  }
+
+  static Future<String> updateData() async {
     String dataFromAPI = await fetchData();
 
     String savedData = await getRawSavedData();
 
-    if (savedData != dataFromAPI) {
-      updateData(dataFromAPI);
+    if (savedData != dataFromAPI && dataFromAPI != '') {
+      setData(dataFromAPI);
+
+      return dataFromAPI;
     }
 
-    return decodeData(dataFromAPI);
+    return savedData;
+  }
+
+  static void setSavedClass(String s) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString('classe', s);
   }
 
   static List<MarconiLesson> filterForToday(List<MarconiLesson> lessons) {
@@ -261,31 +294,46 @@ class Utils {
   static List<MarconiLesson> groupTeachers(List<MarconiLesson> lessons) {
     List<MarconiLesson> res = [];
 
-    for (int i = 0; i < lessons.length - 1; i++) {
+    for (int i = 0; i < lessons.length; i++) {
       int offset = 0;
       List<MarconiTeacher> teachers = [];
 
       teachers.addAll(lessons[i].teachers);
 
-      while (lessons[i].hours.startingTime ==
-              lessons[i + offset + 1].hours.startingTime &&
-          lessons[i].name == lessons[i + offset + 1].name &&
-          lessons[i].teachers[0].nameSurname !=
-              lessons[i + offset + 1].teachers[0].nameSurname) {
+      while (i + offset + 1 < lessons.length &&
+          lessons[i].hourIndex == lessons[i + offset + 1].hourIndex) {
         teachers.add(lessons[i + offset + 1].teachers[0]);
         offset++;
       }
 
-      i += offset;
-
       lessons[i].teachers = teachers;
 
       res.add(lessons[i]);
+
+      i += offset;
     }
 
-    res.add(lessons.last);
-
     return res;
+  }
+
+  static List<MarconiLesson> setHours(List<MarconiLesson> lessons) {
+    List<MarconiHour> hours;
+
+    if (lessons[0].day != 5) {
+      if (lessons[0].hourIndex == 1) {
+        hours = hoursListMonThuFirstGroup;
+      } else {
+        hours = hoursListMonThuSecondGroup;
+      }
+    } else {
+      hours = hoursListFri;
+    }
+
+    for (int i = 0; i < lessons.length; i++) {
+      lessons[i].hours = hours[lessons[i].hourIndex - 1];
+    }
+
+    return lessons;
   }
 
   static List<MarconiLesson> decodeData(String data) {
@@ -295,9 +343,7 @@ class Utils {
         .map<MarconiLesson>((json) => MarconiLesson.fromJson(json))
         .toList();
 
-    return groupTeachers(filterForToday(decoded));
-
-    //return filterForToday(decoded);
+    return setHours(groupTeachers(filterForToday(decoded)));
   }
 
   static MarconiHour getHourRange(int hour, int day, int firstOrSecondGroup) {
@@ -324,8 +370,8 @@ class Utils {
             now.year,
             now.month,
             now.day,
-            Utils.hoursListFri[7].startingTime.hour,
-            Utils.hoursListFri[7].startingTime.minute)
+            Utils.hoursListFri.last.startingTime.hour,
+            Utils.hoursListFri.last.startingTime.minute)
         : DateTime(
             now.year,
             now.month,
@@ -342,38 +388,28 @@ class Utils {
   }
 
   static int getCurrentHourIndex() {
-    DateTime now = DateTime.now();
+    DateTime nowDateTime = DateTime.now();
+    TimeOfDay now =
+        TimeOfDay(hour: nowDateTime.hour, minute: nowDateTime.minute);
 
     bool isFirstGroup = true;
 
     if (isInDayRange(isFirstGroup)) {
-      if (now.isBefore(DateTime(now.year, now.month, now.day, 7, 0))) {
+      if (now.isBefore(const TimeOfDay(hour: 7, minute: 0))) {
         return -1;
       }
 
-      if (now.isAfter(DateTime(
-          now.year,
-          now.month,
-          now.day,
-          Utils.hoursListMonThuFirstGroup.last.startingTime.hour,
-          Utils.hoursListMonThuFirstGroup.last.startingTime.minute))) {
-        return -2;
+      if (now.isAfter(TimeOfDay(
+        hour: Utils.hoursListMonThuFirstGroup.last.startingTime.hour,
+        minute: Utils.hoursListMonThuFirstGroup.last.startingTime.minute,
+      ))) {
+        return 0;
       }
 
       return 0; //definire e ritornare i range
     }
 
     return -3;
-  }
-
-  static void updateData(String s) async {
-    final prefs = await SharedPreferences.getInstance();
-    prefs.setString('data', s);
-  }
-
-  static void setSavedClass(String s) async {
-    final prefs = await SharedPreferences.getInstance();
-    prefs.setString('classe', s);
   }
 
   static Future<void> setOptimalDisplayMode() async {

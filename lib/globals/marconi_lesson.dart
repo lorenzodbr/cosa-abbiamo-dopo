@@ -1,10 +1,9 @@
 import 'package:cosa_abbiamo_dopo/globals/marconi_hour.dart';
 import 'package:cosa_abbiamo_dopo/globals/marconi_teacher.dart';
 import 'package:cosa_abbiamo_dopo/globals/extensions/string_extensions.dart';
-import 'package:cosa_abbiamo_dopo/globals/utils.dart';
 
 class MarconiLesson {
-  MarconiHour hours;
+  late MarconiHour hours;
   List<MarconiTeacher> teachers;
   String room;
   String name;
@@ -15,7 +14,6 @@ class MarconiLesson {
     required this.name,
     required this.room,
     required this.teachers,
-    required this.hours,
     required this.hourIndex,
     required this.day,
   });
@@ -34,11 +32,6 @@ class MarconiLesson {
           (json['prof'] as String).toTitleCase(),
         ),
       ],
-      hours: Utils.getHourRange(
-        hour,
-        day,
-        1, //da sistemare
-      ),
       hourIndex: hour,
       day: day,
     );

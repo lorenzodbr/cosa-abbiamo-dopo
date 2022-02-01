@@ -36,15 +36,6 @@ class _HomePageState extends State<HomePage> {
     formattedDate = formatter.format(now);
   }
 
-  List lessons = [
-    "Prima ora",
-    "Seconda ora",
-    "Terza ora",
-    "Quarta ora",
-    "Quinta ora",
-    "Sesta ora"
-  ];
-
   @override
   Widget build(BuildContext context) {
     int hourIndex = Utils.getCurrentHourIndex();
@@ -66,9 +57,14 @@ class _HomePageState extends State<HomePage> {
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
                         if (snapshot.data == '') {
-                          Utils.setSavedClass(Utils.getClasses(snapshot.data!)[
+                          Utils.setSavedClass(Utils.getClasses()[
                               0]); //implementare fetch dinamico delle classi
-
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                  "Ricordati di cambiare classe nelle impostazioni"),
+                            ),
+                          );
                         }
                         return Row(
                           children: [
@@ -123,6 +119,7 @@ class _HomePageState extends State<HomePage> {
                                   endHour: getDataSnapshot
                                       .data![index].hours.endingTime,
                                   closeContainer: closeContainer,
+                                  context: context,
                                 ),
                                 closedBuilder: (_, openContainer) =>
                                     CarouselCard(

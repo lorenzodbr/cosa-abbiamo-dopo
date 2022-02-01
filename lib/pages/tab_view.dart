@@ -34,25 +34,26 @@ class _TabViewState extends State<TabView> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: Utils.fetchData(),
+        future: Utils.getRawData(),
         builder: (context, snapshot) {
-          if (snapshot.hasError && !snapshot.hasData) {
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: const [
-                Text(
-                  "Servizio momentaneamente non disponibile,\nriprova più tardi",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                  ),
-                )
-              ],
-            );
-          }
-
           if (snapshot.hasData || snapshot.hasError) {
+            if (snapshot.data == '') {
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: const [
+                  Text(
+                    "Servizio momentaneamente non disponibile, riprova più tardi",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                    ),
+                  )
+                ],
+              );
+            }
+
             return Scaffold(
                 body: PageView(
                   children: tabPages,

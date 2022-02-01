@@ -11,19 +11,24 @@ class DetailRow extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(
-          text,
-          style: const TextStyle(
-            color: Colors.grey,
-            fontSize: 20,
+        Padding(
+          padding: const EdgeInsets.only(right: 10),
+          child: Text(
+            text,
+            style: const TextStyle(
+              color: Colors.grey,
+              fontSize: 20,
+            ),
           ),
         ),
-        Text(
-          value,
-          textAlign: TextAlign.right,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 20,
+        Flexible(
+          child: Text(
+            value,
+            textAlign: TextAlign.right,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 20,
+            ),
           ),
         ),
       ],

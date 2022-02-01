@@ -15,40 +15,27 @@ class CarouselCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(30),
       ),
       width: 500,
-      child: InkWell(
-        radius: 50,
-        customBorder: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(30),
-        ),
-        highlightColor: Colors.grey,
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(30),
-            color: Colors.black,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text(
+            lessonName,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 40,
+              fontWeight: FontWeight.bold,
+            ),
           ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text(
-                lessonName,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 40,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              Text(
-                room,
-                style: const TextStyle(
-                  color: Colors.grey,
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
+          Text(
+            room,
+            style: const TextStyle(
+              color: Colors.grey,
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
           ),
-        ),
+        ],
       ),
     );
   }

@@ -107,8 +107,10 @@ class _SettingsState extends State<Settings> {
                         snapshot.data != '' ? snapshot.data : 'Caricamento...',
                     items: classi,
                     onChanged: (v) {
+                      _showMyDialog();
                       Utils.setSavedClass(classi[v]);
                       Utils.getData();
+                      Navigator.pop(context);
                       setState(() {});
                     },
                   );
@@ -116,12 +118,6 @@ class _SettingsState extends State<Settings> {
                   return SettingRadioItem<String>(
                     title: 'Seleziona classe',
                     displayValue: 'Caricamento...',
-                    selectedValue: snapshot.data != '' ? snapshot.data : '5DI',
-                    items: [
-                      SettingRadioValue('5DI', '5DI'),
-                      SettingRadioValue('4DI', '4DI'),
-                      SettingRadioValue('3DI', '3DI'),
-                    ],
                     onChanged: (v) => setState(
                       () => () async {
                         Utils.setSavedClass(v);
@@ -144,6 +140,33 @@ class _SettingsState extends State<Settings> {
           ],
         ),
       ]),
+    );
+  }
+
+  Future<void> _showMyDialog() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Attendi'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: const [
+                    Text('Aggiornamento dati'),
+                    CircularProgressIndicator(
+                      color: Colors.black,
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }

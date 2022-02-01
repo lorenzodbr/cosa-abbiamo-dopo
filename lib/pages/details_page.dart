@@ -10,6 +10,7 @@ class DetailsPage extends StatelessWidget {
   final String room;
 
   final VoidCallback closeContainer;
+  final BuildContext context;
 
   const DetailsPage({
     required this.subject,
@@ -18,47 +19,59 @@ class DetailsPage extends StatelessWidget {
     required this.endHour,
     required this.startHour,
     required this.closeContainer,
+    required this.context,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Dettagli"),
-        actions: const [],
-        backgroundColor: Colors.black,
-      ),
-      backgroundColor: Colors.black,
-      body: Container(
-        margin: const EdgeInsets.all(15),
-        child: Column(
-          children: [
-            DetailRow(text: 'Materia', value: subject),
-            const Divider(
-              color: Colors.grey,
+    return GestureDetector(
+        onPanUpdate: (details) {
+          if (details.delta.dy > 0) {
+            Navigator.of(context).pop();
+          }
+        },
+        child: Scaffold(
+          appBar: AppBar(
+            title: const Text("Dettagli"),
+            leading: IconButton(
+              icon: const Icon(Icons.close, color: Colors.white),
+              tooltip: "Chiudi",
+              onPressed: () => Navigator.of(context).pop(),
             ),
-            DetailRow(text: 'Docente', value: _buildTeachersText()),
-            const Divider(
-              color: Colors.grey,
+            backgroundColor: Colors.black,
+          ),
+          backgroundColor: Colors.black,
+          body: Container(
+            margin: const EdgeInsets.all(15),
+            child: Column(
+              children: [
+                DetailRow(text: 'Materia', value: subject),
+                const Divider(
+                  color: Colors.grey,
+                ),
+                DetailRow(text: 'Docente', value: _buildTeachersText()),
+                const Divider(
+                  color: Colors.grey,
+                ),
+                DetailRow(
+                    text: room.startsWith('L') ? 'Laboratorio' : 'Aula',
+                    value: room),
+                const Divider(
+                  color: Colors.grey,
+                ),
+                DetailRow(
+                    text: 'Ora di inizio', value: startHour.format(context)),
+                const Divider(
+                  color: Colors.grey,
+                ),
+                DetailRow(text: 'Ora di fine', value: endHour.format(context)),
+                const Divider(
+                  color: Colors.grey,
+                ),
+              ],
             ),
-            DetailRow(
-                text: room.startsWith('L') ? 'Laboratorio' : 'Aula',
-                value: room),
-            const Divider(
-              color: Colors.grey,
-            ),
-            DetailRow(text: 'Ora di inizio', value: startHour.format(context)),
-            const Divider(
-              color: Colors.grey,
-            ),
-            DetailRow(text: 'Ora di fine', value: endHour.format(context)),
-            const Divider(
-              color: Colors.grey,
-            ),
-          ],
-        ),
-      ),
-    );
+          ),
+        ));
   }
 
   String _buildTeachersText() {
