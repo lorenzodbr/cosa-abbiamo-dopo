@@ -1,0 +1,31 @@
+extension TimeOfDayExtension on TimeOfDay {
+  bool isAfter(TimeOfDay t){
+      if(this.hour < t.hour){
+        return false;
+      }
+      else if(this.hour = t.hour){
+        if(this.minute < t.minute){
+          return false;
+        }
+
+        return true;
+      }
+      
+      return true;
+  }
+
+   bool isBefore(TimeOfDay t){
+      if(this.hour > t.hour){
+        return false;
+      }
+      else if(this.hour = t.hour){
+        if(this.minute > t.minute){
+          return false;
+        }
+
+        return true;
+      }
+      
+      return true;
+  }
+}
