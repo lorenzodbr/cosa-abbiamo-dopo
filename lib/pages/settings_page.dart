@@ -117,12 +117,9 @@ class _SettingsState extends State<Settings> {
                 } else {
                   return SettingRadioItem<String>(
                     title: 'Seleziona classe',
+                    items: const [],
+                    onChanged: (_) {},
                     displayValue: 'Caricamento...',
-                    onChanged: (v) => setState(
-                      () => () async {
-                        Utils.setSavedClass(v);
-                      },
-                    ),
                   );
                 }
               },
