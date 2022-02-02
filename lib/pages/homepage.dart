@@ -9,6 +9,7 @@ import 'package:cosa_abbiamo_dopo/widgets/out_of_range_carousel_card.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -22,6 +23,7 @@ class _HomePageState extends State<HomePage> {
   bool hasData = false;
   bool hasClass = false;
   bool isFetching = false;
+  PageController controller = PageController();
 
   late String selectedClass;
   late String formattedDate;
@@ -134,6 +136,7 @@ class _HomePageState extends State<HomePage> {
                               );
                             },
                             itemCount: getDataSnapshot.data!.length,
+                            carouselController: controller,
                             options: CarouselOptions(
                               initialPage: 0,
                               height: 200,
@@ -142,6 +145,11 @@ class _HomePageState extends State<HomePage> {
                               scrollDirection: Axis.horizontal,
                             ),
                           ),
+                          SmoothPageIndicator(
+                              controller: controller,
+                              count: getDataSnapshot.data!.length,
+                              effect: const WormEffect(),
+                              onDotClicked: (_) {})
                         ],
                       );
                     } else {

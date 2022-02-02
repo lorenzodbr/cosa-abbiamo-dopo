@@ -403,7 +403,7 @@ class Utils {
         hour: Utils.hoursListMonThuFirstGroup.last.startingTime.hour,
         minute: Utils.hoursListMonThuFirstGroup.last.startingTime.minute,
       ))) {
-        return 0;
+        return -2;
       }
 
       return 0; //definire e ritornare i range
