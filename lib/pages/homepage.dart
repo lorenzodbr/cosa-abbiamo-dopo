@@ -24,10 +24,11 @@ class _HomePageState extends State<HomePage> {
   bool hasData = false;
   bool hasClass = false;
   bool isFetching = false;
-  PageController controller = PageController();
+  int _carouselIndex = 0;
 
   late String selectedClass;
   late String formattedDate;
+  late PageController controller;
 
   @override
   void initState() {
@@ -37,6 +38,7 @@ class _HomePageState extends State<HomePage> {
     var now = DateTime.now();
     var formatter = DateFormat('EEEE dd MMMM yyyy', 'it');
     formattedDate = formatter.format(now);
+    controller = PageController(initialPage: 0);
   }
 
   @override
@@ -54,7 +56,7 @@ class _HomePageState extends State<HomePage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 0, 0, 20),
+                  padding: const EdgeInsets.only(bottom: 20),
                   child: FutureBuilder<String>(
                     future: Utils.getSavedClass(),
                     builder: (context, snapshot) {
@@ -86,8 +88,10 @@ class _HomePageState extends State<HomePage> {
                       } else {
                         return const Text(
                           'Caricamento...',
-                          style:
-                              TextStyle(fontSize: 18, color: CustomColors.grey),
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: CustomColors.grey,
+                          ),
                         );
                       }
                     },
@@ -95,7 +99,10 @@ class _HomePageState extends State<HomePage> {
                 ),
                 const Text(
                   "Cosa abbiamo dopo?",
-                  style: TextStyle(fontWeight: FontWeight.w900, fontSize: 50),
+                  style: TextStyle(
+                    fontWeight: FontWeight.w900,
+                    fontSize: 50,
+                  ),
                 ),
               ],
             ),
@@ -127,9 +134,10 @@ class _HomePageState extends State<HomePage> {
                                 ),
                                 closedBuilder: (_, openContainer) =>
                                     CarouselCard(
-                                        openContainer,
-                                        getDataSnapshot.data![index].name,
-                                        getDataSnapshot.data![index].room),
+                                  openContainer,
+                                  getDataSnapshot.data![index].name,
+                                  getDataSnapshot.data![index].room,
+                                ),
                                 openColor: CustomColors.black,
                                 closedShape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(30),
@@ -138,7 +146,41 @@ class _HomePageState extends State<HomePage> {
                               );
                             },
                             itemCount: getDataSnapshot.data!.length,
-                            carouselController: controller,
+                            options: CarouselOptions(
+                                initialPage: hourIndex,
+                                height: 200,
+                                enableInfiniteScroll: false,
+                                enlargeCenterPage: true,
+                                scrollDirection: Axis.horizontal,
+                                onPageChanged: (index, reason) {
+                                  setState(() {
+                                    _carouselIndex = index;
+                                  });
+                                }),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 20),
+                            child: AnimatedSmoothIndicator(
+                              activeIndex: _carouselIndex,
+                              count: getDataSnapshot.data!.length,
+                              effect: WormEffect(
+                                activeDotColor: CustomColors.black,
+                                dotColor: CustomColors.silver,
+                                dotHeight: 10,
+                                dotWidth: 10,
+                              ),
+                            ),
+                          )
+                        ],
+                      );
+                    } else {
+                      return Column(
+                        children: [
+                          CarouselSlider.builder(
+                            itemBuilder: (context, index, realIndex) {
+                              return LoadingCarouselCard();
+                            },
+                            itemCount: 1,
                             options: CarouselOptions(
                               initialPage: hourIndex,
                               height: 200,
@@ -147,28 +189,21 @@ class _HomePageState extends State<HomePage> {
                               scrollDirection: Axis.horizontal,
                             ),
                           ),
-                          SmoothPageIndicator(
+                          Padding(
+                            padding: const EdgeInsets.only(top: 20),
+                            child: SmoothPageIndicator(
                               controller: controller,
-                              count: getDataSnapshot.data!.length,
+                              count: 1,
                               effect: const WormEffect(
-                                  dotColor: CustomColors.silver,
-                                  activeDotColor: CustomColors.grey),
-                              onDotClicked: (_) {})
+                                dotColor: CustomColors.silver,
+                                activeDotColor: CustomColors.grey,
+                                dotHeight: 10,
+                                dotWidth: 10,
+                              ),
+                              onDotClicked: (_) {},
+                            ),
+                          )
                         ],
-                      );
-                    } else {
-                      return CarouselSlider.builder(
-                        itemBuilder: (context, index, realIndex) {
-                          return LoadingCarouselCard();
-                        },
-                        itemCount: 1,
-                        options: CarouselOptions(
-                          initialPage: hourIndex,
-                          height: 200,
-                          enableInfiniteScroll: false,
-                          enlargeCenterPage: true,
-                          scrollDirection: Axis.horizontal,
-                        ),
                       );
                     }
                   },
