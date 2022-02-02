@@ -1,3 +1,4 @@
+import 'package:cosa_abbiamo_dopo/globals/custom_colors.dart';
 import 'package:flutter/material.dart';
 
 class LoadingCarouselCard extends StatelessWidget {
@@ -5,9 +6,11 @@ class LoadingCarouselCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
+        color: CustomColors.black,
+        shape: BoxShape.rectangle,
         borderRadius: BorderRadius.circular(30),
-        color: Colors.black,
       ),
+      width: 500,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,

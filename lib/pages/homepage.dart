@@ -20,12 +20,12 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int hourIndex = 0;
+  int _hourIndex = 0;
   bool hasData = false;
   bool hasClass = false;
   bool isFetching = false;
-  int _carouselIndex = 0;
 
+  int _carouselIndex = -1;
   late String selectedClass;
   late String formattedDate;
   late PageController controller;
@@ -38,15 +38,17 @@ class _HomePageState extends State<HomePage> {
     var now = DateTime.now();
     var formatter = DateFormat('EEEE dd MMMM yyyy', 'it');
     formattedDate = formatter.format(now);
-    controller = PageController(initialPage: 0);
+    _hourIndex = Utils.getCurrentHourIndex();
   }
 
   @override
   Widget build(BuildContext context) {
-    int hourIndex = Utils.getCurrentHourIndex();
+    if (_carouselIndex < 0) {
+      _carouselIndex = _hourIndex;
+    }
 
     return Container(
-      margin: const EdgeInsets.fromLTRB(0, 0, 0, 10),
+      margin: const EdgeInsets.only(bottom: 10),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
@@ -61,16 +63,6 @@ class _HomePageState extends State<HomePage> {
                     future: Utils.getSavedClass(),
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
-                        if (snapshot.data == '') {
-                          Utils.setSavedClass(Utils.getClasses()[0]);
-                          //implementare fetch dinamico delle classi
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text(
-                                  "Ricordati di cambiare classe nelle impostazioni"),
-                            ),
-                          );
-                        }
                         return Row(
                           children: [
                             Text(
@@ -107,13 +99,10 @@ class _HomePageState extends State<HomePage> {
               ],
             ),
           ),
-          hourIndex >= 0
+          _hourIndex >= 0
               ? FutureBuilder<List<MarconiLesson>>(
                   future: Utils.getSavedData(),
                   builder: (context, getDataSnapshot) {
-                    if (getDataSnapshot.hasError) {
-                      print(getDataSnapshot.error);
-                    }
                     if (getDataSnapshot.hasData) {
                       return Column(
                         children: [
@@ -130,7 +119,6 @@ class _HomePageState extends State<HomePage> {
                                   endHour: getDataSnapshot
                                       .data![index].hours.endingTime,
                                   closeContainer: closeContainer,
-                                  context: context,
                                 ),
                                 closedBuilder: (_, openContainer) =>
                                     CarouselCard(
@@ -147,8 +135,8 @@ class _HomePageState extends State<HomePage> {
                             },
                             itemCount: getDataSnapshot.data!.length,
                             options: CarouselOptions(
-                                initialPage: hourIndex,
                                 height: 200,
+                                initialPage: 5,
                                 enableInfiniteScroll: false,
                                 enlargeCenterPage: true,
                                 scrollDirection: Axis.horizontal,
@@ -163,7 +151,7 @@ class _HomePageState extends State<HomePage> {
                             child: AnimatedSmoothIndicator(
                               activeIndex: _carouselIndex,
                               count: getDataSnapshot.data!.length,
-                              effect: WormEffect(
+                              effect: const WormEffect(
                                 activeDotColor: CustomColors.black,
                                 dotColor: CustomColors.silver,
                                 dotHeight: 10,
@@ -182,27 +170,13 @@ class _HomePageState extends State<HomePage> {
                             },
                             itemCount: 1,
                             options: CarouselOptions(
-                              initialPage: hourIndex,
+                              initialPage: _hourIndex,
                               height: 200,
                               enableInfiniteScroll: false,
                               enlargeCenterPage: true,
                               scrollDirection: Axis.horizontal,
                             ),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 20),
-                            child: SmoothPageIndicator(
-                              controller: controller,
-                              count: 1,
-                              effect: const WormEffect(
-                                dotColor: CustomColors.silver,
-                                activeDotColor: CustomColors.grey,
-                                dotHeight: 10,
-                                dotWidth: 10,
-                              ),
-                              onDotClicked: (_) {},
-                            ),
-                          )
                         ],
                       );
                     }
@@ -210,7 +184,7 @@ class _HomePageState extends State<HomePage> {
                 )
               : CarouselSlider.builder(
                   itemBuilder: (context, index, realIndex) {
-                    return OutOfRangeCarouselCard(hourIndex);
+                    return OutOfRangeCarouselCard(_hourIndex);
                   },
                   itemCount: 1,
                   options: CarouselOptions(

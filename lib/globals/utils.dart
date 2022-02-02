@@ -125,8 +125,20 @@ class Utils {
     ),
   ];
 
-  static Future<String> fetchData() async {
+  static Future<String> fetchData(context) async {
     String savedClass = await getSavedClass();
+
+    if (savedClass != '') {
+    } else {
+      savedClass = (await getClasses())[0];
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            "Ricordati di cambiare classe nelle impostazioni",
+          ),
+        ),
+      );
+    }
 
     Uri uri = Uri.parse(
         'https://apps.marconivr.it/orario/api.php?class=' + savedClass);
@@ -159,7 +171,29 @@ class Utils {
     return prefs.getString('classe') ?? '';
   }
 
-  static List<String> getClasses() {
+  static Future<String> fetchClasses() async {
+    Uri uri = Uri.parse('https://apps.marconivr.it/orario/api.php');
+
+    try {
+      final response = await http.get(uri);
+
+      if (response.statusCode == 200) {
+        return response.body;
+      } else {
+        return '';
+      }
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
+  static Future<String> getRawClasses() async {
+    return await fetchClasses();
+  }
+
+  static Future<List<String>> getClasses() async {
+    String rawClassesString = await getRawClasses();
+
     return [
       "1AI",
       "1BI",
@@ -232,8 +266,8 @@ class Utils {
     ];
   }
 
-  static Future<List<MarconiLesson>> getData() async {
-    String data = await getRawData();
+  static Future<List<MarconiLesson>> getData(context) async {
+    String data = await getRawData(context);
 
     return decodeData(data);
   }
@@ -249,8 +283,8 @@ class Utils {
     return prefs.getString('data') ?? '';
   }
 
-  static Future<String> getRawData() async {
-    String data = await updateData();
+  static Future<String> getRawData(context) async {
+    String data = await updateData(context);
 
     return data;
   }
@@ -260,8 +294,8 @@ class Utils {
     prefs.setString('data', s);
   }
 
-  static Future<String> updateData() async {
-    String dataFromAPI = await fetchData();
+  static Future<String> updateData(context) async {
+    String dataFromAPI = await fetchData(context);
 
     String savedData = await getRawSavedData();
 

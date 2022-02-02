@@ -10,7 +10,6 @@ class DetailsPage extends StatelessWidget {
   final String room;
 
   final VoidCallback closeContainer;
-  final BuildContext context;
 
   const DetailsPage({
     required this.subject,
@@ -19,14 +18,13 @@ class DetailsPage extends StatelessWidget {
     required this.endHour,
     required this.startHour,
     required this.closeContainer,
-    required this.context,
   });
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
         onPanUpdate: (details) {
-          if (details.delta.dy > 0) {
+          if (details.delta.dy > 15 && details.delta.dx.abs() < 0.75) {
             Navigator.of(context).pop();
           }
         },

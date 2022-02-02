@@ -35,7 +35,7 @@ class _TabViewState extends State<TabView> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: Utils.getRawData(),
+        future: Utils.getRawData(context),
         builder: (context, snapshot) {
           if (snapshot.hasData || snapshot.hasError) {
             if (snapshot.data == '') {
@@ -78,6 +78,20 @@ class _TabViewState extends State<TabView> {
           } else {
             return Container(
               color: Colors.black,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: const [
+                  CircularProgressIndicator(color: Colors.white),
+                  Text(
+                    "Ottengo gli orari...",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                    ),
+                  ),
+                ],
+              ),
             );
           }
         });
