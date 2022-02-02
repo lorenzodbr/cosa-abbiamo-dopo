@@ -3,6 +3,7 @@ import 'package:cosa_abbiamo_dopo/globals/marconi_hour.dart';
 import 'package:cosa_abbiamo_dopo/globals/marconi_lesson.dart';
 import 'package:cosa_abbiamo_dopo/globals/marconi_teacher.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_displaymode/flutter_displaymode.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
@@ -306,6 +307,8 @@ class Utils {
         offset++;
       }
 
+      teachers.sort((a, b) => a.nameSurname.compareTo(b.nameSurname));
+
       lessons[i].teachers = teachers;
 
       res.add(lessons[i]);
@@ -427,5 +430,21 @@ class Utils {
         sameResolution.isNotEmpty ? sameResolution.first : active;
 
     await FlutterDisplayMode.setPreferredMode(mostOptimalMode);
+  }
+
+  static void setPortrait() {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeRight,
+      DeviceOrientation.landscapeLeft,
+    ]);
+  }
+
+  static void unsetPortrait() {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeRight,
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
   }
 }

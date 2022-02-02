@@ -1,3 +1,4 @@
+import 'package:cosa_abbiamo_dopo/globals/custom_colors.dart';
 import 'package:cosa_abbiamo_dopo/pages/tab_view.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -17,7 +18,8 @@ class MyApp extends StatelessWidget {
         textTheme: GoogleFonts.workSansTextTheme(
           Theme.of(context).textTheme,
         ),
-        colorScheme: ThemeData().colorScheme.copyWith(secondary: Colors.black),
+        colorScheme: ThemeData().colorScheme.copyWith(
+            secondary: CustomColors.black, primary: CustomColors.black),
       ),
     );
   }

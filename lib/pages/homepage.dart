@@ -1,4 +1,5 @@
 import 'package:animations/animations.dart';
+import 'package:cosa_abbiamo_dopo/globals/custom_colors.dart';
 import 'package:cosa_abbiamo_dopo/globals/marconi_lesson.dart';
 import 'package:cosa_abbiamo_dopo/globals/utils.dart';
 import 'package:cosa_abbiamo_dopo/pages/details_page.dart';
@@ -59,8 +60,8 @@ class _HomePageState extends State<HomePage> {
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
                         if (snapshot.data == '') {
-                          Utils.setSavedClass(Utils.getClasses()[
-                              0]); //implementare fetch dinamico delle classi
+                          Utils.setSavedClass(Utils.getClasses()[0]);
+                          //implementare fetch dinamico delle classi
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
                               content: Text(
@@ -73,19 +74,20 @@ class _HomePageState extends State<HomePage> {
                             Text(
                               snapshot.data!,
                               style: const TextStyle(
-                                  fontSize: 18, color: Colors.grey),
+                                  fontSize: 18, color: CustomColors.grey),
                             ),
                             Text(
                               ' | ' + formattedDate,
                               style: const TextStyle(
-                                  fontSize: 18, color: Colors.grey),
+                                  fontSize: 18, color: CustomColors.grey),
                             )
                           ],
                         );
                       } else {
                         return const Text(
                           'Caricamento...',
-                          style: TextStyle(fontSize: 18, color: Colors.grey),
+                          style:
+                              TextStyle(fontSize: 18, color: CustomColors.grey),
                         );
                       }
                     },
@@ -128,11 +130,11 @@ class _HomePageState extends State<HomePage> {
                                         openContainer,
                                         getDataSnapshot.data![index].name,
                                         getDataSnapshot.data![index].room),
-                                openColor: Colors.black,
+                                openColor: CustomColors.black,
                                 closedShape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(30),
                                 ),
-                                closedColor: Colors.black,
+                                closedColor: CustomColors.black,
                               );
                             },
                             itemCount: getDataSnapshot.data!.length,
@@ -148,7 +150,9 @@ class _HomePageState extends State<HomePage> {
                           SmoothPageIndicator(
                               controller: controller,
                               count: getDataSnapshot.data!.length,
-                              effect: const WormEffect(),
+                              effect: const WormEffect(
+                                  dotColor: CustomColors.silver,
+                                  activeDotColor: CustomColors.grey),
                               onDotClicked: (_) {})
                         ],
                       );

@@ -27,6 +27,7 @@ class _TabViewState extends State<TabView> {
   void initState() {
     super.initState();
 
+    Utils.setPortrait();
     Utils.setOptimalDisplayMode();
     controller = PageController(initialPage: _index);
   }
@@ -103,5 +104,11 @@ class _TabViewState extends State<TabView> {
 
   void onTabTapped(int index) {
     controller.jumpToPage(index);
+  }
+
+  @override
+  dispose() {
+    Utils.unsetPortrait();
+    super.dispose();
   }
 }
