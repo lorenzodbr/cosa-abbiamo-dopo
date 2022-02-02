@@ -140,7 +140,7 @@ class _HomePageState extends State<HomePage> {
                             itemCount: getDataSnapshot.data!.length,
                             carouselController: controller,
                             options: CarouselOptions(
-                              initialPage: 0,
+                              initialPage: hourIndex,
                               height: 200,
                               enableInfiniteScroll: false,
                               enlargeCenterPage: true,

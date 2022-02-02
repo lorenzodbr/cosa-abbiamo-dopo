@@ -440,8 +440,7 @@ class Utils {
 
   static void setPortrait() {
     SystemChrome.setPreferredOrientations([
-      DeviceOrientation.landscapeRight,
-      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.portraitUp,
     ]);
   }
 
