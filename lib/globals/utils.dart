@@ -409,7 +409,13 @@ class Utils {
         return -2;
       }
 
-      return 0; //definire e ritornare i range
+      for (int i = 0; i < Utils.hoursListFri.length; i++) {
+        if (now.isBefore(Utils.hoursListFri[i].startingTime)) {
+          return i;
+        }
+      }
+
+      return 0;
     }
 
     return -3;

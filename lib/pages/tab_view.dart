@@ -78,19 +78,6 @@ class _TabViewState extends State<TabView> {
           } else {
             return Container(
               color: Colors.black,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: const [
-                  SizedBox(
-                    child: CircularProgressIndicator(
-                      color: Colors.white,
-                    ),
-                    height: 50,
-                    width: 50,
-                  )
-                ],
-              ),
             );
           }
         });
