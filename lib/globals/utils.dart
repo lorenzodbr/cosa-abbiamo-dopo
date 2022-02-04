@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_displaymode/flutter_displaymode.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'dart:async';
 import 'dart:convert';
 
@@ -131,6 +132,8 @@ class Utils {
     if (savedClass != '') {
     } else {
       savedClass = (await getClasses())[0];
+      setSavedClass(savedClass);
+
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text(
@@ -147,6 +150,7 @@ class Utils {
       final response = await http.get(uri);
 
       if (response.statusCode == 200) {
+        justFetched();
         return response.body;
       } else {
         return '';
@@ -187,12 +191,38 @@ class Utils {
     }
   }
 
+  static Future<void> justFetched() async {
+    DateTime now = DateTime.now();
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString(
+        'lastFetch', DateFormat("Il dd/MM/yyyy 'alle' kk:mm").format(now));
+  }
+
+  static Future<String> getLastFetch() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('lastFetch') ?? '';
+  }
+
+  static Future<String> getLastUpdate() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('lastUpdate') ?? '';
+  }
+
+  static Future<void> justUpdated() async {
+    DateTime now = DateTime.now();
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString(
+        'lastUpdate', DateFormat("Il dd/MM/yyyy 'alle' kk:mm").format(now));
+  }
+
   static Future<String> getRawClasses() async {
     return await fetchClasses();
   }
 
   static Future<List<String>> getClasses() async {
     String rawClassesString = await getRawClasses();
+
+    return decodeClasses(rawClassesString);
 
     return [
       "1AI",
@@ -302,6 +332,8 @@ class Utils {
     if (savedData != dataFromAPI && dataFromAPI != '') {
       setData(dataFromAPI);
 
+      justUpdated();
+
       return dataFromAPI;
     }
 
@@ -383,6 +415,16 @@ class Utils {
     return setHours(groupTeachers(filterForToday(decoded)));
   }
 
+  static Future<List<String>> decodeClasses(String data) async {
+    List<String> decoded = data
+        .substring(data.indexOf("[") + 2, data.indexOf("]") - 1)
+        .split('","');
+
+    decoded.removeWhere((element) => !element.startsWith(RegExp("[1-5]")));
+
+    return decoded;
+  }
+
   static MarconiHour getHourRange(int hour, int day, int firstOrSecondGroup) {
     if (firstOrSecondGroup == 1) {
       if (day == 5) {
@@ -403,20 +445,10 @@ class Utils {
     DateTime now = DateTime.now();
 
     DateTime maxHour = isFirstGroup
-        ? DateTime(
-            now.year,
-            now.month,
-            now.day,
-            Utils.hoursListFri.last.startingTime.hour,
-            Utils.hoursListFri.last.startingTime.minute)
-        : DateTime(
-            now.year,
-            now.month,
-            now.day,
-            Utils.hoursListMonThuFirstGroup.last.startingTime.hour,
-            Utils.hoursListMonThuFirstGroup.last.startingTime.minute);
+        ? Utils.hoursListFri.last.startingTime.toDateTime()
+        : Utils.hoursListMonThuFirstGroup.last.startingTime.toDateTime();
 
-    if ((now.weekday != 6 && now.weekday != 7) ||
+    if ((now.weekday != 6 && now.weekday != 7) &&
         (now.weekday == 5 && now.isBefore(maxHour))) {
       return true;
     }
@@ -436,15 +468,13 @@ class Utils {
         return -1;
       }
 
-      if (now.isAfter(TimeOfDay(
-        hour: Utils.hoursListMonThuFirstGroup.last.startingTime.hour,
-        minute: Utils.hoursListMonThuFirstGroup.last.startingTime.minute,
-      ))) {
+      if (now.isAfter(Utils.hoursListMonThuFirstGroup.last.startingTime)) {
         return -2;
       }
 
       for (int i = 0; i < Utils.hoursListFri.length; i++) {
         if (now.isBefore(Utils.hoursListFri[i].startingTime)) {
+          print("ottenuto $i");
           return i;
         }
       }

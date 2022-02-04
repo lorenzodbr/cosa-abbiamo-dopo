@@ -28,4 +28,13 @@ extension TimeOfDayExtension on TimeOfDay {
 
     return true;
   }
+
+  Duration timeFrom(TimeOfDay t) {
+    return toDateTime().difference(t.toDateTime());
+  }
+
+  DateTime toDateTime() {
+    final now = DateTime.now();
+    return DateTime(now.year, now.month, now.day, hour, minute);
+  }
 }

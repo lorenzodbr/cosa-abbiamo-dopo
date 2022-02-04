@@ -82,19 +82,47 @@ class _SettingsState extends State<Settings> {
                 }
               },
             ),
-          ],
-        ),
-        SettingSection(
-          title: 'Aspetto',
-          items: [
-            SettingCheckboxItem(
-              title: 'Inverti colori',
-              value: false,
-              onChanged: (v) => setState(() {}),
-              description: 'Seleziona il colore dell\'app',
+            FutureBuilder<String>(
+              future: Utils.getLastFetch(),
+              builder: (context, getLastUpdateSnapshot) {
+                return SettingItem(
+                  title: 'Ultima ricerca di aggiornamenti',
+                  displayValue: getLastUpdateSnapshot.hasData
+                      ? getLastUpdateSnapshot.data != ''
+                          ? getLastUpdateSnapshot.data
+                          : "-"
+                      : "Caricamento...",
+                  onTap: () {},
+                );
+              },
+            ),
+            FutureBuilder<String>(
+              future: Utils.getLastUpdate(),
+              builder: (context, getLastFetchSnapshot) {
+                return SettingItem(
+                  title: 'Ultimo aggiornamento',
+                  displayValue: getLastFetchSnapshot.hasData
+                      ? getLastFetchSnapshot.data != ''
+                          ? getLastFetchSnapshot.data
+                          : "-"
+                      : "Caricamento...",
+                  onTap: () {},
+                );
+              },
             ),
           ],
         ),
+        // SettingSection(
+        //   title: 'Aspetto',
+        //   items: [
+        //     SettingCheckboxItem(
+        //       title: 'Inverti colori',
+        //       value: false,
+        //       onChanged: (v) => setState(() {}),
+        //       description: 'Seleziona il colore dell\'app',
+        //     ),
+        //   ],
+        // ),
       ]),
     );
   }

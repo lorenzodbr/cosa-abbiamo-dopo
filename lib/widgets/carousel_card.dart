@@ -1,3 +1,4 @@
+import 'package:cosa_abbiamo_dopo/globals/extensions/time_of_day_extension.dart';
 import 'package:flutter/material.dart';
 
 class CarouselCard extends StatelessWidget {
@@ -5,7 +6,10 @@ class CarouselCard extends StatelessWidget {
   final String room;
   final VoidCallback openContainer;
 
-  const CarouselCard(this.openContainer, this.lessonName, this.room);
+  final TimeOfDay? startingHour;
+
+  const CarouselCard(this.openContainer, this.lessonName, this.room,
+      {this.startingHour});
 
   @override
   Widget build(BuildContext context) {
@@ -18,25 +22,54 @@ class CarouselCard extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Text(
-            lessonName,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 40,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          Text(
-            room,
-            style: const TextStyle(
-              color: Colors.grey,
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ],
+        children: _buildCardContent(),
       ),
     );
+  }
+
+  List<Widget> _buildCardContent() {
+    List<Widget> res = [];
+
+    if (startingHour != null) {
+      int minutes = _timeToGo().inMinutes;
+
+      Text timeToGo = Text(
+        "fra $minutes minut" + (minutes == 1 ? "o" : "i"),
+        style: const TextStyle(
+          color: Colors.grey,
+          fontSize: 15,
+          fontWeight: FontWeight.bold,
+        ),
+      );
+
+      res.add(timeToGo);
+    }
+
+    res.addAll([
+      Text(
+        lessonName,
+        style: const TextStyle(
+          color: Colors.white,
+          fontSize: 40,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      Text(
+        room,
+        style: const TextStyle(
+          color: Colors.grey,
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+        ),
+      )
+    ]);
+
+    return res;
+  }
+
+  Duration _timeToGo() {
+    TimeOfDay now = TimeOfDay.now();
+
+    return startingHour!.timeFrom(now);
   }
 }

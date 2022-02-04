@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:card_swiper/card_swiper.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -46,6 +47,8 @@ class _HomePageState extends State<HomePage> {
     if (_carouselIndex < 0) {
       _carouselIndex = _hourIndex;
     }
+
+    print(_hourIndex);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
@@ -99,104 +102,123 @@ class _HomePageState extends State<HomePage> {
               ],
             ),
           ),
-          _hourIndex >= 0
-              ? FutureBuilder<List<MarconiLesson>>(
-                  future: Utils.getSavedData(),
-                  builder: (context, getDataSnapshot) {
-                    if (getDataSnapshot.hasData) {
-                      return Column(
-                        children: [
-                          CarouselSlider.builder(
-                            itemBuilder: (context, index, realIndex) {
-                              return OpenContainer<String>(
-                                openBuilder: (_, closeContainer) => DetailsPage(
-                                  subject: getDataSnapshot.data![index].name,
-                                  teachers:
-                                      getDataSnapshot.data![index].teachers,
-                                  room: getDataSnapshot.data![index].room,
-                                  startHour: getDataSnapshot
-                                      .data![index].hours.startingTime,
-                                  endHour: getDataSnapshot
-                                      .data![index].hours.endingTime,
-                                  closeContainer: closeContainer,
-                                ),
-                                closedBuilder: (_, openContainer) =>
-                                    CarouselCard(
-                                  openContainer,
-                                  getDataSnapshot.data![index].name,
-                                  getDataSnapshot.data![index].room,
-                                ),
-                                openColor: CustomColors.black,
-                                closedShape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(30),
-                                ),
-                                closedColor: CustomColors.black,
-                              );
-                            },
-                            itemCount: getDataSnapshot.data!.length,
-                            options: CarouselOptions(
-                                height: 200,
-                                initialPage: 5,
-                                enableInfiniteScroll: false,
-                                enlargeCenterPage: true,
-                                scrollDirection: Axis.horizontal,
-                                onPageChanged: (index, reason) {
-                                  setState(() {
-                                    _carouselIndex = index;
-                                  });
-                                }),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 20),
-                            child: AnimatedSmoothIndicator(
-                              activeIndex: _carouselIndex,
-                              count: getDataSnapshot.data!.length,
-                              effect: const WormEffect(
-                                activeDotColor: CustomColors.black,
-                                dotColor: CustomColors.silver,
-                                dotHeight: 10,
-                                dotWidth: 10,
-                              ),
-                            ),
-                          )
-                        ],
-                      );
-                    } else {
-                      return Column(
-                        children: [
-                          CarouselSlider.builder(
-                            itemBuilder: (context, index, realIndex) {
-                              return LoadingCarouselCard();
-                            },
-                            itemCount: 1,
-                            options: CarouselOptions(
-                              initialPage: _hourIndex,
-                              height: 200,
-                              enableInfiniteScroll: false,
-                              enlargeCenterPage: true,
-                              scrollDirection: Axis.horizontal,
-                            ),
-                          ),
-                        ],
-                      );
-                    }
-                  },
-                )
-              : CarouselSlider.builder(
-                  itemBuilder: (context, index, realIndex) {
-                    return OutOfRangeCarouselCard(_hourIndex);
-                  },
-                  itemCount: 1,
-                  options: CarouselOptions(
-                    initialPage: 0,
-                    height: 200,
-                    enableInfiniteScroll: false,
-                    enlargeCenterPage: true,
-                    scrollDirection: Axis.horizontal,
-                  ),
-                ),
+          _buildCarousel()
         ],
       ),
     );
+  }
+
+  Widget _buildCarousel() {
+    return _hourIndex >= 0
+        ? FutureBuilder<List<MarconiLesson>>(
+            future: Utils.getSavedData(),
+            builder: (context, getDataSnapshot) {
+              if (getDataSnapshot.hasData) {
+                return Column(
+                  children: [
+                    CarouselSlider.builder(
+                      itemBuilder: (context, index, realIndex) {
+                        return OpenContainer<String>(
+                          openBuilder: (_, closeContainer) => DetailsPage(
+                            subject: getDataSnapshot.data![index].name,
+                            teachers: getDataSnapshot.data![index].teachers,
+                            room: getDataSnapshot.data![index].room,
+                            startHour:
+                                getDataSnapshot.data![index].hours.startingTime,
+                            endHour:
+                                getDataSnapshot.data![index].hours.endingTime,
+                            closeContainer: closeContainer,
+                          ),
+                          closedBuilder: (_, openContainer) => CarouselCard(
+                            openContainer,
+                            getDataSnapshot.data![index].name,
+                            getDataSnapshot.data![index].room,
+                            startingHour: index == _hourIndex
+                                ? getDataSnapshot
+                                    .data![index].hours.startingTime
+                                : null,
+                          ),
+                          openColor: CustomColors.black,
+                          closedShape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                          closedColor: CustomColors.black,
+                        );
+                      },
+                      itemCount: getDataSnapshot.data!.length,
+                      options: CarouselOptions(
+                          height: 200,
+                          initialPage: _hourIndex + 1,
+                          enableInfiniteScroll: false,
+                          enlargeCenterPage: true,
+                          scrollDirection: Axis.horizontal,
+                          onPageChanged: (index, reason) {
+                            setState(() {
+                              print("spostato su $index");
+                              _carouselIndex = index;
+                            });
+                          }),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 50),
+                      child: AnimatedSmoothIndicator(
+                        activeIndex: _carouselIndex,
+                        count: getDataSnapshot.data!.length,
+                        effect: const WormEffect(
+                          activeDotColor: CustomColors.black,
+                          dotColor: CustomColors.silver,
+                          dotHeight: 10,
+                          dotWidth: 10,
+                        ),
+                      ),
+                    )
+                  ],
+                );
+              } else {
+                return Column(
+                  children: [
+                    CarouselSlider(
+                      items: [
+                        LoadingCarouselCard(),
+                      ],
+                      options: CarouselOptions(
+                        initialPage: _hourIndex,
+                        height: 200,
+                        enableInfiniteScroll: false,
+                        enlargeCenterPage: true,
+                        scrollDirection: Axis.horizontal,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 50),
+                      child: AnimatedSmoothIndicator(
+                        activeIndex: 0,
+                        count: 1,
+                        effect: const WormEffect(
+                          activeDotColor: CustomColors.black,
+                          dotColor: CustomColors.silver,
+                          dotHeight: 10,
+                          dotWidth: 10,
+                        ),
+                      ),
+                    )
+                  ],
+                );
+              }
+            },
+          )
+        : CarouselSlider.builder(
+            itemBuilder: (context, index, realIndex) {
+              return OutOfRangeCarouselCard(_hourIndex);
+            },
+            itemCount: 1,
+            options: CarouselOptions(
+              initialPage: 0,
+              height: 200,
+              enableInfiniteScroll: false,
+              enlargeCenterPage: true,
+              scrollDirection: Axis.horizontal,
+            ),
+          );
   }
 }

@@ -1,3 +1,4 @@
+import 'package:cosa_abbiamo_dopo/globals/custom_colors.dart';
 import 'package:cosa_abbiamo_dopo/globals/utils.dart';
 import 'package:cosa_abbiamo_dopo/pages/homepage.dart';
 import 'package:cosa_abbiamo_dopo/pages/info_page.dart';
@@ -65,7 +66,6 @@ class _TabViewState extends State<TabView> {
                   currentIndex: _index,
                   onTap: onTabTapped,
                   backgroundColor: Colors.white,
-                  selectedItemColor: Colors.black,
                   items: const <BottomNavigationBarItem>[
                     BottomNavigationBarItem(
                         icon: Icon(Icons.home), label: "Home"),
@@ -76,21 +76,26 @@ class _TabViewState extends State<TabView> {
                   ],
                 ));
           } else {
-            return Container(
-              color: Colors.black,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: const [
-                  CircularProgressIndicator(color: Colors.white),
-                  Text(
-                    "Ottengo gli orari...",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
+            return Scaffold(
+              backgroundColor: CustomColors.black,
+              body: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: const [
+                    CircularProgressIndicator(color: Colors.white),
+                    Padding(
+                      padding: EdgeInsets.only(top: 10),
+                      child: Text(
+                        "Ottengo gli orari...",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                        ),
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             );
           }

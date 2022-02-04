@@ -52,7 +52,11 @@ class DetailsPage extends StatelessWidget {
                   color: Colors.grey,
                 ),
                 DetailRow(
-                    text: room.startsWith('L') ? 'Laboratorio' : 'Aula',
+                    text: room.startsWith('L')
+                        ? 'Laboratorio'
+                        : room.startsWith('P')
+                            ? 'Palestra'
+                            : 'Aula',
                     value: room),
                 const Divider(
                   color: Colors.grey,
