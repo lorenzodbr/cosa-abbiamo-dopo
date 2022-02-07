@@ -135,10 +135,16 @@ class _HomePageState extends State<HomePage> {
                             openContainer,
                             getDataSnapshot.data![index].name,
                             getDataSnapshot.data![index].room,
-                            startingHour: index == _hourIndex
-                                ? getDataSnapshot
-                                    .data![index].hours.startingTime
-                                : null,
+                            startingHour:
+                                getDataSnapshot.data![0].hourIndex == 1
+                                    ? (index == _hourIndex
+                                        ? getDataSnapshot
+                                            .data![index].hours.startingTime
+                                        : null)
+                                    : (index == _hourIndex - 3
+                                        ? getDataSnapshot
+                                            .data![index].hours.startingTime
+                                        : null),
                           ),
                           openColor: CustomColors.black,
                           closedShape: RoundedRectangleBorder(
@@ -149,17 +155,18 @@ class _HomePageState extends State<HomePage> {
                       },
                       itemCount: getDataSnapshot.data!.length,
                       options: CarouselOptions(
-                          initialPage: _hourIndex,
-                          height: 200,
-                          enableInfiniteScroll: false,
-                          enlargeCenterPage: true,
-                          scrollDirection: Axis.horizontal,
-                          onPageChanged: (index, reason) {
-                            setState(() {
-                              print("spostato su $index");
-                              _carouselIndex = index;
-                            });
-                          }),
+                        initialPage: _hourIndex,
+                        height: 200,
+                        enableInfiniteScroll: false,
+                        enlargeCenterPage: true,
+                        scrollDirection: Axis.horizontal,
+                        onPageChanged: (index, reason) {
+                          setState(() {
+                            print("spostato su $index");
+                            _carouselIndex = index;
+                          });
+                        },
+                      ),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(top: 50),
