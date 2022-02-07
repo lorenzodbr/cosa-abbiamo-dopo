@@ -332,8 +332,10 @@ class Utils {
     if (lessons[0].day != 5) {
       if (lessons[0].hourIndex == 1) {
         hours = hoursListMonThuFirstGroup;
+        setGroup(1);
       } else {
         hours = hoursListMonThuSecondGroup;
+        setGroup(2);
       }
     } else {
       hours = hoursListFri;

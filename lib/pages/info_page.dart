@@ -12,15 +12,8 @@ class InfoPage extends StatefulWidget {
 class _InfoPageState extends State<InfoPage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          "Informazioni",
-          style: TextStyle(color: CustomColors.black),
-        ),
-        backgroundColor: CustomColors.white,
-      ),
-      body: Column(
+    return SafeArea(
+      child: Column(
         children: [
           ExpandablePanel(
             theme: const ExpandableThemeData(
@@ -45,7 +38,7 @@ class _InfoPageState extends State<InfoPage> {
             ),
             builder: (_, collapsed, expanded) {
               return Padding(
-                padding: const EdgeInsets.only(left: 20, right: 20, top: 10),
+                padding: const EdgeInsets.only(left: 20, right: 20, bottom: 10),
                 child: Expandable(
                   collapsed: collapsed,
                   expanded: expanded,
@@ -54,7 +47,6 @@ class _InfoPageState extends State<InfoPage> {
               );
             },
           ),
-          Divider(),
           ExpandablePanel(
             theme: const ExpandableThemeData(
               headerAlignment: ExpandablePanelHeaderAlignment.center,
@@ -78,7 +70,7 @@ class _InfoPageState extends State<InfoPage> {
             ),
             builder: (_, collapsed, expanded) {
               return Padding(
-                padding: const EdgeInsets.only(left: 20, right: 20, top: 10),
+                padding: const EdgeInsets.only(left: 20, right: 20, bottom: 10),
                 child: Expandable(
                   collapsed: collapsed,
                   expanded: expanded,
@@ -110,7 +102,8 @@ class _InfoPageState extends State<InfoPage> {
             ),
             builder: (_, collapsed, expanded) {
               return Padding(
-                padding: const EdgeInsets.only(left: 20, right: 20, top: 10),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                 child: Expandable(
                   collapsed: collapsed,
                   expanded: expanded,

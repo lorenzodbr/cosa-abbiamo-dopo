@@ -28,7 +28,7 @@ class _HomePageState extends State<HomePage> {
   int _carouselIndex = -1;
   late String selectedClass;
   late String formattedDate;
-  late PageController controller;
+  late CarouselController controller;
 
   @override
   void initState() {
@@ -41,6 +41,8 @@ class _HomePageState extends State<HomePage> {
     formattedDate = formatter.format(now);
 
     _hourIndex = Utils.getCurrentHourIndex();
+
+    controller = CarouselController();
   }
 
   @override
@@ -48,8 +50,6 @@ class _HomePageState extends State<HomePage> {
     if (_carouselIndex < 0) {
       _carouselIndex = _hourIndex;
     }
-
-    print(_hourIndex);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
@@ -103,7 +103,7 @@ class _HomePageState extends State<HomePage> {
               ],
             ),
           ),
-          _buildCarousel()
+          _buildCarousel(),
         ],
       ),
     );
@@ -118,6 +118,7 @@ class _HomePageState extends State<HomePage> {
                 return Column(
                   children: [
                     CarouselSlider.builder(
+                      carouselController: controller,
                       itemBuilder: (context, index, realIndex) {
                         return OpenContainer<String>(
                           openBuilder: (_, closeContainer) => DetailsPage(
@@ -148,8 +149,8 @@ class _HomePageState extends State<HomePage> {
                       },
                       itemCount: getDataSnapshot.data!.length,
                       options: CarouselOptions(
+                          initialPage: _hourIndex,
                           height: 200,
-                          initialPage: _hourIndex + 1,
                           enableInfiniteScroll: false,
                           enlargeCenterPage: true,
                           scrollDirection: Axis.horizontal,
@@ -183,7 +184,6 @@ class _HomePageState extends State<HomePage> {
                         LoadingCarouselCard(),
                       ],
                       options: CarouselOptions(
-                        initialPage: _hourIndex,
                         height: 200,
                         enableInfiniteScroll: false,
                         enlargeCenterPage: true,

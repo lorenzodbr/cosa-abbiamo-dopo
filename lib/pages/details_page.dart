@@ -24,7 +24,7 @@ class DetailsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
         onPanUpdate: (details) {
-          if (details.delta.dy > 15 && details.delta.dx.abs() < 0.75) {
+          if (details.delta.dy > 15 && details.delta.dx.abs() < 1) {
             Navigator.of(context).pop();
           }
         },

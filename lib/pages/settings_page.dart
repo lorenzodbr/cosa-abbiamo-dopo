@@ -21,15 +21,8 @@ class _SettingsState extends State<Settings> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          "Impostazioni",
-          style: TextStyle(color: CustomColors.black),
-        ),
-        backgroundColor: CustomColors.white,
-      ),
-      body: SettingContainer(sections: [
+    return SafeArea(
+      child: SettingContainer(sections: [
         SettingSection(
           title: 'Dati',
           items: [
@@ -108,7 +101,7 @@ class _SettingsState extends State<Settings> {
               future: Utils.getLastUpdate(),
               builder: (context, getLastFetchSnapshot) {
                 return SettingItem(
-                  title: 'Ultimo aggiornamento',
+                  title: 'Ultimo aggiornamento dei dati',
                   displayValue: getLastFetchSnapshot.hasData
                       ? getLastFetchSnapshot.data != ''
                           ? getLastFetchSnapshot.data
