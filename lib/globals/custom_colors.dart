@@ -6,4 +6,6 @@ class CustomColors {
   static const Color silver = Color.fromRGBO(192, 192, 192, 1);
 
   static const Color black = Colors.black;
+
+  static const Color white = Colors.white;
 }

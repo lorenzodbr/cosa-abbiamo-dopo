@@ -11,7 +11,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
-import 'package:card_swiper/card_swiper.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -36,9 +35,11 @@ class _HomePageState extends State<HomePage> {
     super.initState();
 
     initializeDateFormatting();
+
     var now = DateTime.now();
     var formatter = DateFormat('EEEE dd MMMM yyyy', 'it');
     formattedDate = formatter.format(now);
+
     _hourIndex = Utils.getCurrentHourIndex();
   }
 

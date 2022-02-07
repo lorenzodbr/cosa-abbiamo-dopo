@@ -1,3 +1,4 @@
+import 'package:cosa_abbiamo_dopo/globals/custom_colors.dart';
 import 'package:cosa_abbiamo_dopo/globals/extensions/time_of_day_extension.dart';
 import 'package:flutter/material.dart';
 
@@ -36,8 +37,8 @@ class CarouselCard extends StatelessWidget {
       Text timeToGo = Text(
         "fra $minutes minut" + (minutes == 1 ? "o" : "i"),
         style: const TextStyle(
-          color: Colors.grey,
-          fontSize: 15,
+          color: CustomColors.silver,
+          fontSize: 12,
           fontWeight: FontWeight.bold,
         ),
       );

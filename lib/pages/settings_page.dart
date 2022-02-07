@@ -1,4 +1,5 @@
 import 'package:clean_settings/clean_settings.dart';
+import 'package:cosa_abbiamo_dopo/globals/custom_colors.dart';
 import 'package:cosa_abbiamo_dopo/globals/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -20,8 +21,15 @@ class _SettingsState extends State<Settings> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: SettingContainer(sections: [
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          "Impostazioni",
+          style: TextStyle(color: CustomColors.black),
+        ),
+        backgroundColor: CustomColors.white,
+      ),
+      body: SettingContainer(sections: [
         SettingSection(
           title: 'Dati',
           items: [
@@ -107,6 +115,26 @@ class _SettingsState extends State<Settings> {
                           : "-"
                       : "Caricamento...",
                   onTap: () {},
+                );
+              },
+            ),
+          ],
+        ),
+        SettingSection(
+          title: 'App',
+          items: [
+            FutureBuilder<String>(
+              future: Utils.getAppVersion(),
+              builder: (context, getAppVersionSnapshot) {
+                return SettingItem(
+                  title: 'Versione',
+                  displayValue: getAppVersionSnapshot.hasData
+                      ? getAppVersionSnapshot.data
+                      : "Caricamento...",
+                  onTap: () {},
+                  priority: getAppVersionSnapshot.hasData
+                      ? ItemPriority.normal
+                      : ItemPriority.disabled,
                 );
               },
             ),

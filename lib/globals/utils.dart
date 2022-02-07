@@ -11,6 +11,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 class Utils {
   static List<MarconiHour> hoursListMonThuFirstGroup = [
@@ -223,77 +224,17 @@ class Utils {
     String rawClassesString = await getRawClasses();
 
     return decodeClasses(rawClassesString);
+  }
 
-    return [
-      "1AI",
-      "1BI",
-      "1CI",
-      "1DI",
-      "1EI",
-      "1FL",
-      "1GL",
-      "1HL",
-      "1IL",
-      "1LE",
-      "1ME",
-      "1NE",
-      "1OE",
-      "1PE",
-      "1QL",
-      "1RI",
-      "1SE",
-      "2AI",
-      "2BI",
-      "2CI",
-      "2DI",
-      "2EI",
-      "2FL",
-      "2GL",
-      "2HL",
-      "2IL",
-      "2LE",
-      "2ME",
-      "2NE",
-      "2OE",
-      "2PE",
-      "3AC",
-      "3AE",
-      "3AI",
-      "3AL",
-      "3AT",
-      "3AT1",
-      "3BE",
-      "3BI",
-      "3BL",
-      "3CI",
-      "3DI",
-      "3EI",
-      "3FI",
-      "3GI",
-      "4AC",
-      "4AE",
-      "4AI",
-      "4AL",
-      "4AT",
-      "4AT1",
-      "4BE",
-      "4BI",
-      "4BL",
-      "4CI",
-      "4DI",
-      "4EI",
-      "5AC",
-      "5AE",
-      "5AI",
-      "5AL",
-      "5AT",
-      "5AT1",
-      "5BI",
-      "5BL",
-      "5CI",
-      "5DI",
-      "5EI"
-    ];
+  static Future<bool> isFirstGroup() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    return (prefs.getInt('groupIndex') ?? 1) == 1;
+  }
+
+  static Future<void> setGroup(int index) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setInt('groupIndex', index);
   }
 
   static Future<List<MarconiLesson>> getData(context) async {
@@ -448,11 +389,10 @@ class Utils {
         ? Utils.hoursListFri.last.startingTime.toDateTime()
         : Utils.hoursListMonThuFirstGroup.last.startingTime.toDateTime();
 
-    if ((now.weekday != 6 && now.weekday != 7) &&
+    if ((now.weekday != 6 && now.weekday != 7) ||
         (now.weekday == 5 && now.isBefore(maxHour))) {
       return true;
     }
-
     return false;
   }
 
@@ -474,7 +414,6 @@ class Utils {
 
       for (int i = 0; i < Utils.hoursListFri.length; i++) {
         if (now.isBefore(Utils.hoursListFri[i].startingTime)) {
-          print("ottenuto $i");
           return i;
         }
       }
@@ -483,6 +422,12 @@ class Utils {
     }
 
     return -3;
+  }
+
+  static Future<String> getAppVersion() async {
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+
+    return packageInfo.version;
   }
 
   static Future<void> setOptimalDisplayMode() async {

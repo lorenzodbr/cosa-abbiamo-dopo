@@ -36,70 +36,71 @@ class _TabViewState extends State<TabView> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: Utils.getRawData(context),
-        builder: (context, snapshot) {
-          if (snapshot.hasData || snapshot.hasError) {
-            if (snapshot.data == '') {
-              return Column(
+      future: Utils.getRawData(context),
+      builder: (context, snapshot) {
+        if (snapshot.hasData || snapshot.hasError) {
+          if (snapshot.data == '') {
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: const [
+                Text(
+                  "Servizio momentaneamente non disponibile, riprova più tardi",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                  ),
+                )
+              ],
+            );
+          }
+
+          return Scaffold(
+            body: PageView(
+              children: tabPages,
+              onPageChanged: onPageChanged,
+              controller: controller,
+              physics: const NeverScrollableScrollPhysics(),
+            ),
+            bottomNavigationBar: BottomNavigationBar(
+              currentIndex: _index,
+              onTap: onTabTapped,
+              backgroundColor: Colors.white,
+              items: const <BottomNavigationBarItem>[
+                BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
+                BottomNavigationBarItem(
+                    icon: Icon(Icons.settings), label: "Impostazioni"),
+                BottomNavigationBarItem(icon: Icon(Icons.info), label: "Info"),
+              ],
+            ),
+          );
+        } else {
+          return Scaffold(
+            backgroundColor: CustomColors.black,
+            body: Center(
+              child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: const [
-                  Text(
-                    "Servizio momentaneamente non disponibile, riprova più tardi",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                    ),
-                  )
-                ],
-              );
-            }
-
-            return Scaffold(
-                body: PageView(
-                  children: tabPages,
-                  onPageChanged: onPageChanged,
-                  controller: controller,
-                ),
-                bottomNavigationBar: BottomNavigationBar(
-                  currentIndex: _index,
-                  onTap: onTabTapped,
-                  backgroundColor: Colors.white,
-                  items: const <BottomNavigationBarItem>[
-                    BottomNavigationBarItem(
-                        icon: Icon(Icons.home), label: "Home"),
-                    BottomNavigationBarItem(
-                        icon: Icon(Icons.settings), label: "Impostazioni"),
-                    BottomNavigationBarItem(
-                        icon: Icon(Icons.info), label: "Info"),
-                  ],
-                ));
-          } else {
-            return Scaffold(
-              backgroundColor: CustomColors.black,
-              body: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: const [
-                    CircularProgressIndicator(color: Colors.white),
-                    Padding(
-                      padding: EdgeInsets.only(top: 10),
-                      child: Text(
-                        "Ottengo gli orari...",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                        ),
+                  CircularProgressIndicator(color: Colors.white),
+                  Padding(
+                    padding: EdgeInsets.only(top: 10),
+                    child: Text(
+                      "Ottengo gli orari...",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            );
-          }
-        });
+            ),
+          );
+        }
+      },
+    );
   }
 
   void onPageChanged(int page) {
