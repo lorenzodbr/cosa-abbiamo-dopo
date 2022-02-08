@@ -13,10 +13,8 @@ class TabView extends StatefulWidget {
 }
 
 class _TabViewState extends State<TabView> {
-  int _index = 0;
-  late PageController controller;
-
-  late DateTime dataTime;
+  int _pageIndex = 0;
+  late PageController _controller;
 
   List<Widget> tabPages = [
     const HomePage(),
@@ -30,7 +28,7 @@ class _TabViewState extends State<TabView> {
 
     Utils.setPortrait();
     Utils.setOptimalDisplayMode();
-    controller = PageController(initialPage: _index);
+    _controller = PageController(initialPage: _pageIndex);
   }
 
   @override
@@ -39,32 +37,15 @@ class _TabViewState extends State<TabView> {
       future: Utils.getRawData(context),
       builder: (context, snapshot) {
         if (snapshot.hasData || snapshot.hasError) {
-          if (snapshot.data == '') {
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: const [
-                Text(
-                  "Servizio momentaneamente non disponibile, riprova più tardi",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                  ),
-                )
-              ],
-            );
-          }
-
           return Scaffold(
             body: PageView(
               children: tabPages,
               onPageChanged: onPageChanged,
-              controller: controller,
+              controller: _controller,
               physics: const NeverScrollableScrollPhysics(),
             ),
             bottomNavigationBar: BottomNavigationBar(
-              currentIndex: _index,
+              currentIndex: _pageIndex,
               onTap: onTabTapped,
               backgroundColor: Colors.white,
               items: const <BottomNavigationBarItem>[
@@ -105,12 +86,12 @@ class _TabViewState extends State<TabView> {
 
   void onPageChanged(int page) {
     setState(() {
-      _index = page;
+      _pageIndex = page;
     });
   }
 
   void onTabTapped(int index) {
-    controller.jumpToPage(index);
+    _controller.jumpToPage(index);
   }
 
   @override

@@ -2,16 +2,16 @@ import 'package:cosa_abbiamo_dopo/globals/extensions/time_of_day_extension.dart'
 import 'package:cosa_abbiamo_dopo/globals/marconi_hour.dart';
 import 'package:cosa_abbiamo_dopo/globals/marconi_lesson.dart';
 import 'package:cosa_abbiamo_dopo/globals/marconi_teacher.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_displaymode/flutter_displaymode.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'dart:async';
 import 'dart:convert';
-
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 
 class Utils {
   static List<MarconiHour> hoursListMonThuFirstGroup = [
@@ -171,9 +171,8 @@ class Utils {
     }
   }
 
-  static Future<String> getSavedClass() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('classe') ?? '';
+  static String getSavedClass() {
+    return GetStorage().read('classe');
   }
 
   static Future<String> fetchClasses() async {
@@ -192,27 +191,25 @@ class Utils {
     }
   }
 
-  static Future<void> justFetched() async {
+  static void justFetched() {
     DateTime now = DateTime.now();
-    final prefs = await SharedPreferences.getInstance();
-    prefs.setString(
+
+    GetStorage().write(
         'lastFetch', DateFormat("Il dd/MM/yyyy 'alle' kk:mm").format(now));
   }
 
-  static Future<String> getLastFetch() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('lastFetch') ?? '';
+  static String getLastFetch() {
+    return GetStorage().read('lastFetch');
   }
 
-  static Future<String> getLastUpdate() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('lastUpdate') ?? '';
+  static String getLastUpdate() {
+    return GetStorage().read('lastUpdate');
   }
 
-  static Future<void> justUpdated() async {
+  static void justUpdated() {
     DateTime now = DateTime.now();
-    final prefs = await SharedPreferences.getInstance();
-    prefs.setString(
+
+    GetStorage().write(
         'lastUpdate', DateFormat("Il dd/MM/yyyy 'alle' kk:mm").format(now));
   }
 
@@ -232,9 +229,8 @@ class Utils {
     return (prefs.getInt('groupIndex') ?? 1) == 1;
   }
 
-  static Future<void> setGroup(int index) async {
-    final prefs = await SharedPreferences.getInstance();
-    prefs.setInt('groupIndex', index);
+  static void setGroup(int index) {
+    GetStorage().write('groupIndex', index);
   }
 
   static Future<List<MarconiLesson>> getData(context) async {
@@ -243,15 +239,14 @@ class Utils {
     return decodeData(data);
   }
 
-  static Future<List<MarconiLesson>> getSavedData() async {
-    String rawSavedData = await getRawSavedData();
+  static List<MarconiLesson> getSavedData() {
+    String rawSavedData = getRawSavedData();
 
     return decodeData(rawSavedData);
   }
 
-  static Future<String> getRawSavedData() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('data') ?? '';
+  static String getRawSavedData() {
+    return GetStorage().read('data');
   }
 
   static Future<String> getRawData(context) async {
@@ -260,15 +255,14 @@ class Utils {
     return data;
   }
 
-  static void setData(String s) async {
-    final prefs = await SharedPreferences.getInstance();
-    prefs.setString('data', s);
+  static void setData(String s) {
+    GetStorage().write('data', s);
   }
 
   static Future<String> updateData(context) async {
     String dataFromAPI = await fetchData(context);
 
-    String savedData = await getRawSavedData();
+    String savedData = getRawSavedData();
 
     if (savedData != dataFromAPI && dataFromAPI != '') {
       setData(dataFromAPI);
@@ -281,9 +275,8 @@ class Utils {
     return savedData;
   }
 
-  static void setSavedClass(String s) async {
-    final prefs = await SharedPreferences.getInstance();
-    prefs.setString('classe', s);
+  static void setSavedClass(String s) {
+    GetStorage().write('classe', s);
   }
 
   static List<MarconiLesson> filterForToday(List<MarconiLesson> lessons) {
@@ -358,7 +351,7 @@ class Utils {
     return setHours(groupTeachers(filterForToday(decoded)));
   }
 
-  static Future<List<String>> decodeClasses(String data) async {
+  static List<String> decodeClasses(String data) {
     List<String> decoded = data
         .substring(data.indexOf("[") + 2, data.indexOf("]") - 1)
         .split('","');

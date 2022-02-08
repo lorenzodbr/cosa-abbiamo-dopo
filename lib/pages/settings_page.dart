@@ -12,139 +12,94 @@ class Settings extends StatefulWidget {
 }
 
 class _SettingsState extends State<Settings> {
-  late String classe;
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: SettingContainer(sections: [
-        SettingSection(
-          title: 'Dati',
-          items: [
-            FutureBuilder<List<String>>(
-              future: Utils.getClasses(),
-              builder: (context, getClassesSnapshot) {
-                if (getClassesSnapshot.hasError) {
-                  return SettingRadioItem<String>(
-                    title: 'Seleziona classe',
-                    priority: ItemPriority.disabled,
-                    items: const [],
-                    onChanged: (_) {},
-                    displayValue:
-                        'Connettiti a internet per poter cambiare classe',
+      child: SettingContainer(
+        sections: [
+          SettingSection(
+            title: 'Dati',
+            items: [
+              _buildClassesWheel(),
+              SettingItem(
+                title: 'Ultima ricerca di aggiornamenti',
+                displayValue: Utils.getLastFetch(),
+                onTap: () {},
+              ),
+              SettingItem(
+                title: 'Ultimo aggiornamento dei dati',
+                displayValue: Utils.getLastUpdate(),
+                onTap: () {},
+              ),
+            ],
+          ),
+          SettingSection(
+            title: 'App',
+            items: [
+              FutureBuilder<String>(
+                future: Utils.getAppVersion(),
+                builder: (context, getAppVersionSnapshot) {
+                  return SettingItem(
+                    title: 'Versione',
+                    displayValue: getAppVersionSnapshot.hasData
+                        ? getAppVersionSnapshot.data
+                        : "Caricamento...",
+                    onTap: () {},
+                    priority: getAppVersionSnapshot.hasData
+                        ? ItemPriority.normal
+                        : ItemPriority.disabled,
                   );
-                }
+                },
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
 
-                if (getClassesSnapshot.hasData) {
-                  return FutureBuilder<String>(
-                    future: Utils.getSavedClass(),
-                    builder: (context, getSavedClassSnapshot) {
-                      if (getSavedClassSnapshot.hasData) {
-                        return SettingWheelPickerItem(
-                          title: 'Seleziona classe',
-                          initialValueIndex: getClassesSnapshot.data!
-                              .indexOf(getSavedClassSnapshot.data!),
-                          displayValue: getSavedClassSnapshot.data!,
-                          items: getClassesSnapshot.data,
-                          onChanged: (v) {
-                            _showMyDialog();
+  Widget _buildClassesWheel() {
+    return FutureBuilder<List<String>>(
+      future: Utils.getClasses(),
+      builder: (context, getClassesSnapshot) {
+        if (getClassesSnapshot.hasError) {
+          return SettingRadioItem<String>(
+            title: 'Seleziona classe',
+            priority: ItemPriority.disabled,
+            items: const [],
+            onChanged: (_) {},
+            displayValue: 'Connettiti a internet per poter cambiare classe',
+          );
+        }
 
-                            Utils.setSavedClass(getClassesSnapshot.data![v]);
-                            Utils.getData(context);
+        if (getClassesSnapshot.hasData) {
+          String classe = Utils.getSavedClass();
 
-                            Navigator.pop(context);
-                            setState(() {});
-                          },
-                        );
-                      } else {
-                        return SettingRadioItem<String>(
-                          priority: ItemPriority.disabled,
-                          title: 'Seleziona classe',
-                          items: const [],
-                          onChanged: (_) {},
-                          displayValue: 'Caricamento...',
-                        );
-                      }
-                    },
-                  );
-                } else {
-                  return SettingRadioItem<String>(
-                    title: 'Seleziona classe',
-                    priority: ItemPriority.disabled,
-                    items: const [],
-                    onChanged: (_) {},
-                    displayValue: 'Caricamento...',
-                  );
-                }
-              },
-            ),
-            FutureBuilder<String>(
-              future: Utils.getLastFetch(),
-              builder: (context, getLastUpdateSnapshot) {
-                return SettingItem(
-                  title: 'Ultima ricerca di aggiornamenti',
-                  displayValue: getLastUpdateSnapshot.hasData
-                      ? getLastUpdateSnapshot.data != ''
-                          ? getLastUpdateSnapshot.data
-                          : "-"
-                      : "Caricamento...",
-                  onTap: () {},
-                );
-              },
-            ),
-            FutureBuilder<String>(
-              future: Utils.getLastUpdate(),
-              builder: (context, getLastFetchSnapshot) {
-                return SettingItem(
-                  title: 'Ultimo aggiornamento dei dati',
-                  displayValue: getLastFetchSnapshot.hasData
-                      ? getLastFetchSnapshot.data != ''
-                          ? getLastFetchSnapshot.data
-                          : "-"
-                      : "Caricamento...",
-                  onTap: () {},
-                );
-              },
-            ),
-          ],
-        ),
-        SettingSection(
-          title: 'App',
-          items: [
-            FutureBuilder<String>(
-              future: Utils.getAppVersion(),
-              builder: (context, getAppVersionSnapshot) {
-                return SettingItem(
-                  title: 'Versione',
-                  displayValue: getAppVersionSnapshot.hasData
-                      ? getAppVersionSnapshot.data
-                      : "Caricamento...",
-                  onTap: () {},
-                  priority: getAppVersionSnapshot.hasData
-                      ? ItemPriority.normal
-                      : ItemPriority.disabled,
-                );
-              },
-            ),
-          ],
-        ),
-        // SettingSection(
-        //   title: 'Aspetto',
-        //   items: [
-        //     SettingCheckboxItem(
-        //       title: 'Inverti colori',
-        //       value: false,
-        //       onChanged: (v) => setState(() {}),
-        //       description: 'Seleziona il colore dell\'app',
-        //     ),
-        //   ],
-        // ),
-      ]),
+          return SettingWheelPickerItem(
+            title: 'Seleziona classe',
+            initialValueIndex: getClassesSnapshot.data!.indexOf(classe),
+            displayValue: classe,
+            items: getClassesSnapshot.data,
+            onChanged: (v) {
+              _showMyDialog();
+
+              Utils.setSavedClass(getClassesSnapshot.data![v]);
+              Utils.getData(context);
+
+              Navigator.pop(context);
+              setState(() {});
+            },
+          );
+        } else {
+          return SettingRadioItem<String>(
+            title: 'Seleziona classe',
+            priority: ItemPriority.disabled,
+            items: const [],
+            onChanged: (_) {},
+            displayValue: 'Caricamento...',
+          );
+        }
+      },
     );
   }
 

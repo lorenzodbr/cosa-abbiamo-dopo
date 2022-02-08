@@ -1,4 +1,3 @@
-import 'package:cosa_abbiamo_dopo/globals/custom_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:expandable/expandable.dart';
 

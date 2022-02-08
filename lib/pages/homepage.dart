@@ -27,8 +27,10 @@ class _HomePageState extends State<HomePage> {
 
   int _carouselIndex = -1;
   late String selectedClass;
-  late String formattedDate;
-  late CarouselController controller;
+  late String _formattedDate;
+  late CarouselController _controller;
+  late String _savedClass;
+  late List<MarconiLesson> _savedData;
 
   @override
   void initState() {
@@ -36,13 +38,16 @@ class _HomePageState extends State<HomePage> {
 
     initializeDateFormatting();
 
-    var now = DateTime.now();
-    var formatter = DateFormat('EEEE dd MMMM yyyy', 'it');
-    formattedDate = formatter.format(now);
+    DateTime _now = DateTime.now();
+    DateFormat _formatter = DateFormat('EEEE dd MMMM yyyy', 'it');
+    _formattedDate = _formatter.format(_now);
+
+    _savedClass = Utils.getSavedClass();
+    _savedData = Utils.getSavedData();
 
     _hourIndex = Utils.getCurrentHourIndex();
 
-    controller = CarouselController();
+    _controller = CarouselController();
   }
 
   @override
@@ -61,38 +66,7 @@ class _HomePageState extends State<HomePage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 20),
-                  child: FutureBuilder<String>(
-                    future: Utils.getSavedClass(),
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData) {
-                        return Row(
-                          children: [
-                            Text(
-                              snapshot.data!,
-                              style: const TextStyle(
-                                  fontSize: 18, color: CustomColors.grey),
-                            ),
-                            Text(
-                              ' | ' + formattedDate,
-                              style: const TextStyle(
-                                  fontSize: 18, color: CustomColors.grey),
-                            )
-                          ],
-                        );
-                      } else {
-                        return const Text(
-                          'Caricamento...',
-                          style: TextStyle(
-                            fontSize: 18,
-                            color: CustomColors.grey,
-                          ),
-                        );
-                      }
-                    },
-                  ),
-                ),
+                _buildClassAndDateRow(),
                 const Text(
                   "Cosa abbiamo dopo?",
                   style: TextStyle(
@@ -109,111 +83,84 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  Widget _buildClassAndDateRow() {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 20),
+      child: Row(
+        children: [
+          Text(
+            _savedClass + ' | ' + _formattedDate,
+            style: const TextStyle(fontSize: 18, color: CustomColors.grey),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildCarousel() {
     return _hourIndex >= 0
-        ? FutureBuilder<List<MarconiLesson>>(
-            future: Utils.getSavedData(),
-            builder: (context, getDataSnapshot) {
-              if (getDataSnapshot.hasData) {
-                return Column(
-                  children: [
-                    CarouselSlider.builder(
-                      carouselController: controller,
-                      itemBuilder: (context, index, realIndex) {
-                        return OpenContainer<String>(
-                          openBuilder: (_, closeContainer) => DetailsPage(
-                            subject: getDataSnapshot.data![index].name,
-                            teachers: getDataSnapshot.data![index].teachers,
-                            room: getDataSnapshot.data![index].room,
-                            startHour:
-                                getDataSnapshot.data![index].hours.startingTime,
-                            endHour:
-                                getDataSnapshot.data![index].hours.endingTime,
-                            closeContainer: closeContainer,
-                          ),
-                          closedBuilder: (_, openContainer) => CarouselCard(
-                            openContainer,
-                            getDataSnapshot.data![index].name,
-                            getDataSnapshot.data![index].room,
-                            startingHour:
-                                getDataSnapshot.data![0].hourIndex == 1
-                                    ? (index == _hourIndex
-                                        ? getDataSnapshot
-                                            .data![index].hours.startingTime
-                                        : null)
-                                    : (index == _hourIndex - 3
-                                        ? getDataSnapshot
-                                            .data![index].hours.startingTime
-                                        : null),
-                          ),
-                          openColor: CustomColors.black,
-                          closedShape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                          closedColor: CustomColors.black,
-                        );
-                      },
-                      itemCount: getDataSnapshot.data!.length,
-                      options: CarouselOptions(
-                        initialPage: _hourIndex,
-                        height: 200,
-                        enableInfiniteScroll: false,
-                        enlargeCenterPage: true,
-                        scrollDirection: Axis.horizontal,
-                        onPageChanged: (index, reason) {
-                          setState(() {
-                            print("spostato su $index");
-                            _carouselIndex = index;
-                          });
-                        },
-                      ),
+        ? Column(
+            children: [
+              CarouselSlider.builder(
+                carouselController: _controller,
+                itemBuilder: (context, index, realIndex) {
+                  return OpenContainer<String>(
+                    openBuilder: (_, closeContainer) => DetailsPage(
+                      subject: _savedData[index].name,
+                      teachers: _savedData[index].teachers,
+                      room: _savedData[index].room,
+                      startHour: _savedData[index].hours.startingTime,
+                      endHour: _savedData[index].hours.endingTime,
+                      closeContainer: closeContainer,
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 50),
-                      child: AnimatedSmoothIndicator(
-                        activeIndex: _carouselIndex,
-                        count: getDataSnapshot.data!.length,
-                        effect: const WormEffect(
-                          activeDotColor: CustomColors.black,
-                          dotColor: CustomColors.silver,
-                          dotHeight: 10,
-                          dotWidth: 10,
-                        ),
-                      ),
-                    )
-                  ],
-                );
-              } else {
-                return Column(
-                  children: [
-                    CarouselSlider(
-                      items: [
-                        LoadingCarouselCard(),
-                      ],
-                      options: CarouselOptions(
-                        height: 200,
-                        enableInfiniteScroll: false,
-                        enlargeCenterPage: true,
-                        scrollDirection: Axis.horizontal,
-                      ),
+                    closedBuilder: (_, openContainer) => CarouselCard(
+                      openContainer,
+                      _savedData[index].name,
+                      _savedData[index].room,
+                      startingHour: _savedData[0].hourIndex == 1
+                          ? (index == _hourIndex
+                              ? _savedData[index].hours.startingTime
+                              : null)
+                          : (index == _hourIndex - 2
+                              ? _savedData[index].hours.startingTime
+                              : null),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 50),
-                      child: AnimatedSmoothIndicator(
-                        activeIndex: 0,
-                        count: 1,
-                        effect: const WormEffect(
-                          activeDotColor: CustomColors.black,
-                          dotColor: CustomColors.silver,
-                          dotHeight: 10,
-                          dotWidth: 10,
-                        ),
-                      ),
-                    )
-                  ],
-                );
-              }
-            },
+                    openColor: CustomColors.black,
+                    closedShape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    closedColor: CustomColors.black,
+                  );
+                },
+                itemCount: _savedData.length,
+                options: CarouselOptions(
+                  initialPage: _hourIndex,
+                  height: 200,
+                  enableInfiniteScroll: false,
+                  enlargeCenterPage: true,
+                  scrollDirection: Axis.horizontal,
+                  onPageChanged: (index, reason) {
+                    setState(() {
+                      print("spostato su $index");
+                      _carouselIndex = index;
+                    });
+                  },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 50),
+                child: AnimatedSmoothIndicator(
+                  activeIndex: _carouselIndex,
+                  count: _savedData.length,
+                  effect: const WormEffect(
+                    activeDotColor: CustomColors.black,
+                    dotColor: CustomColors.silver,
+                    dotHeight: 10,
+                    dotWidth: 10,
+                  ),
+                ),
+              )
+            ],
           )
         : CarouselSlider.builder(
             itemBuilder: (context, index, realIndex) {
