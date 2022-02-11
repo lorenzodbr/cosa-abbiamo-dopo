@@ -5,7 +5,6 @@ import 'package:cosa_abbiamo_dopo/globals/utils.dart';
 import 'package:cosa_abbiamo_dopo/pages/details_page.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cosa_abbiamo_dopo/widgets/carousel_card.dart';
-import 'package:cosa_abbiamo_dopo/widgets/loading_carousel_card.dart';
 import 'package:cosa_abbiamo_dopo/widgets/out_of_range_carousel_card.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -26,11 +25,12 @@ class _HomePageState extends State<HomePage> {
   bool isFetching = false;
 
   int _carouselIndex = -1;
-  late String selectedClass;
   late String _formattedDate;
   late CarouselController _controller;
+
   late String _savedClass;
   late List<MarconiLesson> _savedData;
+  late bool _isFirstGroup;
 
   @override
   void initState() {
@@ -43,9 +43,12 @@ class _HomePageState extends State<HomePage> {
     _formattedDate = _formatter.format(_now);
 
     _savedClass = Utils.getSavedClass();
+
     _savedData = Utils.getSavedData();
 
-    _hourIndex = Utils.getCurrentHourIndex();
+    _isFirstGroup = Utils.isFirstGroup(_savedData);
+
+    _hourIndex = Utils.getCurrentHourIndex(_isFirstGroup);
 
     _controller = CarouselController();
   }
@@ -141,7 +144,6 @@ class _HomePageState extends State<HomePage> {
                   scrollDirection: Axis.horizontal,
                   onPageChanged: (index, reason) {
                     setState(() {
-                      print("spostato su $index");
                       _carouselIndex = index;
                     });
                   },

@@ -1,8 +1,6 @@
 import 'package:clean_settings/clean_settings.dart';
-import 'package:cosa_abbiamo_dopo/globals/custom_colors.dart';
 import 'package:cosa_abbiamo_dopo/globals/utils.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 
 class Settings extends StatefulWidget {
   const Settings({Key? key}) : super(key: key);
@@ -45,9 +43,6 @@ class _SettingsState extends State<Settings> {
                         ? getAppVersionSnapshot.data
                         : "Caricamento...",
                     onTap: () {},
-                    priority: getAppVersionSnapshot.hasData
-                        ? ItemPriority.normal
-                        : ItemPriority.disabled,
                   );
                 },
               ),
@@ -68,7 +63,8 @@ class _SettingsState extends State<Settings> {
             priority: ItemPriority.disabled,
             items: const [],
             onChanged: (_) {},
-            displayValue: 'Connettiti a internet per poter cambiare classe',
+            displayValue:
+                'Impossibile caricare la lista delle classi. Riprova più tardi',
           );
         }
 
@@ -78,7 +74,9 @@ class _SettingsState extends State<Settings> {
           return SettingWheelPickerItem(
             title: 'Seleziona classe',
             initialValueIndex: getClassesSnapshot.data!.indexOf(classe),
-            displayValue: classe,
+            displayValue: getClassesSnapshot.data!.isEmpty
+                ? 'Connettiti a Internet per cambiare classe'
+                : classe,
             items: getClassesSnapshot.data,
             onChanged: (v) {
               _showMyDialog();
@@ -93,7 +91,6 @@ class _SettingsState extends State<Settings> {
         } else {
           return SettingRadioItem<String>(
             title: 'Seleziona classe',
-            priority: ItemPriority.disabled,
             items: const [],
             onChanged: (_) {},
             displayValue: 'Caricamento...',

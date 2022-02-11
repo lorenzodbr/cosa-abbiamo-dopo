@@ -49,7 +49,7 @@ class Utils {
     ),
   ];
 
-  static List<MarconiHour> hoursListFri = [
+  static List<MarconiHour> hoursListFriFirstGroup = [
     MarconiHour(
       const TimeOfDay(hour: 8, minute: 0),
       const TimeOfDay(hour: 8, minute: 45),
@@ -58,6 +58,33 @@ class Utils {
       const TimeOfDay(hour: 8, minute: 45),
       const TimeOfDay(hour: 9, minute: 30),
     ),
+    MarconiHour(
+      const TimeOfDay(hour: 9, minute: 30),
+      const TimeOfDay(hour: 10, minute: 20),
+    ),
+    MarconiHour(
+      const TimeOfDay(hour: 10, minute: 20),
+      const TimeOfDay(hour: 11, minute: 10),
+    ),
+    MarconiHour(
+      const TimeOfDay(hour: 11, minute: 20),
+      const TimeOfDay(hour: 12, minute: 10),
+    ),
+    MarconiHour(
+      const TimeOfDay(hour: 12, minute: 10),
+      const TimeOfDay(hour: 12, minute: 55),
+    ),
+    MarconiHour(
+      const TimeOfDay(hour: 13, minute: 05),
+      const TimeOfDay(hour: 13, minute: 55),
+    ),
+    MarconiHour(
+      const TimeOfDay(hour: 13, minute: 55),
+      const TimeOfDay(hour: 14, minute: 45),
+    ),
+  ];
+
+  static List<MarconiHour> hoursListFriSecondGroup = [
     MarconiHour(
       const TimeOfDay(hour: 9, minute: 30),
       const TimeOfDay(hour: 10, minute: 20),
@@ -128,10 +155,9 @@ class Utils {
   ];
 
   static Future<String> fetchData(context) async {
-    String savedClass = await getSavedClass();
+    String savedClass = getSavedClass();
 
-    if (savedClass != '') {
-    } else {
+    if (savedClass == '') {
       savedClass = (await getClasses())[0];
       setSavedClass(savedClass);
 
@@ -156,7 +182,7 @@ class Utils {
       } else {
         return '';
       }
-    } catch (ex) {
+    } catch (_) {
       rethrow;
     }
   }
@@ -172,7 +198,7 @@ class Utils {
   }
 
   static String getSavedClass() {
-    return GetStorage().read('classe');
+    return GetStorage().read('classe') ?? "";
   }
 
   static Future<String> fetchClasses() async {
@@ -199,11 +225,11 @@ class Utils {
   }
 
   static String getLastFetch() {
-    return GetStorage().read('lastFetch');
+    return GetStorage().read('lastFetch') ?? "";
   }
 
   static String getLastUpdate() {
-    return GetStorage().read('lastUpdate');
+    return GetStorage().read('lastUpdate') ?? "";
   }
 
   static void justUpdated() {
@@ -220,13 +246,15 @@ class Utils {
   static Future<List<String>> getClasses() async {
     String rawClassesString = await getRawClasses();
 
+    if (rawClassesString == '') {
+      return [];
+    }
+
     return decodeClasses(rawClassesString);
   }
 
-  static Future<bool> isFirstGroup() async {
-    final prefs = await SharedPreferences.getInstance();
-
-    return (prefs.getInt('groupIndex') ?? 1) == 1;
+  static bool isFirstGroup(List<MarconiLesson> lessons) {
+    return lessons[0].hourIndex == 1;
   }
 
   static void setGroup(int index) {
@@ -246,7 +274,7 @@ class Utils {
   }
 
   static String getRawSavedData() {
-    return GetStorage().read('data');
+    return GetStorage().read('data') ?? "";
   }
 
   static Future<String> getRawData(context) async {
@@ -265,9 +293,9 @@ class Utils {
     String savedData = getRawSavedData();
 
     if (savedData != dataFromAPI && dataFromAPI != '') {
-      setData(dataFromAPI);
-
       justUpdated();
+
+      setData(dataFromAPI);
 
       return dataFromAPI;
     }
@@ -322,6 +350,8 @@ class Utils {
   static List<MarconiLesson> setHours(List<MarconiLesson> lessons) {
     List<MarconiHour> hours;
 
+    bool isFirstGroup = lessons[0].hourIndex == 1;
+
     if (lessons[0].day != 5) {
       if (lessons[0].hourIndex == 1) {
         hours = hoursListMonThuFirstGroup;
@@ -331,7 +361,7 @@ class Utils {
         setGroup(2);
       }
     } else {
-      hours = hoursListFri;
+      hours = isFirstGroup ? hoursListFriFirstGroup : hoursListFriSecondGroup;
     }
 
     for (int i = 0; i < lessons.length; i++) {
@@ -364,13 +394,13 @@ class Utils {
   static MarconiHour getHourRange(int hour, int day, int firstOrSecondGroup) {
     if (firstOrSecondGroup == 1) {
       if (day == 5) {
-        return hoursListFri[hour - 1];
+        return hoursListFriFirstGroup[hour - 1];
       } else {
         return hoursListMonThuFirstGroup[hour - 1];
       }
     } else {
       if (day == 5) {
-        return hoursListFri[hour - 1];
+        return hoursListFriFirstGroup[hour - 1];
       } else {
         return hoursListMonThuSecondGroup[hour - 1];
       }
@@ -380,36 +410,71 @@ class Utils {
   static bool isInDayRange(bool isFirstGroup) {
     DateTime now = DateTime.now();
 
-    DateTime maxHour = isFirstGroup
-        ? Utils.hoursListFri.last.startingTime.toDateTime()
-        : Utils.hoursListMonThuFirstGroup.last.startingTime.toDateTime();
+    DateTime maxHour;
 
-    if ((now.weekday != 6 && now.weekday != 7) ||
+    if (isFirstGroup) {
+      maxHour = now.weekday == 5
+          ? Utils.hoursListFriFirstGroup.last.startingTime.toDateTime()
+          : Utils.hoursListMonThuFirstGroup.last.startingTime.toDateTime();
+    } else {
+      maxHour = now.weekday == 5
+          ? Utils.hoursListFriSecondGroup.last.startingTime.toDateTime()
+          : Utils.hoursListMonThuSecondGroup.last.startingTime.toDateTime();
+    }
+
+    print(now.weekday == 5 && now.isBefore(maxHour));
+
+    if ((now.weekday != 6 && now.weekday != 7 && now.weekday != 5) ||
         (now.weekday == 5 && now.isBefore(maxHour))) {
       return true;
     }
+
     return false;
   }
 
-  static int getCurrentHourIndex() {
+  static int getCurrentHourIndex(isFirstGroup) {
     DateTime nowDateTime = DateTime.now();
     TimeOfDay now =
         TimeOfDay(hour: nowDateTime.hour, minute: nowDateTime.minute);
-
-    bool isFirstGroup = true;
 
     if (isInDayRange(isFirstGroup)) {
       if (now.isBefore(const TimeOfDay(hour: 7, minute: 0))) {
         return -1;
       }
 
-      if (now.isAfter(Utils.hoursListMonThuFirstGroup.last.startingTime)) {
-        return -2;
+      if (nowDateTime.weekday != 5) {
+        if (isFirstGroup) {
+          if (now.isAfter(Utils.hoursListMonThuFirstGroup.last.startingTime)) {
+            return -2;
+          }
+        } else {
+          if (now.isAfter(Utils.hoursListMonThuSecondGroup.last.startingTime)) {
+            return -2;
+          }
+        }
+      } else {
+        if (isFirstGroup) {
+          if (now.isAfter(Utils.hoursListFriFirstGroup.last.startingTime)) {
+            return -2;
+          }
+        } else {
+          if (now.isAfter(Utils.hoursListFriSecondGroup.last.startingTime)) {
+            return -2;
+          }
+        }
       }
 
-      for (int i = 0; i < Utils.hoursListFri.length; i++) {
-        if (now.isBefore(Utils.hoursListFri[i].startingTime)) {
-          return i;
+      if (isFirstGroup) {
+        for (int i = 0; i < Utils.hoursListFriFirstGroup.length; i++) {
+          if (now.isBefore(Utils.hoursListFriFirstGroup[i].startingTime)) {
+            return i;
+          }
+        }
+      } else {
+        for (int i = 0; i < Utils.hoursListFriSecondGroup.length; i++) {
+          if (now.isBefore(Utils.hoursListFriSecondGroup[i].startingTime)) {
+            return i;
+          }
         }
       }
 

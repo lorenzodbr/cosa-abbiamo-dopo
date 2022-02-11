@@ -19,7 +19,7 @@ class _TabViewState extends State<TabView> {
   List<Widget> tabPages = [
     const HomePage(),
     const Settings(),
-    const InfoPage(),
+    InfoPage(),
   ];
 
   @override
