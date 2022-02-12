@@ -254,7 +254,7 @@ class Utils {
   }
 
   static bool isFirstGroup(List<MarconiLesson> lessons) {
-    return lessons[0].hourIndex == 1;
+    return lessons.isNotEmpty ? lessons[0].hourIndex == 1 : true;
   }
 
   static void setGroup(int index) {
@@ -348,24 +348,26 @@ class Utils {
   }
 
   static List<MarconiLesson> setHours(List<MarconiLesson> lessons) {
-    List<MarconiHour> hours;
+    if (lessons.isNotEmpty) {
+      List<MarconiHour> hours;
 
-    bool isFirstGroup = lessons[0].hourIndex == 1;
+      bool isFirstGroup = lessons[0].hourIndex == 1;
 
-    if (lessons[0].day != 5) {
-      if (lessons[0].hourIndex == 1) {
-        hours = hoursListMonThuFirstGroup;
-        setGroup(1);
+      if (lessons[0].day != 5) {
+        if (lessons[0].hourIndex == 1) {
+          hours = hoursListMonThuFirstGroup;
+          setGroup(1);
+        } else {
+          hours = hoursListMonThuSecondGroup;
+          setGroup(2);
+        }
       } else {
-        hours = hoursListMonThuSecondGroup;
-        setGroup(2);
+        hours = isFirstGroup ? hoursListFriFirstGroup : hoursListFriSecondGroup;
       }
-    } else {
-      hours = isFirstGroup ? hoursListFriFirstGroup : hoursListFriSecondGroup;
-    }
 
-    for (int i = 0; i < lessons.length; i++) {
-      lessons[i].hours = hours[lessons[i].hourIndex - 1];
+      for (int i = 0; i < lessons.length; i++) {
+        lessons[i].hours = hours[lessons[i].hourIndex - 1];
+      }
     }
 
     return lessons;

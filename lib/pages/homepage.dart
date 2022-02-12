@@ -4,8 +4,9 @@ import 'package:cosa_abbiamo_dopo/globals/marconi_lesson.dart';
 import 'package:cosa_abbiamo_dopo/globals/utils.dart';
 import 'package:cosa_abbiamo_dopo/pages/details_page.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:cosa_abbiamo_dopo/widgets/carousel_card.dart';
-import 'package:cosa_abbiamo_dopo/widgets/out_of_range_carousel_card.dart';
+import 'package:cosa_abbiamo_dopo/widgets/cards/carousel_card.dart';
+import 'package:cosa_abbiamo_dopo/widgets/cards/no_data_card.dart';
+import 'package:cosa_abbiamo_dopo/widgets/cards/out_of_range_carousel_card.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -101,81 +102,97 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildCarousel() {
-    return _hourIndex >= 0
-        ? Column(
-            children: [
-              CarouselSlider.builder(
-                carouselController: _controller,
-                itemBuilder: (context, index, realIndex) {
-                  return OpenContainer<String>(
-                    openBuilder: (_, closeContainer) => DetailsPage(
-                      subject: _savedData[index].name,
-                      teachers: _savedData[index].teachers,
-                      room: _savedData[index].room,
-                      startHour: _savedData[index].hours.startingTime,
-                      endHour: _savedData[index].hours.endingTime,
-                      closeContainer: closeContainer,
-                    ),
-                    closedBuilder: (_, openContainer) => CarouselCard(
-                      openContainer,
-                      _savedData[index].name,
-                      _savedData[index].room,
-                      startingHour: _savedData[0].hourIndex == 1
-                          ? (index == _hourIndex
-                              ? _savedData[index].hours.startingTime
-                              : null)
-                          : (index == _hourIndex - 2
-                              ? _savedData[index].hours.startingTime
-                              : null),
-                    ),
-                    openColor: CustomColors.black,
-                    closedShape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                    closedColor: CustomColors.black,
-                  );
+    if (_hourIndex >= 0) {
+      if (_savedData.isNotEmpty) {
+        return Column(
+          children: [
+            CarouselSlider.builder(
+              carouselController: _controller,
+              itemBuilder: (context, index, realIndex) {
+                return OpenContainer<String>(
+                  openBuilder: (_, closeContainer) => DetailsPage(
+                    subject: _savedData[index].name,
+                    teachers: _savedData[index].teachers,
+                    room: _savedData[index].room,
+                    startHour: _savedData[index].hours.startingTime,
+                    endHour: _savedData[index].hours.endingTime,
+                    closeContainer: closeContainer,
+                  ),
+                  closedBuilder: (_, openContainer) => CarouselCard(
+                    openContainer,
+                    _savedData[index].name,
+                    _savedData[index].room,
+                    startingHour: _savedData[0].hourIndex == 1
+                        ? (index == _hourIndex
+                            ? _savedData[index].hours.startingTime
+                            : null)
+                        : (index == _hourIndex - 2
+                            ? _savedData[index].hours.startingTime
+                            : null),
+                  ),
+                  openColor: CustomColors.black,
+                  closedShape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  closedColor: CustomColors.black,
+                );
+              },
+              itemCount: _savedData.length,
+              options: CarouselOptions(
+                initialPage: _hourIndex,
+                height: 200,
+                enableInfiniteScroll: false,
+                enlargeCenterPage: true,
+                scrollDirection: Axis.horizontal,
+                onPageChanged: (index, reason) {
+                  setState(() {
+                    _carouselIndex = index;
+                  });
                 },
-                itemCount: _savedData.length,
-                options: CarouselOptions(
-                  initialPage: _hourIndex,
-                  height: 200,
-                  enableInfiniteScroll: false,
-                  enlargeCenterPage: true,
-                  scrollDirection: Axis.horizontal,
-                  onPageChanged: (index, reason) {
-                    setState(() {
-                      _carouselIndex = index;
-                    });
-                  },
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 50),
+              child: AnimatedSmoothIndicator(
+                activeIndex: _carouselIndex,
+                count: _savedData.length,
+                effect: const WormEffect(
+                  activeDotColor: CustomColors.black,
+                  dotColor: CustomColors.silver,
+                  dotHeight: 10,
+                  dotWidth: 10,
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.only(top: 50),
-                child: AnimatedSmoothIndicator(
-                  activeIndex: _carouselIndex,
-                  count: _savedData.length,
-                  effect: const WormEffect(
-                    activeDotColor: CustomColors.black,
-                    dotColor: CustomColors.silver,
-                    dotHeight: 10,
-                    dotWidth: 10,
-                  ),
-                ),
-              )
-            ],
-          )
-        : CarouselSlider.builder(
-            itemBuilder: (context, index, realIndex) {
-              return OutOfRangeCarouselCard(_hourIndex);
-            },
-            itemCount: 1,
-            options: CarouselOptions(
-              initialPage: 0,
-              height: 200,
-              enableInfiniteScroll: false,
-              enlargeCenterPage: true,
-              scrollDirection: Axis.horizontal,
-            ),
-          );
+            )
+          ],
+        );
+      } else {
+        return CarouselSlider.builder(
+          itemBuilder: (context, index, realIndex) {
+            return const NoDataCarouselCard();
+          },
+          itemCount: 1,
+          options: CarouselOptions(
+            height: 200,
+            enableInfiniteScroll: false,
+            enlargeCenterPage: true,
+            scrollDirection: Axis.horizontal,
+          ),
+        );
+      }
+    } else {
+      return CarouselSlider.builder(
+        itemBuilder: (context, index, realIndex) {
+          return OutOfRangeCarouselCard(_hourIndex);
+        },
+        itemCount: 1,
+        options: CarouselOptions(
+          height: 200,
+          enableInfiniteScroll: false,
+          enlargeCenterPage: true,
+          scrollDirection: Axis.horizontal,
+        ),
+      );
+    }
   }
 }

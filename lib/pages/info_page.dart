@@ -71,7 +71,7 @@ class _InfoPageState extends State<InfoPage> {
               padding: EdgeInsets.only(top: 10, bottom: 20, left: 7),
               child: Text(
                 "Informazioni",
-                style: TextStyle(fontSize: 40, fontWeight: FontWeight.w900),
+                style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
               ),
             ),
             ExpansionPanelList(
@@ -80,7 +80,7 @@ class _InfoPageState extends State<InfoPage> {
                 itemData[panelIndex].expanded = !isExpanded;
                 setState(() {});
               },
-              expandedHeaderPadding: const EdgeInsets.all(5),
+              expandedHeaderPadding: const EdgeInsets.all(0),
             ),
           ],
         ),
