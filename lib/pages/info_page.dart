@@ -71,9 +71,9 @@ class _InfoPageState extends State<InfoPage> {
       ],
     ),
     ItemModel(
-      header: "È disponibile pubblicamente il codice sorgente?",
+      header: "Dove posso trovare il codice sorgente?",
       body: [
-        "Certamente, l'intero progetto è Open Source ed è disponibile su Github.",
+        "L'intero progetto è Open Source ed è disponibile su Github.",
         "Puoi accedervi con il pulsante qui sotto."
       ],
       button: [
