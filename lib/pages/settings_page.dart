@@ -1,4 +1,5 @@
 import 'package:clean_settings/clean_settings.dart';
+import 'package:cosa_abbiamo_dopo/globals/marconi_lesson.dart';
 import 'package:cosa_abbiamo_dopo/globals/utils.dart';
 import 'package:flutter/material.dart';
 
@@ -20,13 +21,13 @@ class _SettingsState extends State<Settings> {
             items: [
               _buildClassesWheel(),
               SettingItem(
-                title: 'Ultima ricerca di aggiornamenti',
-                displayValue: Utils.getLastFetch(),
+                title: 'Ultimo aggiornamento degli orari',
+                displayValue: Utils.getLastUpdate(),
                 onTap: () {},
               ),
               SettingItem(
-                title: 'Ultimo aggiornamento dei dati',
-                displayValue: Utils.getLastUpdate(),
+                title: 'Ultima ricerca di aggiornamenti degli orari',
+                displayValue: Utils.getLastFetch(),
                 onTap: () {},
               ),
             ],
@@ -63,8 +64,7 @@ class _SettingsState extends State<Settings> {
             priority: ItemPriority.disabled,
             items: const [],
             onChanged: (_) {},
-            displayValue:
-                'Impossibile caricare la lista delle classi. Riprova più tardi',
+            displayValue: 'Impossibile caricare la lista delle classi',
           );
         }
 
@@ -78,17 +78,37 @@ class _SettingsState extends State<Settings> {
               displayValue: classe,
               items: getClassesSnapshot.data,
               onChanged: (v) async {
-                _showMyDialog();
+                _showLoadingDialog();
 
                 String previousClass = Utils.getSavedClass();
 
                 Utils.setSavedClass(getClassesSnapshot.data![v]);
-                if ((await Utils.getData(context)).isEmpty) {
-                  Utils.setSavedClass(previousClass);
-                }
 
-                Navigator.pop(context);
-                setState(() {});
+                try {
+                  List<MarconiLesson> data = await Utils.getData(context);
+
+                  if (data.isEmpty) {
+                    Utils.setSavedClass(previousClass);
+
+                    Navigator.pop(context);
+
+                    setState(() {});
+
+                    _showErrorDialog(1);
+                  } else {
+                    Navigator.pop(context);
+
+                    setState(() {});
+                  }
+                } catch (ex) {
+                  Utils.setSavedClass(previousClass);
+
+                  Navigator.pop(context);
+
+                  setState(() {});
+
+                  _showErrorDialog(0);
+                }
               },
             );
           } else {
@@ -113,10 +133,10 @@ class _SettingsState extends State<Settings> {
     );
   }
 
-  Future<void> _showMyDialog() async {
+  Future<void> _showLoadingDialog() async {
     return showDialog<void>(
       context: context,
-      barrierDismissible: false, // user must tap button!
+      barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Attendi'),
@@ -126,7 +146,7 @@ class _SettingsState extends State<Settings> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: const [
-                    Text('Aggiornamento dati'),
+                    Text('Aggiornamento dei dati'),
                     CircularProgressIndicator(
                       color: Colors.black,
                     ),
@@ -135,6 +155,35 @@ class _SettingsState extends State<Settings> {
               ],
             ),
           ),
+        );
+      },
+    );
+  }
+
+  Future<void> _showErrorDialog(int errorCode) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Errore'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: [
+                Text(errorCode == 1
+                    ? 'Si è verificato un errore nello scaricamento degli orari.\n\nRiprova.'
+                    : "Connettiti a Internet per scaricare i nuovi orari."),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
         );
       },
     );

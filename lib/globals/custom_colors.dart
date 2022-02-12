@@ -8,4 +8,6 @@ class CustomColors {
   static const Color black = Colors.black;
 
   static const Color white = Colors.white;
+
+  static const Color darkGrey = Color.fromRGBO(105, 105, 105, 1);
 }

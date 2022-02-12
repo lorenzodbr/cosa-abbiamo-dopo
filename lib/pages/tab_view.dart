@@ -14,6 +14,8 @@ class TabView extends StatefulWidget {
 
 class _TabViewState extends State<TabView> {
   int _pageIndex = 0;
+  bool _skipLoading = false;
+
   late PageController _controller;
 
   List<Widget> tabPages = [
@@ -36,7 +38,7 @@ class _TabViewState extends State<TabView> {
     return FutureBuilder(
       future: Utils.getRawData(context),
       builder: (context, snapshot) {
-        if (snapshot.hasData || snapshot.hasError) {
+        if (snapshot.hasData || snapshot.hasError || _skipLoading) {
           return Scaffold(
             body: PageView(
               children: tabPages,
@@ -63,16 +65,31 @@ class _TabViewState extends State<TabView> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
-                children: const [
-                  CircularProgressIndicator(color: Colors.white),
-                  Padding(
-                    padding: EdgeInsets.only(top: 10),
+                children: [
+                  const CircularProgressIndicator(color: Colors.white),
+                  const Padding(
+                    padding: EdgeInsets.only(top: 10, bottom: 30),
                     child: Text(
                       "Ottengo gli orari...",
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 20,
                       ),
+                    ),
+                  ),
+                  OutlinedButton(
+                    onPressed: () {
+                      setState(() {
+                        _skipLoading = true;
+                      });
+                    },
+                    style: OutlinedButton.styleFrom(
+                      side: const BorderSide(color: CustomColors.darkGrey),
+                      primary: CustomColors.white,
+                    ),
+                    child: const Text(
+                      "Salta caricamento",
+                      style: TextStyle(color: Colors.white),
                     ),
                   ),
                 ],

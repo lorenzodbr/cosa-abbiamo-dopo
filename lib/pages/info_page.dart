@@ -16,7 +16,7 @@ class _InfoPageState extends State<InfoPage> {
     ItemModel(
       header: "Chi è il creatore di quest'app?",
       body: [
-        "Quest'app è stata realizzata da Lorenzo Di Berardino.",
+        "Quest'app è stata realizzata da\nLorenzo Di Berardino.",
         "Puoi contattarlo con i pulsanti qui sotto."
       ],
       button: [
