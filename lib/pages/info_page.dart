@@ -1,7 +1,6 @@
 import 'package:cosa_abbiamo_dopo/globals/custom_colors.dart';
 import 'package:cosa_abbiamo_dopo/globals/item_model.dart';
 import 'package:flutter/material.dart';
-import 'package:expandable/expandable.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class InfoPage extends StatefulWidget {
@@ -33,12 +32,15 @@ class _InfoPageState extends State<InfoPage> {
       header: "Chi è il creatore di quest'app?",
       body:
           "Il creatore di quest'app è Lorenzo Di Berardino. Puoi contattarlo con il pulsante qui sotto.",
-      button: ElevatedButton(
-        child: const Text("Contattami"),
+      button: ElevatedButton.icon(
+        icon: const Icon(Icons.launch),
+        label: const Text("Contattami"),
         onPressed: () async {
           String url = "https://t.me/lorenzodiberardino";
 
-          if (await canLaunch(url)) await launch(url);
+          if (await canLaunch(url)) {
+            await launch(url);
+          }
         },
         style: ElevatedButton.styleFrom(
           primary: Colors.black,
@@ -49,9 +51,16 @@ class _InfoPageState extends State<InfoPage> {
       header: "È disponibile il codice sorgente?",
       body:
           "Certo, l'intero progetto è Open Source e disponibile su Github. Puoi accedere al codice con il pulsante qui sotto.",
-      button: ElevatedButton(
-        child: const Text("Progetto su Github"),
-        onPressed: () {},
+      button: ElevatedButton.icon(
+        icon: const Icon(Icons.launch),
+        label: const Text("Progetto su Github"),
+        onPressed: () async {
+          String url = "https://t.me/lorenzodiberardino";
+
+          if (await canLaunch(url)) {
+            await launch(url);
+          }
+        },
         style: ElevatedButton.styleFrom(
           primary: Colors.black,
         ),
@@ -62,28 +71,30 @@ class _InfoPageState extends State<InfoPage> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: Container(
-        margin: const EdgeInsets.all(10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Padding(
-              padding: EdgeInsets.only(top: 10, bottom: 20, left: 7),
-              child: Text(
-                "Informazioni",
-                style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
+      child: Scaffold(
+        backgroundColor: CustomColors.white,
+        body: ListView(padding: const EdgeInsets.all(10), children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Padding(
+                padding: EdgeInsets.only(top: 10, bottom: 20, left: 7),
+                child: Text(
+                  "Informazioni",
+                  style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
+                ),
               ),
-            ),
-            ExpansionPanelList(
-              children: _getExpansionPanels(),
-              expansionCallback: (panelIndex, isExpanded) {
-                itemData[panelIndex].expanded = !isExpanded;
-                setState(() {});
-              },
-              expandedHeaderPadding: const EdgeInsets.all(0),
-            ),
-          ],
-        ),
+              ExpansionPanelList(
+                children: _getExpansionPanels(),
+                expansionCallback: (panelIndex, isExpanded) {
+                  itemData[panelIndex].expanded = !isExpanded;
+                  setState(() {});
+                },
+                expandedHeaderPadding: const EdgeInsets.all(0),
+              ),
+            ],
+          ),
+        ]),
       ),
     );
   }
@@ -124,9 +135,12 @@ class _InfoPageState extends State<InfoPage> {
 
     if (item.button != null) {
       widgets.add(
-        SizedBox(
-          width: 300,
-          child: item.button!,
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 17),
+          child: SizedBox(
+            width: double.infinity,
+            child: item.button!,
+          ),
         ),
       );
     }

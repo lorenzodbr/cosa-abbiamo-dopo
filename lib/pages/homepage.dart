@@ -21,13 +21,9 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _hourIndex = 0;
-  bool hasData = false;
-  bool hasClass = false;
-  bool isFetching = false;
 
   int _carouselIndex = -1;
   late String _formattedDate;
-  late CarouselController _controller;
 
   late String _savedClass;
   late List<MarconiLesson> _savedData;
@@ -50,8 +46,6 @@ class _HomePageState extends State<HomePage> {
     _isFirstGroup = Utils.isFirstGroup(_savedData);
 
     _hourIndex = Utils.getCurrentHourIndex(_isFirstGroup);
-
-    _controller = CarouselController();
   }
 
   @override
@@ -60,9 +54,9 @@ class _HomePageState extends State<HomePage> {
       _carouselIndex = _hourIndex;
     }
 
-    return Container(
-      margin: const EdgeInsets.only(bottom: 10),
-      child: Column(
+    return Scaffold(
+      backgroundColor: CustomColors.white,
+      body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           Container(
@@ -107,7 +101,6 @@ class _HomePageState extends State<HomePage> {
         return Column(
           children: [
             CarouselSlider.builder(
-              carouselController: _controller,
               itemBuilder: (context, index, realIndex) {
                 return OpenContainer<String>(
                   openBuilder: (_, closeContainer) => DetailsPage(

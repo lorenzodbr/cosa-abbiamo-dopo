@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
           Theme.of(context).textTheme,
         ),
         colorScheme: ThemeData().colorScheme.copyWith(
-              secondary: CustomColors.white,
+              secondary: CustomColors.black,
               primary: CustomColors.black,
             ),
       ),

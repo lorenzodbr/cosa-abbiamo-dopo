@@ -38,7 +38,6 @@ dependencies:
   google_fonts: ^2.2.0
   swipedetector: ^1.2.0
   smooth_page_indicator: ^1.0.0+2
-  expandable: ^5.0.1
   package_info_plus: ^1.0.6
   get_storage: ^2.0.3
   url_launcher: ^6.0.20

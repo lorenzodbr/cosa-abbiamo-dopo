@@ -77,12 +77,12 @@ class _SettingsState extends State<Settings> {
             displayValue: getClassesSnapshot.data!.isEmpty
                 ? 'Connettiti a Internet per cambiare classe'
                 : classe,
-            items: getClassesSnapshot.data,
-            onChanged: (v) {
+            items: getClassesSnapshot.data ?? [],
+            onChanged: (v) async {
               _showMyDialog();
 
               Utils.setSavedClass(getClassesSnapshot.data![v]);
-              Utils.getData(context);
+              await Utils.getData(context);
 
               Navigator.pop(context);
               setState(() {});
