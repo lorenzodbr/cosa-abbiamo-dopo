@@ -86,6 +86,14 @@ class Utils {
 
   static List<MarconiHour> hoursListFriSecondGroup = [
     MarconiHour(
+      const TimeOfDay(hour: 8, minute: 0),
+      const TimeOfDay(hour: 8, minute: 45),
+    ),
+    MarconiHour(
+      const TimeOfDay(hour: 8, minute: 45),
+      const TimeOfDay(hour: 9, minute: 30),
+    ),
+    MarconiHour(
       const TimeOfDay(hour: 9, minute: 30),
       const TimeOfDay(hour: 10, minute: 20),
     ),
@@ -317,6 +325,10 @@ class Utils {
       }
     }
 
+    res.sort(
+      (a, b) => a.hourIndex.compareTo(b.hourIndex),
+    );
+
     return res;
   }
 
@@ -423,8 +435,6 @@ class Utils {
           ? Utils.hoursListFriSecondGroup.last.startingTime.toDateTime()
           : Utils.hoursListMonThuSecondGroup.last.startingTime.toDateTime();
     }
-
-    print(now.weekday == 5 && now.isBefore(maxHour));
 
     if ((now.weekday != 6 && now.weekday != 7 && now.weekday != 5) ||
         (now.weekday == 5 && now.isBefore(maxHour))) {

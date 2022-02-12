@@ -8,6 +8,7 @@ class DetailsPage extends StatelessWidget {
   final List<MarconiTeacher> teachers;
   final String subject;
   final String room;
+  final int hourIndex;
 
   final VoidCallback closeContainer;
 
@@ -15,16 +16,28 @@ class DetailsPage extends StatelessWidget {
     required this.subject,
     required this.teachers,
     required this.room,
+    required this.hourIndex,
     required this.endHour,
     required this.startHour,
     required this.closeContainer,
   });
 
+  static const hours = [
+    "Prima",
+    "Seconda",
+    "Terza",
+    "Quarta",
+    "Quinta",
+    "Sesta",
+    "Settima",
+    "Ottava"
+  ];
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
         onPanUpdate: (details) {
-          if (details.delta.dy > 15 && details.delta.dx.abs() < 1) {
+          if (details.delta.dy > 15) {
             Navigator.of(context).pop();
           }
         },
@@ -43,32 +56,33 @@ class DetailsPage extends StatelessWidget {
             margin: const EdgeInsets.all(15),
             child: Column(
               children: [
-                DetailRow(text: 'Materia', value: subject),
-                const Divider(
-                  color: Colors.grey,
-                ),
-                DetailRow(text: 'Docente', value: _buildTeachersText()),
-                const Divider(
-                  color: Colors.grey,
+                DetailRow(
+                  text: 'Materia',
+                  value: subject,
                 ),
                 DetailRow(
-                    text: room.startsWith('L')
-                        ? 'Laboratorio'
-                        : room.startsWith('P')
-                            ? 'Palestra'
-                            : 'Aula',
-                    value: room),
-                const Divider(
-                  color: Colors.grey,
+                  text: 'Docent' + (teachers.length == 1 ? 'e' : 'i'),
+                  value: _buildTeachersText(),
                 ),
                 DetailRow(
-                    text: 'Ora di inizio', value: startHour.format(context)),
-                const Divider(
-                  color: Colors.grey,
+                  text: room.startsWith('L')
+                      ? 'Laboratorio'
+                      : room.startsWith('P')
+                          ? 'Palestra'
+                          : 'Aula',
+                  value: room,
                 ),
-                DetailRow(text: 'Ora di fine', value: endHour.format(context)),
-                const Divider(
-                  color: Colors.grey,
+                DetailRow(
+                  text: 'Ora',
+                  value: hours[hourIndex - 1],
+                ),
+                DetailRow(
+                  text: 'Ora di inizio',
+                  value: startHour.format(context),
+                ),
+                DetailRow(
+                  text: 'Ora di fine',
+                  value: endHour.format(context),
                 ),
               ],
             ),

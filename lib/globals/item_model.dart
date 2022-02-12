@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 class ItemModel {
   bool expanded;
   final String header;
-  final String body;
-  ElevatedButton? button;
+  final List<String> body;
+  final List<ElevatedButton>? button;
 
   ItemModel({
     this.expanded = false,

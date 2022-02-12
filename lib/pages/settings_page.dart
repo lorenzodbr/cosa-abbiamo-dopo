@@ -69,31 +69,44 @@ class _SettingsState extends State<Settings> {
         }
 
         if (getClassesSnapshot.hasData) {
-          String classe = Utils.getSavedClass();
+          if (getClassesSnapshot.data!.isNotEmpty) {
+            String classe = Utils.getSavedClass();
 
-          return SettingWheelPickerItem(
-            title: 'Seleziona classe',
-            initialValueIndex: getClassesSnapshot.data!.indexOf(classe),
-            displayValue: getClassesSnapshot.data!.isEmpty
-                ? 'Connettiti a Internet per cambiare classe'
-                : classe,
-            items: getClassesSnapshot.data ?? [],
-            onChanged: (v) async {
-              _showMyDialog();
+            return SettingWheelPickerItem(
+              title: 'Seleziona classe',
+              initialValueIndex: getClassesSnapshot.data!.indexOf(classe),
+              displayValue: classe,
+              items: getClassesSnapshot.data,
+              onChanged: (v) async {
+                _showMyDialog();
 
-              Utils.setSavedClass(getClassesSnapshot.data![v]);
-              await Utils.getData(context);
+                String previousClass = Utils.getSavedClass();
 
-              Navigator.pop(context);
-              setState(() {});
-            },
-          );
+                Utils.setSavedClass(getClassesSnapshot.data![v]);
+                if ((await Utils.getData(context)).isEmpty) {
+                  Utils.setSavedClass(previousClass);
+                }
+
+                Navigator.pop(context);
+                setState(() {});
+              },
+            );
+          } else {
+            return SettingWheelPickerItem(
+              title: 'Seleziona classe',
+              displayValue: 'Connettiti a Internet per cambiare classe',
+              items: const [],
+              onChanged: (_) {},
+              priority: ItemPriority.disabled,
+            );
+          }
         } else {
           return SettingRadioItem<String>(
             title: 'Seleziona classe',
             items: const [],
             onChanged: (_) {},
             displayValue: 'Caricamento...',
+            priority: ItemPriority.disabled,
           );
         }
       },

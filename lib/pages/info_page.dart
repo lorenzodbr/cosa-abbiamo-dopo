@@ -1,4 +1,5 @@
 import 'package:cosa_abbiamo_dopo/globals/custom_colors.dart';
+import 'package:cosa_abbiamo_dopo/globals/custom_icons_icons.dart';
 import 'package:cosa_abbiamo_dopo/globals/item_model.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -13,58 +14,98 @@ class InfoPage extends StatefulWidget {
 class _InfoPageState extends State<InfoPage> {
   List<ItemModel> itemData = <ItemModel>[
     ItemModel(
-      header: "Come è nata quest'app?",
-      body:
-          "Chiunque, almeno una volta nella propria vita scolastica al Marconi, si è posto o ha posto a qualcuno questa domanda.\nQuest'app, realizzata specificatamente per il nostro istituto, giunge in supporto a coloro che vogliono avere una risposta a questa domanda in modo semplice e veloce.",
+      header: "Chi è il creatore di quest'app?",
+      body: [
+        "Quest'app è stata realizzata da Lorenzo Di Berardino.",
+        "Puoi contattarlo con i pulsanti qui sotto."
+      ],
+      button: [
+        ElevatedButton.icon(
+          icon: const Icon(CustomIcons.telegram_plane),
+          label: const Text("Telegram"),
+          onPressed: () async {
+            String url = "https://t.me/lorenzodiberardino";
+
+            if (await canLaunch(url)) {
+              await launch(url);
+            }
+          },
+          style: ElevatedButton.styleFrom(
+            primary: Colors.black,
+          ),
+        ),
+        ElevatedButton.icon(
+          icon: const Icon(Icons.email),
+          label: const Text("Email"),
+          onPressed: () async {
+            String url = "mailto:lorenzo.diberardino03@gmail.com";
+
+            if (await canLaunch(url)) {
+              await launch(url);
+            }
+          },
+          style: ElevatedButton.styleFrom(
+            primary: Colors.black,
+          ),
+        ),
+      ],
+    ),
+    ItemModel(
+      header: "Come è nata l'idea per quest'app?",
+      body: [
+        "Be', chiunque, almeno una volta nella propria vita scolastica, si è posto o ha posto a qualcuno la domanda nella Homepage.",
+        "Quest'app, realizzata specificatamente per il nostro istituto (ITI G. Marconi), giunge in supporto a coloro che vogliono avere una risposta a quella domanda in modo semplice e veloce."
+      ],
     ),
     ItemModel(
       header: "Come funziona quest'app?",
-      body:
-          "Il funzionamento è rapido e intuitivo: basta aprire l'app, verranno ricercati automaticamente aggiornamenti per gli orari e verranno mostrati senza che l'utente debba fare qualcosa.",
+      body: [
+        "Il suo funzionamento è rapido e intuitivo: basta aprirla. Verranno ricercati automaticamente aggiornamenti per gli orari, in base a quanto pubblicato dalla scuola, e verranno mostrati con una grafica semplice e minimale."
+      ],
     ),
     ItemModel(
       header:
-          "Devo avere una connessione a Internet attiva per utilizzare l'app?",
-      body:
-          "La connessione è richiesta solo al primo avvio. I dati verranno salvati in cache, quindi anche se successivamente non è disponibile una connessione a Internet gli orari (seppur non aggiornati) verranno mostrati lo stesso.",
+          "È richiesta una connessione a Internet attiva per utilizzare l'app?",
+      body: [
+        "L'app scarica gli orari al primo avvio e li memorizza. Nelle volte successive, l'app tenterà, in ogni caso, di aggiornare i dati, ma, se non fosse disponibile una connessione a Internet, mostrerà i dati memorizzati precedentemente."
+      ],
     ),
     ItemModel(
-      header: "Chi è il creatore di quest'app?",
-      body:
-          "Il creatore di quest'app è Lorenzo Di Berardino. Puoi contattarlo con il pulsante qui sotto.",
-      button: ElevatedButton.icon(
-        icon: const Icon(Icons.launch),
-        label: const Text("Contattami"),
-        onPressed: () async {
-          String url = "https://t.me/lorenzodiberardino";
+      header: "È disponibile pubblicamente il codice sorgente?",
+      body: [
+        "Certamente, l'intero progetto è Open Source ed è disponibile su Github.",
+        "Puoi accedervi con il pulsante qui sotto."
+      ],
+      button: [
+        ElevatedButton.icon(
+          icon: const Icon(CustomIcons.github),
+          label: const Text("Progetto"),
+          onPressed: () async {
+            String url = "https://github.com/lorenzodbr/cosa-abbiamo-dopo";
 
-          if (await canLaunch(url)) {
-            await launch(url);
-          }
-        },
-        style: ElevatedButton.styleFrom(
-          primary: Colors.black,
+            if (await canLaunch(url)) {
+              await launch(url);
+            }
+          },
+          style: ElevatedButton.styleFrom(
+            primary: Colors.black,
+          ),
         ),
-      ),
+      ],
     ),
     ItemModel(
-      header: "È disponibile il codice sorgente?",
-      body:
-          "Certo, l'intero progetto è Open Source e disponibile su Github. Puoi accedere al codice con il pulsante qui sotto.",
-      button: ElevatedButton.icon(
-        icon: const Icon(Icons.launch),
-        label: const Text("Progetto su Github"),
-        onPressed: () async {
-          String url = "https://t.me/lorenzodiberardino";
-
-          if (await canLaunch(url)) {
-            await launch(url);
-          }
-        },
-        style: ElevatedButton.styleFrom(
-          primary: Colors.black,
-        ),
-      ),
+      header: "Quest'app mi ruba i dati del telefono?",
+      body: [
+        "No.",
+        "Ma se vuoi controllare personalmente, puoi aprire la pagina del progetto e navigare nel codice."
+      ],
+    ),
+    ItemModel(
+      header: "Posso segnalare un problema?",
+      body: [
+        "Certamente, cercherò di risolverlo nel minor tempo possibile rilasciando un aggiornamento.",
+        "Contattami con i pulsanti qui sopra."
+      ],
     ),
   ];
 
@@ -123,26 +164,52 @@ class _InfoPageState extends State<InfoPage> {
   }
 
   Widget _buildExpansionBody(ItemModel item) {
-    List<Widget> widgets = [
-      ListTile(
-        title: Text(
-          item.body,
-          textAlign: TextAlign.justify,
-          style: const TextStyle(fontSize: 14.0),
-        ),
-      )
-    ];
+    List<Widget> body = [];
 
-    if (item.button != null) {
-      widgets.add(
+    for (String bodyLine in item.body) {
+      body.add(
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 17),
-          child: SizedBox(
-            width: double.infinity,
-            child: item.button!,
+          padding: const EdgeInsets.only(left: 15, right: 15, bottom: 5),
+          child: Text(
+            bodyLine,
+            textAlign: TextAlign.justify,
           ),
         ),
       );
+    }
+
+    List<Widget> widgets = [
+      Padding(
+        padding: const EdgeInsets.symmetric(vertical: 10),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: body,
+        ),
+      ),
+    ];
+
+    if (item.button != null) {
+      List<Widget> buttons = [];
+
+      for (ElevatedButton button in item.button!) {
+        buttons.add(
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(3),
+              child: button,
+            ),
+          ),
+        );
+      }
+
+      widgets.add(Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 15),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: buttons,
+        ),
+      ));
     }
 
     return Padding(

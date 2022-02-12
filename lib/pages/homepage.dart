@@ -5,7 +5,7 @@ import 'package:cosa_abbiamo_dopo/globals/utils.dart';
 import 'package:cosa_abbiamo_dopo/pages/details_page.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cosa_abbiamo_dopo/widgets/cards/carousel_card.dart';
-import 'package:cosa_abbiamo_dopo/widgets/cards/no_data_card.dart';
+import 'package:cosa_abbiamo_dopo/widgets/cards/no_data_carousel_card.dart';
 import 'package:cosa_abbiamo_dopo/widgets/cards/out_of_range_carousel_card.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -51,7 +51,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     if (_carouselIndex < 0) {
-      _carouselIndex = _hourIndex;
+      _carouselIndex = _isFirstGroup ? _hourIndex : _hourIndex - 2;
     }
 
     return Scaffold(
@@ -110,19 +110,18 @@ class _HomePageState extends State<HomePage> {
                     startHour: _savedData[index].hours.startingTime,
                     endHour: _savedData[index].hours.endingTime,
                     closeContainer: closeContainer,
+                    hourIndex: _isFirstGroup
+                        ? _savedData[index].hourIndex
+                        : _savedData[index].hourIndex - 2,
                   ),
                   closedBuilder: (_, openContainer) => CarouselCard(
-                    openContainer,
-                    _savedData[index].name,
-                    _savedData[index].room,
-                    startingHour: _savedData[0].hourIndex == 1
-                        ? (index == _hourIndex
-                            ? _savedData[index].hours.startingTime
-                            : null)
-                        : (index == _hourIndex - 2
-                            ? _savedData[index].hours.startingTime
-                            : null),
-                  ),
+                      openContainer,
+                      _savedData[index].name,
+                      _savedData[index].room,
+                      startingHour:
+                          index == (_isFirstGroup ? _hourIndex : _hourIndex - 2)
+                              ? _savedData[index].hours.startingTime
+                              : null),
                   openColor: CustomColors.black,
                   closedShape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
@@ -132,7 +131,7 @@ class _HomePageState extends State<HomePage> {
               },
               itemCount: _savedData.length,
               options: CarouselOptions(
-                initialPage: _hourIndex,
+                initialPage: _isFirstGroup ? _hourIndex : _hourIndex - 2,
                 height: 200,
                 enableInfiniteScroll: false,
                 enlargeCenterPage: true,
