@@ -16,7 +16,9 @@ class _TabViewState extends State<TabView> with TickerProviderStateMixin {
   int _pageIndex = 0;
   bool _skipLoading = false;
 
-  late PageController _controller;
+  late PageController _pageController;
+  late Animation<double> _animation;
+  late AnimationController _animationController;
 
   List<Widget> tabPages = [
     const HomePage(),
@@ -30,7 +32,20 @@ class _TabViewState extends State<TabView> with TickerProviderStateMixin {
 
     Utils.setPortrait();
     Utils.setOptimalDisplayMode();
-    _controller = PageController(initialPage: _pageIndex);
+
+    _pageController = PageController(
+      initialPage: _pageIndex,
+    );
+
+    _animationController = AnimationController(
+      duration: const Duration(seconds: 3),
+      vsync: this,
+    )..forward();
+
+    _animation = CurvedAnimation(
+      parent: _animationController,
+      curve: const Interval(0.9, 1.0, curve: Curves.easeIn),
+    );
   }
 
   @override
@@ -45,7 +60,7 @@ class _TabViewState extends State<TabView> with TickerProviderStateMixin {
             body: PageView(
               children: tabPages,
               onPageChanged: onPageChanged,
-              controller: _controller,
+              controller: _pageController,
               physics: const NeverScrollableScrollPhysics(),
             ),
             bottomNavigationBar: BottomNavigationBar(
@@ -80,13 +95,7 @@ class _TabViewState extends State<TabView> with TickerProviderStateMixin {
                     ),
                   ),
                   FadeTransition(
-                    opacity: CurvedAnimation(
-                      parent: AnimationController(
-                        duration: const Duration(seconds: 3),
-                        vsync: this,
-                      )..forward(),
-                      curve: const Interval(0.9, 1.0, curve: Curves.easeIn),
-                    ),
+                    opacity: _animation,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
@@ -134,7 +143,7 @@ class _TabViewState extends State<TabView> with TickerProviderStateMixin {
   }
 
   void onTabTapped(int index) {
-    _controller.jumpToPage(index);
+    _pageController.jumpToPage(index);
   }
 
   @override

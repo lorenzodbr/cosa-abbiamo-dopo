@@ -104,7 +104,7 @@ class _InfoPageState extends State<InfoPage> {
       header: "Posso segnalare un problema?",
       body: [
         "Certamente, cercherò di risolverlo nel minor tempo possibile rilasciando un aggiornamento.",
-        "Contattami con i pulsanti qui sopra."
+        "Contattami con i pulsanti nella prima sezione."
       ],
     ),
   ];
