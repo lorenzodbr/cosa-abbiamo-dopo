@@ -2,14 +2,17 @@ import 'package:cosa_abbiamo_dopo/globals/extensions/time_of_day_extension.dart'
 import 'package:cosa_abbiamo_dopo/globals/marconi_hour.dart';
 import 'package:cosa_abbiamo_dopo/globals/marconi_lesson.dart';
 import 'package:cosa_abbiamo_dopo/globals/marconi_teacher.dart';
+
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_displaymode/flutter_displaymode.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
 import 'dart:async';
 import 'dart:convert';
 
