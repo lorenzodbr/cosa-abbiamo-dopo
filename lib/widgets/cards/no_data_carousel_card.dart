@@ -16,14 +16,17 @@ class NoDataCarouselCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: const [
           Center(
-            child: Text(
-              "Connettiti a Internet per scaricare gli orari",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: Color.fromRGBO(192, 192, 192, 1),
-                fontSize: 22,
+            child: Padding(
+              padding: EdgeInsets.all(20),
+              child: Text(
+                "Connettiti a Internet per scaricare gli orari",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Color.fromRGBO(192, 192, 192, 1),
+                  fontSize: 22,
+                ),
+                textAlign: TextAlign.center,
               ),
-              textAlign: TextAlign.center,
             ),
           ),
         ],

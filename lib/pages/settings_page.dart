@@ -78,7 +78,7 @@ class _SettingsState extends State<Settings> {
               displayValue: classe,
               items: getClassesSnapshot.data,
               onChanged: (v) async {
-                _showLoadingDialog();
+                _showUpdatingDialog();
 
                 String previousClass = Utils.getSavedClass();
 
@@ -133,7 +133,7 @@ class _SettingsState extends State<Settings> {
     );
   }
 
-  Future<void> _showLoadingDialog() async {
+  Future<void> _showUpdatingDialog() async {
     return showDialog<void>(
       context: context,
       barrierDismissible: false,
@@ -144,7 +144,8 @@ class _SettingsState extends State<Settings> {
             child: ListBody(
               children: [
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: const [
                     Text('Aggiornamento dei dati'),
                     CircularProgressIndicator(

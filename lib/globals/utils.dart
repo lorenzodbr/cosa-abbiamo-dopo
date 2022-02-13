@@ -181,16 +181,28 @@ class Utils {
     String _savedClass = getSavedClass();
 
     if (_savedClass == '') {
-      _savedClass = (await getClasses())[0];
-      setSavedClass(_savedClass);
+      List<String> _classes = [];
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Ricordati di cambiare classe nelle impostazioni',
-          ),
-        ),
-      );
+      try {
+        _classes = await getClasses();
+
+        if (_classes.isNotEmpty) {
+          _savedClass = _classes[0];
+          setSavedClass(_savedClass);
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text(
+                'Ricordati di cambiare classe nelle impostazioni',
+              ),
+            ),
+          );
+        } else {
+          return '';
+        }
+      } catch (_) {
+        return '';
+      }
     }
 
     Uri _uri = Uri.parse('$baseUrl?class=$_savedClass');
@@ -247,11 +259,11 @@ class Utils {
   }
 
   static String getLastFetch() {
-    return GetStorage().read(lastFetch) ?? '';
+    return GetStorage().read(lastFetch) ?? 'Non ancora effettuata';
   }
 
   static String getLastUpdate() {
-    return GetStorage().read(lastUpdate) ?? '';
+    return GetStorage().read(lastUpdate) ?? 'Non ancora effettuato';
   }
 
   static void justUpdated() {

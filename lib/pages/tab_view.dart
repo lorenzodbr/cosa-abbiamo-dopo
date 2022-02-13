@@ -12,7 +12,7 @@ class TabView extends StatefulWidget {
   _TabViewState createState() => _TabViewState();
 }
 
-class _TabViewState extends State<TabView> {
+class _TabViewState extends State<TabView> with TickerProviderStateMixin {
   int _pageIndex = 0;
   bool _skipLoading = false;
 
@@ -37,8 +37,10 @@ class _TabViewState extends State<TabView> {
   Widget build(BuildContext context) {
     return FutureBuilder(
       future: Utils.getRawData(context),
-      builder: (context, snapshot) {
-        if (snapshot.hasData || snapshot.hasError || _skipLoading) {
+      builder: (context, getRawDataSnapshot) {
+        if (getRawDataSnapshot.hasData ||
+            getRawDataSnapshot.hasError ||
+            _skipLoading) {
           return Scaffold(
             body: PageView(
               children: tabPages,
@@ -77,26 +79,44 @@ class _TabViewState extends State<TabView> {
                       ),
                     ),
                   ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      const Text('Ci sta volendo più\ntempo del previsto'),
-                      OutlinedButton(
-                        onPressed: () {
-                          setState(() {
-                            _skipLoading = true;
-                          });
-                        },
-                        style: OutlinedButton.styleFrom(
-                          side: const BorderSide(color: CustomColors.darkGrey),
-                          primary: CustomColors.white,
+                  FadeTransition(
+                    opacity: CurvedAnimation(
+                      parent: AnimationController(
+                        duration: const Duration(seconds: 3),
+                        vsync: this,
+                      )..forward(),
+                      curve: const Interval(0.9, 1.0, curve: Curves.easeIn),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const Text(
+                          'Ci sta volendo\npiù tempo del previsto',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                          ),
+                          textAlign: TextAlign.center,
                         ),
-                        child: const Text(
-                          "Mostra dati salvati",
-                          style: TextStyle(color: Colors.white),
+                        const Padding(padding: EdgeInsets.all(2)),
+                        OutlinedButton(
+                          onPressed: () {
+                            setState(() {
+                              _skipLoading = true;
+                            });
+                          },
+                          style: OutlinedButton.styleFrom(
+                            side:
+                                const BorderSide(color: CustomColors.darkGrey),
+                            primary: CustomColors.white,
+                          ),
+                          child: const Text(
+                            "Mostra dati salvati",
+                            style: TextStyle(color: Colors.white, fontSize: 12),
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ],
               ),

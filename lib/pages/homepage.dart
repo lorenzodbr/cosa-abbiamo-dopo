@@ -41,11 +41,19 @@ class _HomePageState extends State<HomePage> {
 
     _savedClass = Utils.getSavedClass();
 
-    _savedData = Utils.getSavedData();
+    try {
+      _savedData = Utils.getSavedData();
 
-    _isFirstGroup = Utils.isFirstGroup(_savedData);
+      _isFirstGroup = Utils.isFirstGroup(_savedData);
 
-    _hourIndex = Utils.getCurrentHourIndex(_isFirstGroup);
+      _hourIndex = Utils.getCurrentHourIndex(_isFirstGroup);
+    } catch (_) {
+      _savedData = [];
+
+      _isFirstGroup = true;
+
+      _hourIndex = 0;
+    }
   }
 
   @override
