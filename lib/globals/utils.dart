@@ -184,7 +184,7 @@ class Utils {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text(
-            "Ricordati di cambiare classe nelle impostazioni",
+            'Ricordati di cambiare classe nelle impostazioni',
           ),
         ),
       );
@@ -217,7 +217,7 @@ class Utils {
   }
 
   static String getSavedClass() {
-    return GetStorage().read(savedClass) ?? "";
+    return GetStorage().read(savedClass) ?? '';
   }
 
   static Future<String> fetchClasses() async {
@@ -240,7 +240,7 @@ class Utils {
     DateTime _now = DateTime.now();
 
     GetStorage().write(
-        'lastFetch', DateFormat("Il dd/MM/yyyy 'alle' kk:mm").format(_now));
+        lastFetch, DateFormat("Il dd/MM/yyyy 'alle' kk:mm").format(_now));
   }
 
   static String getLastFetch() {
@@ -403,10 +403,10 @@ class Utils {
 
   static List<String> decodeClasses(String data) {
     final List<String> _parsed = data
-        .substring(data.indexOf("[") + 2, data.indexOf("]") - 1)
+        .substring(data.indexOf('[') + 2, data.indexOf(']') - 1)
         .split('","');
 
-    _parsed.removeWhere((element) => !element.startsWith(RegExp("[1-5]")));
+    _parsed.removeWhere((element) => !element.startsWith(RegExp('[1-5]')));
 
     return _parsed;
   }
