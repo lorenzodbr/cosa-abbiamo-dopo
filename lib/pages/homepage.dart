@@ -87,7 +87,7 @@ class _HomePageState extends State<HomePage> {
       child: Row(
         children: [
           Text(
-            _savedClass + ' | ' + _formattedDate,
+            (_savedClass != '' ? _savedClass + ' | ' : '') + _formattedDate,
             style: const TextStyle(fontSize: 18, color: CustomColors.grey),
           ),
         ],

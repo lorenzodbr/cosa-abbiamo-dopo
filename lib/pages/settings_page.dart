@@ -85,9 +85,9 @@ class _SettingsState extends State<Settings> {
                 Utils.setSavedClass(getClassesSnapshot.data![v]);
 
                 try {
-                  List<MarconiLesson> data = await Utils.getData(context);
+                  String data = await Utils.getRawData(context);
 
-                  if (data.isEmpty) {
+                  if (data == '') {
                     Utils.setSavedClass(previousClass);
 
                     Navigator.pop(context);

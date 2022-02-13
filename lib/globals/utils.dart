@@ -265,10 +265,6 @@ class Utils {
     return lessons.isNotEmpty ? lessons[0].hourIndex == 1 : true;
   }
 
-  static void setGroup(int index) {
-    GetStorage().write('groupIndex', index);
-  }
-
   static Future<List<MarconiLesson>> getData(context) async {
     String data = await getRawData(context);
 
@@ -363,15 +359,13 @@ class Utils {
     if (lessons.isNotEmpty) {
       List<MarconiHour> hours;
 
-      bool isFirstGroup = lessons[0].hourIndex == 1;
+      bool isFirstGroup = Utils.isFirstGroup(lessons);
 
       if (lessons[0].day != 5) {
         if (lessons[0].hourIndex == 1) {
           hours = hoursListMonThuFirstGroup;
-          setGroup(1);
         } else {
           hours = hoursListMonThuSecondGroup;
-          setGroup(2);
         }
       } else {
         hours = isFirstGroup ? hoursListFriFirstGroup : hoursListFriSecondGroup;

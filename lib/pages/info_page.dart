@@ -94,9 +94,9 @@ class _InfoPageState extends State<InfoPage> {
       ],
     ),
     ItemModel(
-      header: "Quest'app mi ruba i dati del telefono?",
+      header: "Quest'app è un virus?",
       body: [
-        "No.",
+        "No, fa solo quello per cui è stata pensata. Niente malware, trojan, ransomware o miner di Bitcoin.",
         "Ma se vuoi controllare personalmente, puoi aprire la pagina del progetto e navigare nel codice."
       ],
     ),
