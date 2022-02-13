@@ -96,7 +96,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildCarousel() {
-    if (_hourIndex >= 0) {
+    if (_hourIndex >= Utils.inSchoolTime) {
       if (_savedData.isNotEmpty) {
         return Column(
           children: [

@@ -77,20 +77,26 @@ class _TabViewState extends State<TabView> {
                       ),
                     ),
                   ),
-                  OutlinedButton(
-                    onPressed: () {
-                      setState(() {
-                        _skipLoading = true;
-                      });
-                    },
-                    style: OutlinedButton.styleFrom(
-                      side: const BorderSide(color: CustomColors.darkGrey),
-                      primary: CustomColors.white,
-                    ),
-                    child: const Text(
-                      "Salta caricamento",
-                      style: TextStyle(color: Colors.white),
-                    ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const Text('Ci sta volendo più\ntempo del previsto'),
+                      OutlinedButton(
+                        onPressed: () {
+                          setState(() {
+                            _skipLoading = true;
+                          });
+                        },
+                        style: OutlinedButton.styleFrom(
+                          side: const BorderSide(color: CustomColors.darkGrey),
+                          primary: CustomColors.white,
+                        ),
+                        child: const Text(
+                          "Mostra dati salvati",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),

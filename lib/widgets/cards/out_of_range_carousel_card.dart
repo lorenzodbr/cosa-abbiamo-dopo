@@ -1,3 +1,4 @@
+import 'package:cosa_abbiamo_dopo/globals/utils.dart';
 import 'package:flutter/material.dart';
 
 class OutOfRangeCarouselCard extends StatelessWidget {
@@ -35,12 +36,14 @@ class OutOfRangeCarouselCard extends StatelessWidget {
 
   String _selectOutOfRangeText() {
     switch (hourRange) {
-      case -1:
+      case Utils.beforeSchoolTime:
         return "È ancora presto,\nripassa dalle 7:00";
-      case -2:
+      case Utils.afterSchoolTime:
         return "Lezioni finite,\nripassa domani";
-      default:
+      case Utils.noSchoolDay:
         return "Lezioni finite,\nripassa lunedì";
+      default:
+        return "Nessun orario da mostrare";
     }
   }
 }

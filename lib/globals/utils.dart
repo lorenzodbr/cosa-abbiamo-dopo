@@ -14,6 +14,18 @@ import 'dart:async';
 import 'dart:convert';
 
 class Utils {
+  static const int beforeSchoolTime = -1;
+  static const int afterSchoolTime = -2;
+  static const int noSchoolDay = -3;
+  static const int inSchoolTime = 0;
+
+  static const String savedClass = 'class';
+  static const String savedData = 'data';
+  static const String lastFetch = 'lastFetch';
+  static const String lastUpdate = 'lastUpdate';
+
+  static const String baseUrl = 'https://apps.marconivr.it/orario/api.php';
+
   static List<MarconiHour> hoursListMonThuFirstGroup = [
     MarconiHour(
       const TimeOfDay(hour: 8, minute: 0),
@@ -163,11 +175,11 @@ class Utils {
   ];
 
   static Future<String> fetchData(context) async {
-    String savedClass = getSavedClass();
+    String _savedClass = getSavedClass();
 
-    if (savedClass == '') {
-      savedClass = (await getClasses())[0];
-      setSavedClass(savedClass);
+    if (_savedClass == '') {
+      _savedClass = (await getClasses())[0];
+      setSavedClass(_savedClass);
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -178,15 +190,14 @@ class Utils {
       );
     }
 
-    Uri uri = Uri.parse(
-        'https://apps.marconivr.it/orario/api.php?class=' + savedClass);
+    Uri _uri = Uri.parse('$baseUrl?class=$_savedClass');
 
     try {
-      final response = await http.get(uri);
+      final _response = await http.get(_uri);
 
-      if (response.statusCode == 200) {
+      if (_response.statusCode == 200) {
         justFetched();
-        return response.body;
+        return _response.body;
       } else {
         return '';
       }
@@ -196,9 +207,9 @@ class Utils {
   }
 
   static Future<bool> isClassSet() async {
-    final prefs = await SharedPreferences.getInstance();
+    final _prefs = await SharedPreferences.getInstance();
 
-    if ((prefs.getString('classe') ?? '').isEmpty) {
+    if ((_prefs.getString(savedClass) ?? '').isEmpty) {
       return false;
     } else {
       return true;
@@ -206,14 +217,14 @@ class Utils {
   }
 
   static String getSavedClass() {
-    return GetStorage().read('classe') ?? "";
+    return GetStorage().read(savedClass) ?? "";
   }
 
   static Future<String> fetchClasses() async {
-    Uri uri = Uri.parse('https://apps.marconivr.it/orario/api.php');
+    Uri _uri = Uri.parse('https://apps.marconivr.it/orario/api.php');
 
     try {
-      final response = await http.get(uri);
+      final response = await http.get(_uri);
 
       if (response.statusCode == 200) {
         return response.body;
@@ -226,25 +237,25 @@ class Utils {
   }
 
   static void justFetched() {
-    DateTime now = DateTime.now();
+    DateTime _now = DateTime.now();
 
     GetStorage().write(
-        'lastFetch', DateFormat("Il dd/MM/yyyy 'alle' kk:mm").format(now));
+        'lastFetch', DateFormat("Il dd/MM/yyyy 'alle' kk:mm").format(_now));
   }
 
   static String getLastFetch() {
-    return GetStorage().read('lastFetch') ?? "";
+    return GetStorage().read(lastFetch) ?? '';
   }
 
   static String getLastUpdate() {
-    return GetStorage().read('lastUpdate') ?? "";
+    return GetStorage().read(lastUpdate) ?? '';
   }
 
   static void justUpdated() {
-    DateTime now = DateTime.now();
+    DateTime _now = DateTime.now();
 
     GetStorage().write(
-        'lastUpdate', DateFormat("Il dd/MM/yyyy 'alle' kk:mm").format(now));
+        lastUpdate, DateFormat("Il dd/MM/yyyy 'alle' kk:mm").format(_now));
   }
 
   static Future<String> getRawClasses() async {
@@ -252,13 +263,13 @@ class Utils {
   }
 
   static Future<List<String>> getClasses() async {
-    String rawClassesString = await getRawClasses();
+    String _rawClassesString = await getRawClasses();
 
-    if (rawClassesString == '') {
+    if (_rawClassesString == '') {
       return [];
     }
 
-    return decodeClasses(rawClassesString);
+    return decodeClasses(_rawClassesString);
   }
 
   static bool isFirstGroup(List<MarconiLesson> lessons) {
@@ -266,100 +277,100 @@ class Utils {
   }
 
   static Future<List<MarconiLesson>> getData(context) async {
-    String data = await getRawData(context);
+    String _data = await getRawData(context);
 
-    return decodeData(data);
+    return decodeData(_data);
   }
 
   static List<MarconiLesson> getSavedData() {
-    String rawSavedData = getRawSavedData();
+    String _rawSavedData = getRawSavedData();
 
-    return decodeData(rawSavedData);
+    return decodeData(_rawSavedData);
   }
 
   static String getRawSavedData() {
-    return GetStorage().read('data') ?? "";
+    return GetStorage().read(savedData) ?? '';
   }
 
   static Future<String> getRawData(context) async {
-    String data = await updateData(context);
+    String _data = await updateData(context);
 
-    return data;
+    return _data;
   }
 
-  static void setData(String s) {
-    GetStorage().write('data', s);
+  static void setSavedData(String s) {
+    GetStorage().write(savedData, s);
   }
 
   static Future<String> updateData(context) async {
-    String dataFromAPI = await fetchData(context);
+    String _dataFromAPI = await fetchData(context);
 
-    String savedData = getRawSavedData();
+    String _savedData = getRawSavedData();
 
-    if (savedData != dataFromAPI && dataFromAPI != '') {
+    if (_savedData != _dataFromAPI && _dataFromAPI != '') {
       justUpdated();
 
-      setData(dataFromAPI);
+      setSavedData(_dataFromAPI);
 
-      return dataFromAPI;
+      return _dataFromAPI;
     }
 
-    return savedData;
+    return _savedData;
   }
 
   static void setSavedClass(String s) {
-    GetStorage().write('classe', s);
+    GetStorage().write(savedClass, s);
   }
 
   static List<MarconiLesson> filterForToday(List<MarconiLesson> lessons) {
-    List<MarconiLesson> res = [];
-    DateTime today = DateTime.now();
+    List<MarconiLesson> _result = [];
+    DateTime _today = DateTime.now();
 
-    for (var element in lessons) {
-      if (element.day == today.weekday) {
-        res.add(element);
+    for (var lesson in lessons) {
+      if (lesson.day == _today.weekday) {
+        _result.add(lesson);
       }
     }
 
-    res.sort(
+    _result.sort(
       (a, b) => a.hourIndex.compareTo(b.hourIndex),
     );
 
-    return res;
+    return _result;
   }
 
   static List<MarconiLesson> groupTeachers(List<MarconiLesson> lessons) {
-    List<MarconiLesson> res = [];
+    List<MarconiLesson> _result = [];
 
     for (int i = 0; i < lessons.length; i++) {
-      int offset = 0;
-      List<MarconiTeacher> teachers = [];
+      int _offset = 0;
+      List<MarconiTeacher> _teachers = [];
 
-      teachers.addAll(lessons[i].teachers);
+      _teachers.addAll(lessons[i].teachers);
 
-      while (i + offset + 1 < lessons.length &&
-          lessons[i].hourIndex == lessons[i + offset + 1].hourIndex) {
-        teachers.add(lessons[i + offset + 1].teachers[0]);
-        offset++;
+      while (i + _offset + 1 < lessons.length &&
+          lessons[i].hourIndex == lessons[i + _offset + 1].hourIndex) {
+        _teachers.add(lessons[i + _offset + 1].teachers[0]);
+        _offset++;
       }
 
-      teachers.sort((a, b) => a.nameSurname.compareTo(b.nameSurname));
+      _teachers.sort((a, b) => a.nameSurname.compareTo(b.nameSurname));
 
-      lessons[i].teachers = teachers;
+      lessons[i].teachers = _teachers;
 
-      res.add(lessons[i]);
+      _result.add(lessons[i]);
 
-      i += offset;
+      i += _offset;
     }
 
-    return res;
+    return _result;
   }
 
   static List<MarconiLesson> setHours(List<MarconiLesson> lessons) {
     if (lessons.isNotEmpty) {
       List<MarconiHour> hours;
 
-      bool isFirstGroup = Utils.isFirstGroup(lessons);
+      bool _isFirstGroup = Utils.isFirstGroup(lessons);
 
       if (lessons[0].day != 5) {
         if (lessons[0].hourIndex == 1) {
@@ -368,7 +379,8 @@ class Utils {
           hours = hoursListMonThuSecondGroup;
         }
       } else {
-        hours = isFirstGroup ? hoursListFriFirstGroup : hoursListFriSecondGroup;
+        hours =
+            _isFirstGroup ? hoursListFriFirstGroup : hoursListFriSecondGroup;
       }
 
       for (int i = 0; i < lessons.length; i++) {
@@ -380,58 +392,42 @@ class Utils {
   }
 
   static List<MarconiLesson> decodeData(String data) {
-    final parsed = jsonDecode(data).cast<Map<String, dynamic>>();
+    final _casted = jsonDecode(data).cast<Map<String, dynamic>>();
 
-    List<MarconiLesson> decoded = parsed
+    List<MarconiLesson> _parsed = _casted
         .map<MarconiLesson>((json) => MarconiLesson.fromJson(json))
         .toList();
 
-    return setHours(groupTeachers(filterForToday(decoded)));
+    return setHours(groupTeachers(filterForToday(_parsed)));
   }
 
   static List<String> decodeClasses(String data) {
-    List<String> decoded = data
+    final List<String> _parsed = data
         .substring(data.indexOf("[") + 2, data.indexOf("]") - 1)
         .split('","');
 
-    decoded.removeWhere((element) => !element.startsWith(RegExp("[1-5]")));
+    _parsed.removeWhere((element) => !element.startsWith(RegExp("[1-5]")));
 
-    return decoded;
-  }
-
-  static MarconiHour getHourRange(int hour, int day, int firstOrSecondGroup) {
-    if (firstOrSecondGroup == 1) {
-      if (day == 5) {
-        return hoursListFriFirstGroup[hour - 1];
-      } else {
-        return hoursListMonThuFirstGroup[hour - 1];
-      }
-    } else {
-      if (day == 5) {
-        return hoursListFriFirstGroup[hour - 1];
-      } else {
-        return hoursListMonThuSecondGroup[hour - 1];
-      }
-    }
+    return _parsed;
   }
 
   static bool isInDayRange(bool isFirstGroup) {
-    DateTime now = DateTime.now();
+    DateTime _now = DateTime.now();
 
-    DateTime maxHour;
+    DateTime _maxHour;
 
     if (isFirstGroup) {
-      maxHour = now.weekday == 5
+      _maxHour = _now.weekday == 5
           ? Utils.hoursListFriFirstGroup.last.startingTime.toDateTime()
           : Utils.hoursListMonThuFirstGroup.last.startingTime.toDateTime();
     } else {
-      maxHour = now.weekday == 5
+      _maxHour = _now.weekday == 5
           ? Utils.hoursListFriSecondGroup.last.startingTime.toDateTime()
           : Utils.hoursListMonThuSecondGroup.last.startingTime.toDateTime();
     }
 
-    if ((now.weekday != 6 && now.weekday != 7 && now.weekday != 5) ||
-        (now.weekday == 5 && now.isBefore(maxHour))) {
+    if ((_now.weekday != 6 && _now.weekday != 7 && _now.weekday != 5) ||
+        (_now.weekday == 5 && _now.isBefore(_maxHour))) {
       return true;
     }
 
@@ -439,76 +435,77 @@ class Utils {
   }
 
   static int getCurrentHourIndex(isFirstGroup) {
-    DateTime nowDateTime = DateTime.now();
-    TimeOfDay now =
-        TimeOfDay(hour: nowDateTime.hour, minute: nowDateTime.minute);
+    DateTime _nowDateTime = DateTime.now();
+    TimeOfDay _now =
+        TimeOfDay(hour: _nowDateTime.hour, minute: _nowDateTime.minute);
 
     if (isInDayRange(isFirstGroup)) {
-      if (now.isBefore(const TimeOfDay(hour: 7, minute: 0))) {
-        return -1;
+      if (_now.isBefore(const TimeOfDay(hour: 7, minute: 0))) {
+        return beforeSchoolTime;
       }
 
-      if (nowDateTime.weekday != 5) {
+      if (_nowDateTime.weekday != 5) {
         if (isFirstGroup) {
-          if (now.isAfter(Utils.hoursListMonThuFirstGroup.last.startingTime)) {
-            return -2;
+          if (_now.isAfter(Utils.hoursListMonThuFirstGroup.last.startingTime)) {
+            return afterSchoolTime;
           }
         } else {
-          if (now.isAfter(Utils.hoursListMonThuSecondGroup.last.startingTime)) {
-            return -2;
+          if (_now
+              .isAfter(Utils.hoursListMonThuSecondGroup.last.startingTime)) {
+            return afterSchoolTime;
           }
         }
       } else {
         if (isFirstGroup) {
-          if (now.isAfter(Utils.hoursListFriFirstGroup.last.startingTime)) {
-            return -2;
+          if (_now.isAfter(Utils.hoursListFriFirstGroup.last.startingTime)) {
+            return afterSchoolTime;
           }
         } else {
-          if (now.isAfter(Utils.hoursListFriSecondGroup.last.startingTime)) {
-            return -2;
+          if (_now.isAfter(Utils.hoursListFriSecondGroup.last.startingTime)) {
+            return afterSchoolTime;
           }
         }
       }
 
       if (isFirstGroup) {
         for (int i = 0; i < Utils.hoursListFriFirstGroup.length; i++) {
-          if (now.isBefore(Utils.hoursListFriFirstGroup[i].startingTime)) {
+          if (_now.isBefore(Utils.hoursListFriFirstGroup[i].startingTime)) {
             return i;
           }
         }
       } else {
         for (int i = 0; i < Utils.hoursListFriSecondGroup.length; i++) {
-          if (now.isBefore(Utils.hoursListFriSecondGroup[i].startingTime)) {
+          if (_now.isBefore(Utils.hoursListFriSecondGroup[i].startingTime)) {
             return i;
           }
         }
       }
 
-      return 0;
+      return inSchoolTime;
     }
 
-    return -3;
+    return noSchoolDay;
   }
 
   static Future<String> getAppVersion() async {
-    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    PackageInfo _packageInfo = await PackageInfo.fromPlatform();
 
-    return packageInfo.version;
+    return _packageInfo.version;
   }
 
   static Future<void> setOptimalDisplayMode() async {
-    final List<DisplayMode> supported = await FlutterDisplayMode.supported;
-    final DisplayMode active = await FlutterDisplayMode.active;
+    final List<DisplayMode> _supported = await FlutterDisplayMode.supported;
+    final DisplayMode _active = await FlutterDisplayMode.active;
 
-    final List<DisplayMode> sameResolution = supported
+    final List<DisplayMode> _sameResolution = _supported
         .where((DisplayMode m) =>
-            m.width == active.width && m.height == active.height)
+            m.width == _active.width && m.height == _active.height)
         .toList()
       ..sort((DisplayMode a, DisplayMode b) =>
           b.refreshRate.compareTo(a.refreshRate));
 
     final DisplayMode mostOptimalMode =
-        sameResolution.isNotEmpty ? sameResolution.first : active;
+        _sameResolution.isNotEmpty ? _sameResolution.first : _active;
 
     await FlutterDisplayMode.setPreferredMode(mostOptimalMode);
   }
