@@ -2,6 +2,7 @@ import 'package:cosa_abbiamo_dopo/globals/custom_colors.dart';
 import 'package:cosa_abbiamo_dopo/globals/utils.dart';
 import 'package:cosa_abbiamo_dopo/pages/homepage.dart';
 import 'package:cosa_abbiamo_dopo/pages/info_page.dart';
+import 'package:cosa_abbiamo_dopo/pages/loading_page.dart';
 import 'package:cosa_abbiamo_dopo/pages/settings_page.dart';
 import 'package:flutter/material.dart';
 
@@ -12,13 +13,11 @@ class TabView extends StatefulWidget {
   _TabViewState createState() => _TabViewState();
 }
 
-class _TabViewState extends State<TabView> with TickerProviderStateMixin {
+class _TabViewState extends State<TabView> {
   int _pageIndex = 0;
   bool _skipLoading = false;
 
   late PageController _pageController;
-  late Animation<double> _animation;
-  late AnimationController _animationController;
 
   List<Widget> tabPages = [
     const HomePage(),
@@ -35,16 +34,6 @@ class _TabViewState extends State<TabView> with TickerProviderStateMixin {
 
     _pageController = PageController(
       initialPage: _pageIndex,
-    );
-
-    _animationController = AnimationController(
-      duration: const Duration(seconds: 5),
-      vsync: this,
-    )..forward();
-
-    _animation = CurvedAnimation(
-      parent: _animationController,
-      curve: const Interval(0.9, 1.0, curve: Curves.easeIn),
     );
   }
 
@@ -76,71 +65,11 @@ class _TabViewState extends State<TabView> with TickerProviderStateMixin {
             ),
           );
         } else {
-          return Material(
-            child: Container(
-              color: CustomColors.black,
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  Positioned(
-                    top: 370,
-                    child: Column(
-                      children: const [
-                        CircularProgressIndicator(color: Colors.white),
-                        Padding(
-                          padding: EdgeInsets.only(top: 10, bottom: 30),
-                          child: Text(
-                            "Caricamento...",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 20,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Positioned(
-                    bottom: 150,
-                    child: FadeTransition(
-                      opacity: _animation,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          const Text(
-                            'Ci sta volendo\npiù tempo del previsto',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 12,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                          const Padding(padding: EdgeInsets.all(2)),
-                          OutlinedButton(
-                            onPressed: () {
-                              setState(() {
-                                _skipLoading = true;
-                              });
-                            },
-                            style: OutlinedButton.styleFrom(
-                              side: const BorderSide(
-                                  color: CustomColors.darkGrey),
-                              primary: CustomColors.white,
-                            ),
-                            child: const Text(
-                              "Mostra dati salvati",
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 12),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          );
+          return LoadingPage(setState: () {
+            setState(() {
+              _skipLoading = true;
+            });
+          });
         }
       },
     );

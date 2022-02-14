@@ -1,5 +1,7 @@
 import 'package:cosa_abbiamo_dopo/globals/custom_colors.dart';
+import 'package:cosa_abbiamo_dopo/globals/utils.dart';
 import 'package:cosa_abbiamo_dopo/pages/tab_view.dart';
+import 'package:cosa_abbiamo_dopo/pages/update_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -16,7 +18,39 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: const TabView(),
+      home: FutureBuilder<String>(
+        future: Utils.isUpdated(),
+        builder: (context, isUpdatedSnapshot) {
+          if (isUpdatedSnapshot.hasData) {
+            if (isUpdatedSnapshot.data != '0') {
+              return UpdatePage(version: isUpdatedSnapshot.data!);
+            } else {
+              return const TabView();
+            }
+          } else {
+            return Material(
+              color: CustomColors.black,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: const [
+                  CircularProgressIndicator(color: Colors.white),
+                  Padding(
+                    padding: EdgeInsets.only(top: 10, bottom: 30),
+                    child: Text(
+                      "Ricerca aggiornamenti...",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }
+        },
+      ),
       theme: ThemeData(
         textTheme: GoogleFonts.workSansTextTheme(
           Theme.of(context).textTheme,

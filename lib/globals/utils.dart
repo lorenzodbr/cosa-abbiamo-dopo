@@ -2,6 +2,7 @@ import 'package:cosa_abbiamo_dopo/globals/extensions/time_of_day_extension.dart'
 import 'package:cosa_abbiamo_dopo/globals/marconi_hour.dart';
 import 'package:cosa_abbiamo_dopo/globals/marconi_lesson.dart';
 import 'package:cosa_abbiamo_dopo/globals/marconi_teacher.dart';
+import 'package:flowder/flowder.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -28,6 +29,13 @@ class Utils {
   static const String lastUpdate = 'lastUpdate';
 
   static const String baseUrl = 'https://apps.marconivr.it/orario/api.php';
+  static const String baseProjectUrl = '';
+
+  static const String baseProjectAPIUrl =
+      'https://api.github.com/repos/lorenzodbr/cosa-abbiamo-dopo/releases/latest';
+
+  static const String baseProjectDownloadUrl =
+      'https://github.com/lorenzodbr/cosa-abbiamo-dopo/releases/download';
 
   static const String empty = '';
 
@@ -582,6 +590,51 @@ class Utils {
           ],
         );
       },
+    );
+  }
+
+  static Future<String> isUpdated() async {
+    String _rawVersion = await fetchVersion();
+
+    String _currentVersion = 'v' + (await getAppVersion());
+
+    String _decodedVersion = decodeVersion(_rawVersion);
+
+    if (_currentVersion.compareTo(_decodedVersion) < 0) {
+      return _decodedVersion;
+    } else {
+      return '0';
+    }
+  }
+
+  static Future<String> fetchVersion() async {
+    Uri _uri = Uri.parse(baseProjectAPIUrl);
+
+    try {
+      final _response = await http.get(_uri);
+
+      if (_response.statusCode == 200) {
+        return _response.body;
+      } else {
+        return empty;
+      }
+    } catch (_) {
+      rethrow;
+    }
+  }
+
+  static String decodeVersion(String data) {
+    String splitted = data.split('"tag_name":')[1];
+
+    String version = splitted.substring(1, splitted.indexOf('",'));
+
+    return version;
+  }
+
+  static Future downloadUpdate(options) async {
+    return await Flowder.download(
+      Utils.baseProjectDownloadUrl + '/v1.0.0/app-release.apk',
+      options,
     );
   }
 

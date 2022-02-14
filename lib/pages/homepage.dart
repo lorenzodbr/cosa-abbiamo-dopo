@@ -130,12 +130,12 @@ class _HomePageState extends State<HomePage> {
   Future<void> _showClassSelector() async {
     String _savedClass = Utils.getSavedClass();
 
-    var _initialValueIndex = 0;
-    var _selectedValueIndex = 0;
+    int _initialValueIndex = 0;
+    int _selectedValueIndex = 0;
 
-    var _classes = [];
+    List<String> _classes = [];
 
-    var changedValueIndex = await showDialog(
+    int _changedValueIndex = await showDialog(
       context: context,
       builder: (_) {
         return AlertDialog(
@@ -201,12 +201,13 @@ class _HomePageState extends State<HomePage> {
       },
     );
 
-    if (changedValueIndex != null && changedValueIndex != _initialValueIndex) {
+    if (_changedValueIndex != null &&
+        _changedValueIndex != _initialValueIndex) {
       Utils.showUpdatingDialog(context);
 
       String previousClass = Utils.getSavedClass();
 
-      Utils.setSavedClass(_classes[changedValueIndex]);
+      Utils.setSavedClass(_classes[_changedValueIndex]);
 
       try {
         String _data = await Utils.getRawData(context);
