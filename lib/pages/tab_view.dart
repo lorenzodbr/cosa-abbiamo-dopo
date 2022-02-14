@@ -38,7 +38,7 @@ class _TabViewState extends State<TabView> with TickerProviderStateMixin {
     );
 
     _animationController = AnimationController(
-      duration: const Duration(seconds: 3),
+      duration: const Duration(seconds: 5),
       vsync: this,
     )..forward();
 
@@ -83,7 +83,7 @@ class _TabViewState extends State<TabView> with TickerProviderStateMixin {
                 alignment: Alignment.center,
                 children: [
                   Positioned(
-                    top: 400,
+                    top: 370,
                     child: Column(
                       children: const [
                         CircularProgressIndicator(color: Colors.white),
@@ -101,7 +101,7 @@ class _TabViewState extends State<TabView> with TickerProviderStateMixin {
                     ),
                   ),
                   Positioned(
-                    bottom: 100,
+                    bottom: 150,
                     child: FadeTransition(
                       opacity: _animation,
                       child: Column(

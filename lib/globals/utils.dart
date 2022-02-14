@@ -29,6 +29,8 @@ class Utils {
 
   static const String baseUrl = 'https://apps.marconivr.it/orario/api.php';
 
+  static const String empty = '';
+
   static List<MarconiHour> hoursListMonThuFirstGroup = [
     MarconiHour(
       const TimeOfDay(hour: 8, minute: 0),
@@ -180,7 +182,7 @@ class Utils {
   static Future<String> fetchData(context) async {
     String _savedClass = getSavedClass();
 
-    if (_savedClass == '') {
+    if (_savedClass == empty) {
       List<String> _classes = [];
 
       try {
@@ -193,15 +195,15 @@ class Utils {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text(
-                'Ricordati di cambiare classe nelle impostazioni',
+                'Ricordati di cambiare classe',
               ),
             ),
           );
         } else {
-          return '';
+          return empty;
         }
       } catch (_) {
-        return '';
+        return empty;
       }
     }
 
@@ -214,7 +216,7 @@ class Utils {
         justFetched();
         return _response.body;
       } else {
-        return '';
+        return empty;
       }
     } catch (_) {
       rethrow;
@@ -224,7 +226,7 @@ class Utils {
   static Future<bool> isClassSet() async {
     final _prefs = await SharedPreferences.getInstance();
 
-    if ((_prefs.getString(savedClass) ?? '').isEmpty) {
+    if ((_prefs.getString(savedClass) ?? empty).isEmpty) {
       return false;
     } else {
       return true;
@@ -232,11 +234,11 @@ class Utils {
   }
 
   static String getSavedClass() {
-    return GetStorage().read(savedClass) ?? '';
+    return GetStorage().read(savedClass) ?? empty;
   }
 
   static Future<String> fetchClasses() async {
-    Uri _uri = Uri.parse('https://apps.marconivr.it/orario/api.php');
+    Uri _uri = Uri.parse(baseUrl);
 
     try {
       final response = await http.get(_uri);
@@ -244,7 +246,7 @@ class Utils {
       if (response.statusCode == 200) {
         return response.body;
       } else {
-        return '';
+        return empty;
       }
     } catch (ex) {
       rethrow;
@@ -280,7 +282,7 @@ class Utils {
   static Future<List<String>> getClasses() async {
     String _rawClassesString = await getRawClasses();
 
-    if (_rawClassesString == '') {
+    if (_rawClassesString == empty) {
       return [];
     }
 
@@ -304,7 +306,7 @@ class Utils {
   }
 
   static String getRawSavedData() {
-    return GetStorage().read(savedData) ?? '';
+    return GetStorage().read(savedData) ?? empty;
   }
 
   static Future<String> getRawData(context) async {
@@ -322,7 +324,7 @@ class Utils {
 
     String _savedData = getRawSavedData();
 
-    if (_savedData != _dataFromAPI && _dataFromAPI != '') {
+    if (_savedData != _dataFromAPI && _dataFromAPI != empty) {
       justUpdated();
 
       setSavedData(_dataFromAPI);
@@ -523,6 +525,64 @@ class Utils {
         _sameResolution.isNotEmpty ? _sameResolution.first : _active;
 
     await FlutterDisplayMode.setPreferredMode(mostOptimalMode);
+  }
+
+  static Future<void> showUpdatingDialog(BuildContext context) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Attendi'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: const [
+                    Text('Aggiornamento dei dati'),
+                    CircularProgressIndicator(
+                      color: Colors.black,
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  static Future<void> showErrorDialog(
+      BuildContext context, int errorCode) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Errore'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: [
+                Text(errorCode == 1
+                    ? 'Si è verificato un errore nello scaricamento degli orari.\n\nRiprova.'
+                    : "Connettiti a Internet per scaricare i nuovi orari."),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   static void setPortrait() {

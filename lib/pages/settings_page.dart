@@ -42,7 +42,7 @@ class _SettingsState extends State<Settings> {
                     title: 'Versione',
                     displayValue: getAppVersionSnapshot.hasData
                         ? getAppVersionSnapshot.data
-                        : "Caricamento...",
+                        : 'Caricamento...',
                     onTap: () {},
                   );
                 },
@@ -70,15 +70,15 @@ class _SettingsState extends State<Settings> {
 
         if (getClassesSnapshot.hasData) {
           if (getClassesSnapshot.data!.isNotEmpty) {
-            String classe = Utils.getSavedClass();
+            String _savedClass = Utils.getSavedClass();
 
             return SettingWheelPickerItem(
               title: 'Seleziona classe',
-              initialValueIndex: getClassesSnapshot.data!.indexOf(classe),
-              displayValue: classe,
+              initialValueIndex: getClassesSnapshot.data!.indexOf(_savedClass),
+              displayValue: _savedClass,
               items: getClassesSnapshot.data,
               onChanged: (v) async {
-                _showUpdatingDialog();
+                Utils.showUpdatingDialog(context);
 
                 String previousClass = Utils.getSavedClass();
 
@@ -94,7 +94,7 @@ class _SettingsState extends State<Settings> {
 
                     setState(() {});
 
-                    _showErrorDialog(1);
+                    Utils.showErrorDialog(context, 1);
                   } else {
                     Navigator.pop(context);
 
@@ -107,7 +107,7 @@ class _SettingsState extends State<Settings> {
 
                   setState(() {});
 
-                  _showErrorDialog(0);
+                  Utils.showErrorDialog(context, 0);
                 }
               },
             );
@@ -129,63 +129,6 @@ class _SettingsState extends State<Settings> {
             priority: ItemPriority.disabled,
           );
         }
-      },
-    );
-  }
-
-  Future<void> _showUpdatingDialog() async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Attendi'),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: const [
-                    Text('Aggiornamento dei dati'),
-                    CircularProgressIndicator(
-                      color: Colors.black,
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  Future<void> _showErrorDialog(int errorCode) async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Errore'),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: [
-                Text(errorCode == 1
-                    ? 'Si è verificato un errore nello scaricamento degli orari.\n\nRiprova.'
-                    : "Connettiti a Internet per scaricare i nuovi orari."),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('OK'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
       },
     );
   }

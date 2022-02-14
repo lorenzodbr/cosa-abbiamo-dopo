@@ -1,4 +1,5 @@
 import 'package:animations/animations.dart';
+import 'package:clean_settings/clean_settings.dart';
 import 'package:cosa_abbiamo_dopo/globals/custom_colors.dart';
 import 'package:cosa_abbiamo_dopo/globals/marconi_lesson.dart';
 import 'package:cosa_abbiamo_dopo/globals/utils.dart';
@@ -7,7 +8,9 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cosa_abbiamo_dopo/widgets/cards/carousel_card.dart';
 import 'package:cosa_abbiamo_dopo/widgets/cards/no_data_carousel_card.dart';
 import 'package:cosa_abbiamo_dopo/widgets/cards/out_of_range_carousel_card.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
@@ -74,7 +77,7 @@ class _HomePageState extends State<HomePage> {
               children: [
                 _buildClassAndDateRow(),
                 const Text(
-                  "Cosa abbiamo dopo?",
+                  'Cosa abbiamo dopo?',
                   style: TextStyle(
                     fontWeight: FontWeight.w900,
                     fontSize: 50,
@@ -98,10 +101,16 @@ class _HomePageState extends State<HomePage> {
     return Padding(
       padding: const EdgeInsets.only(bottom: 20),
       child: Row(
-        children: _savedClass != ''
+        children: _savedClass != Utils.empty
             ? [
                 TextButton.icon(
-                  onPressed: () {},
+                  onPressed: () async {
+                    await _showClassSelector();
+
+                    setState(() {
+                      _savedClass = Utils.getSavedClass();
+                    });
+                  },
                   icon: const Icon(Icons.edit, color: CustomColors.grey),
                   label: Text(
                     _savedClass,
@@ -116,6 +125,109 @@ class _HomePageState extends State<HomePage> {
               ],
       ),
     );
+  }
+
+  Future<void> _showClassSelector() async {
+    String _savedClass = Utils.getSavedClass();
+
+    var _initialValueIndex = 0;
+    var _selectedValueIndex = 0;
+
+    var _classes = [];
+
+    var changedValueIndex = await showDialog(
+      context: context,
+      builder: (_) {
+        return AlertDialog(
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Annulla'),
+              onPressed: () => Navigator.pop(context),
+            ),
+            TextButton(
+              child: const Text('OK'),
+              onPressed: () => Navigator.pop(context, _selectedValueIndex),
+            )
+          ],
+          title: const Text('Seleziona classe'),
+          content: Container(
+            constraints:
+                const BoxConstraints(minHeight: 100.0, maxHeight: 100.0),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                FutureBuilder<List<String>>(
+                  future: Utils.getClasses(),
+                  builder: (context, getClassesSnapshot) {
+                    if (getClassesSnapshot.hasData) {
+                      _classes = getClassesSnapshot.data ?? [];
+
+                      _initialValueIndex =
+                          getClassesSnapshot.data!.indexOf(_savedClass);
+
+                      _selectedValueIndex = _initialValueIndex;
+                      return Expanded(
+                        child: CupertinoPicker(
+                          scrollController: FixedExtentScrollController(
+                              initialItem: _selectedValueIndex),
+                          itemExtent: 50.0,
+                          onSelectedItemChanged: (int value) {
+                            _selectedValueIndex = value;
+                          },
+                          children: getClassesSnapshot.data!
+                              .map(
+                                (e) => Center(
+                                  child: Text(
+                                    e.toString(),
+                                    style: GoogleFonts.workSans(
+                                      textStyle: kWheelPickerItem,
+                                    ),
+                                  ),
+                                ),
+                              )
+                              .toList(),
+                        ),
+                      );
+                    } else {
+                      return const CircularProgressIndicator();
+                    }
+                  },
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+
+    if (changedValueIndex != null && changedValueIndex != _initialValueIndex) {
+      Utils.showUpdatingDialog(context);
+
+      String previousClass = Utils.getSavedClass();
+
+      Utils.setSavedClass(_classes[changedValueIndex]);
+
+      try {
+        String _data = await Utils.getRawData(context);
+
+        if (_data == Utils.empty) {
+          Utils.setSavedClass(previousClass);
+
+          Navigator.pop(context);
+
+          Utils.showErrorDialog(context, 1);
+        } else {
+          Navigator.pop(context);
+        }
+      } catch (ex) {
+        Utils.setSavedClass(previousClass);
+
+        Navigator.pop(context);
+
+        Utils.showErrorDialog(context, 0);
+      }
+    }
   }
 
   Widget _buildCarousel() {
