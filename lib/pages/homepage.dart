@@ -94,8 +94,16 @@ class _HomePageState extends State<HomePage> {
       padding: const EdgeInsets.only(bottom: 20),
       child: Row(
         children: [
+          TextButton.icon(
+            onPressed: () {},
+            icon: const Icon(Icons.edit, color: CustomColors.grey),
+            label: Text(
+              _savedClass,
+              style: const TextStyle(fontSize: 18, color: CustomColors.grey),
+            ),
+          ),
           Text(
-            (_savedClass != '' ? _savedClass + ' | ' : '') + _formattedDate,
+            '| ' + _formattedDate,
             style: const TextStyle(fontSize: 18, color: CustomColors.grey),
           ),
         ],
