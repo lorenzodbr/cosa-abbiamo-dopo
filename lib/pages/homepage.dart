@@ -90,23 +90,30 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildClassAndDateRow() {
+    Text _formattedDateText = Text(
+      '| ' + _formattedDate,
+      style: const TextStyle(fontSize: 18, color: CustomColors.grey),
+    );
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 20),
       child: Row(
-        children: [
-          TextButton.icon(
-            onPressed: () {},
-            icon: const Icon(Icons.edit, color: CustomColors.grey),
-            label: Text(
-              _savedClass,
-              style: const TextStyle(fontSize: 18, color: CustomColors.grey),
-            ),
-          ),
-          Text(
-            '| ' + _formattedDate,
-            style: const TextStyle(fontSize: 18, color: CustomColors.grey),
-          ),
-        ],
+        children: _savedClass != ''
+            ? [
+                TextButton.icon(
+                  onPressed: () {},
+                  icon: const Icon(Icons.edit, color: CustomColors.grey),
+                  label: Text(
+                    _savedClass,
+                    style:
+                        const TextStyle(fontSize: 18, color: CustomColors.grey),
+                  ),
+                ),
+                _formattedDateText,
+              ]
+            : [
+                _formattedDateText,
+              ],
       ),
     );
   }

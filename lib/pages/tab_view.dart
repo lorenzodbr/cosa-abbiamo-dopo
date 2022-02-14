@@ -53,7 +53,9 @@ class _TabViewState extends State<TabView> with TickerProviderStateMixin {
     return FutureBuilder(
       future: Utils.getRawData(context),
       builder: (context, getRawDataSnapshot) {
-        if (getRawDataSnapshot.hasError || _skipLoading) {
+        if (getRawDataSnapshot.hasData ||
+            getRawDataSnapshot.hasError ||
+            _skipLoading) {
           return Scaffold(
             body: PageView(
               children: tabPages,
