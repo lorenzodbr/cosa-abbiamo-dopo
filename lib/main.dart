@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
         future: Utils.isUpdated(),
         builder: (context, isUpdatedSnapshot) {
           if (isUpdatedSnapshot.hasData) {
-            if (isUpdatedSnapshot.data != '0') {
+            if (isUpdatedSnapshot.data != Utils.toBeUpdated) {
               return UpdatePage(version: isUpdatedSnapshot.data!);
             } else {
               return const TabView();

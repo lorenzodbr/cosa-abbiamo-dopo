@@ -38,6 +38,7 @@ class Utils {
       'https://github.com/lorenzodbr/cosa-abbiamo-dopo/releases/download';
 
   static const String empty = '';
+  static const String toBeUpdated = '0';
 
   static List<MarconiHour> hoursListMonThuFirstGroup = [
     MarconiHour(
@@ -603,7 +604,7 @@ class Utils {
     if (_currentVersion.compareTo(_decodedVersion) < 0) {
       return _decodedVersion;
     } else {
-      return '0';
+      return toBeUpdated;
     }
   }
 
@@ -631,9 +632,9 @@ class Utils {
     return version;
   }
 
-  static Future downloadUpdate(options) async {
+  static Future downloadUpdate(options, version) async {
     return await Flowder.download(
-      Utils.baseProjectDownloadUrl + '/v1.0.0/app-release.apk',
+      Utils.baseProjectDownloadUrl + '/$version/app-release.apk',
       options,
     );
   }

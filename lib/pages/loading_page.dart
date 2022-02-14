@@ -18,7 +18,7 @@ class _LoadingPageState extends State<LoadingPage>
   @override
   void initState() {
     _animationController = AnimationController(
-      duration: const Duration(seconds: 5),
+      duration: const Duration(seconds: 8),
       vsync: this,
     )..forward();
 

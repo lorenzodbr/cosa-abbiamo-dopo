@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flowder/flowder.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class UpdatePage extends StatefulWidget {
   const UpdatePage({Key? key, required this.version}) : super(key: key);
@@ -19,7 +20,7 @@ class UpdatePage extends StatefulWidget {
 
 class _UpdatePageState extends State<UpdatePage> {
   late double _progress;
-  late String path = '';
+  late String path;
 
   @override
   void initState() {
@@ -39,7 +40,7 @@ class _UpdatePageState extends State<UpdatePage> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           const Padding(
-            padding: EdgeInsets.only(bottom: 10),
+            padding: EdgeInsets.only(bottom: 7),
             child: Text(
               "Aggiornamento disponibile",
               style: TextStyle(
@@ -78,7 +79,9 @@ class _UpdatePageState extends State<UpdatePage> {
       file: File('$path/cosa-abbiamo-dopo-${widget.version}.apk'),
       progress: ProgressImplementation(),
       onDone: () async {
-        await _showInstructionDialog();
+        if (await Permission.requestInstallPackages.isRestricted) {
+          await _showInstructionDialog();
+        }
 
         OpenFile.open('$path/cosa-abbiamo-dopo-${widget.version}.apk');
 
@@ -87,7 +90,7 @@ class _UpdatePageState extends State<UpdatePage> {
       deleteOnCancel: true,
     );
 
-    Utils.downloadUpdate(options);
+    Utils.downloadUpdate(options, widget.version);
   }
 
   Future<Directory> _setPath() async {
@@ -105,7 +108,7 @@ class _UpdatePageState extends State<UpdatePage> {
             child: ListBody(
               children: const [
                 Text(
-                  "Se non l'hai già fatto, concedi il permesso per installare l'aggiornamento.",
+                  "Concedi il permesso per installare l'aggiornamento.",
                 ),
               ],
             ),
