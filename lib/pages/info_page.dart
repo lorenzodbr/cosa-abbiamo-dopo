@@ -67,6 +67,7 @@ class _InfoPageState extends State<InfoPage> {
       header:
           "È richiesta una connessione a Internet attiva per utilizzare l'app?",
       body: [
+        "L'app controlla la presenza di aggiornamenti all'avvio per mantenere sempre un'esperienza ottimale. Nel caso non fosse disponibile una connessione, sarà possibile mostrare i dati salvati precedentemente.",
         "L'app scarica gli orari al primo avvio e li memorizza. Nelle volte successive, l'app tenterà di aggiornare i dati, ma, se non fosse disponibile una connessione a Internet, mostrerà quelli memorizzati precedentemente."
       ],
     ),
