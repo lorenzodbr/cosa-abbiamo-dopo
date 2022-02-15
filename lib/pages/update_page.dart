@@ -153,13 +153,13 @@ class _MainWrapperState extends State<MainWrapper> {
   }
 
   Future<void> _initDownload() async {
-    Directory cacheDir = (await _setPath());
+    Directory cacheDir = (await Utils.getCachePath());
 
     String path = cacheDir.path;
 
     if (!mounted) return;
 
-    await Utils.deleteCacheDir(cacheDir);
+    await Utils.deleteCacheDir();
 
     var options = DownloaderUtils(
       progressCallback: (current, total) {
@@ -182,10 +182,6 @@ class _MainWrapperState extends State<MainWrapper> {
     );
 
     Utils.downloadUpdate(options, _version);
-  }
-
-  Future<Directory> _setPath() async {
-    return await getTemporaryDirectory();
   }
 
   Future<void> _showInstructionDialog() async {

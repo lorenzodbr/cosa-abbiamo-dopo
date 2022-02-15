@@ -16,8 +16,6 @@ class _SettingsState extends State<Settings> {
 
   @override
   void initState() {
-    //Utils.lockEasterEgg();
-
     wasEasterEggUnlocked = Utils.wasEasterEggUnlocked();
 
     super.initState();

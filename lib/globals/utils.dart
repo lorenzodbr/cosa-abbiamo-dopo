@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cosa_abbiamo_dopo/globals/extensions/time_of_day_extension.dart';
 import 'package:cosa_abbiamo_dopo/globals/marconi_hour.dart';
 import 'package:cosa_abbiamo_dopo/globals/marconi_lesson.dart';
@@ -625,10 +627,16 @@ class Utils {
     }
   }
 
-  static Future<void> deleteCacheDir(cacheDir) async {
+  static Future<void> deleteCacheDir() async {
+    Directory cacheDir = await getCachePath();
+
     if (cacheDir.existsSync()) {
       cacheDir.deleteSync(recursive: true);
     }
+  }
+
+  static Future<Directory> getCachePath() async {
+    return await getTemporaryDirectory();
   }
 
   static Future<String> fetchVersion() async {

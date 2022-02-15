@@ -10,6 +10,7 @@ void main() async {
 
   Utils.setPortrait();
   Utils.setOptimalDisplayMode();
+  Utils.deleteCacheDir();
 
   runApp(const MyApp());
 }
