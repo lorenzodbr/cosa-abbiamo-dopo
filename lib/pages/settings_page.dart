@@ -2,6 +2,7 @@ import 'package:clean_settings/clean_settings.dart';
 import 'package:cosa_abbiamo_dopo/globals/marconi_lesson.dart';
 import 'package:cosa_abbiamo_dopo/globals/utils.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class Settings extends StatefulWidget {
   const Settings({Key? key}) : super(key: key);
@@ -11,6 +12,8 @@ class Settings extends StatefulWidget {
 }
 
 class _SettingsState extends State<Settings> {
+  int easterEggCounter = 0;
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -43,7 +46,18 @@ class _SettingsState extends State<Settings> {
                     displayValue: getAppVersionSnapshot.hasData
                         ? getAppVersionSnapshot.data
                         : 'Caricamento...',
-                    onTap: () {},
+                    onTap: () async {
+                      if (easterEggCounter < 9) {
+                        easterEggCounter++;
+
+                        Fluttertoast.showToast(
+                          msg: 'Mancano ${9 - easterEggCounter} tocchi',
+                          toastLength: Toast.LENGTH_LONG,
+                          gravity: ToastGravity.CENTER,
+                          timeInSecForIosWeb: 0,
+                        );
+                      }
+                    },
                   );
                 },
               ),
