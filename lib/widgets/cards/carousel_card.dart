@@ -10,7 +10,8 @@ class CarouselCard extends StatelessWidget {
   final TimeOfDay? startingHour;
 
   const CarouselCard(this.openContainer, this.lessonName, this.room,
-      {this.startingHour});
+      {this.startingHour, Key? key})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +36,9 @@ class CarouselCard extends StatelessWidget {
       int minutes = _timeToGo().inMinutes;
 
       Text timeToGo = Text(
-        "fra $minutes minut" + (minutes == 1 ? "o" : "i"),
+        minutes == 0
+            ? "adesso"
+            : "fra $minutes minut" + (minutes == 1 ? "o" : "i"),
         style: const TextStyle(
           color: CustomColors.silver,
           fontSize: 12,

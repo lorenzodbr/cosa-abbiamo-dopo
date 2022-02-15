@@ -11,7 +11,6 @@ import 'package:cosa_abbiamo_dopo/widgets/cards/out_of_range_carousel_card.dart'
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:http/http.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
@@ -163,7 +162,10 @@ class _HomePageState extends State<HomePage> {
                   builder: (context, getClassesSnapshot) {
                     if (getClassesSnapshot.hasError) {
                       return const Expanded(
-                        child: Text('Nessuna connessione'),
+                        child: Text(
+                          'Nessuna connessione',
+                          textAlign: TextAlign.center,
+                        ),
                       );
                     }
 
@@ -198,8 +200,9 @@ class _HomePageState extends State<HomePage> {
                         );
                       }
                       return const Expanded(
-                          child: Text(
-                              "Impossibile caricare l'elenco delle classi"));
+                        child:
+                            Text("Impossibile caricare l'elenco delle classi"),
+                      );
                     } else {
                       return const CircularProgressIndicator();
                     }

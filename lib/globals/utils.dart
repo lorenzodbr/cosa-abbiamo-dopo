@@ -24,10 +24,14 @@ class Utils {
   static const int noSchoolDay = -3;
   static const int inSchoolTime = 0;
 
+  static const int easterEggUpperLimit = 15;
+  static const int easterEggStartingLimit = 10;
+
   static const String savedClass = 'class';
   static const String savedData = 'data';
   static const String lastFetch = 'lastFetch';
   static const String lastUpdate = 'lastUpdate';
+  static const String easterEgg = 'easterEgg';
 
   static const String baseUrl = 'https://apps.marconivr.it/orario/api.php';
   static const String baseProjectUrl = '';
@@ -39,7 +43,7 @@ class Utils {
       'https://github.com/lorenzodbr/cosa-abbiamo-dopo/releases/download';
 
   static const String empty = '';
-  static const String toBeUpdated = '0';
+  static const String notToBeUpdated = '0';
 
   static List<MarconiHour> hoursListMonThuFirstGroup = [
     MarconiHour(
@@ -604,16 +608,20 @@ class Utils {
   }
 
   static Future<String> isUpdated() async {
-    String _rawVersion = await fetchVersion();
+    try {
+      String _rawVersion = await fetchVersion();
 
-    String _currentVersion = 'v' + (await getAppVersion());
+      String _currentVersion = 'v' + (await getAppVersion());
 
-    String _decodedVersion = decodeVersion(_rawVersion);
+      String _decodedVersion = decodeVersion(_rawVersion);
 
-    if (_currentVersion.compareTo(_decodedVersion) < 0) {
-      return _decodedVersion;
-    } else {
-      return toBeUpdated;
+      if (_currentVersion.compareTo(_decodedVersion) < 0) {
+        return _decodedVersion;
+      } else {
+        return notToBeUpdated;
+      }
+    } catch (_) {
+      rethrow;
     }
   }
 
@@ -658,6 +666,18 @@ class Utils {
       Utils.baseProjectDownloadUrl + '/$version/app-release.apk',
       options,
     );
+  }
+
+  static void unlockEasterEgg() {
+    GetStorage().write(easterEgg, true);
+  }
+
+  static void lockEasterEgg() {
+    GetStorage().write(easterEgg, false);
+  }
+
+  static bool wasEasterEggUnlocked() {
+    return GetStorage().read(easterEgg) ?? false;
   }
 
   static void setPortrait() {

@@ -1,4 +1,3 @@
-import 'package:cosa_abbiamo_dopo/globals/custom_colors.dart';
 import 'package:cosa_abbiamo_dopo/globals/utils.dart';
 import 'package:cosa_abbiamo_dopo/pages/homepage.dart';
 import 'package:cosa_abbiamo_dopo/pages/info_page.dart';

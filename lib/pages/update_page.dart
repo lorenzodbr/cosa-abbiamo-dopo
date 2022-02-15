@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:cosa_abbiamo_dopo/globals/custom_colors.dart';
 import 'package:cosa_abbiamo_dopo/globals/utils.dart';
+import 'package:cosa_abbiamo_dopo/pages/tab_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:open_file/open_file.dart';
@@ -9,29 +10,22 @@ import 'package:path_provider/path_provider.dart';
 import 'package:flowder/flowder.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-class UpdatePage extends StatefulWidget {
-  const UpdatePage(
-      {Key? key, this.version, required this.hasError, this.skipUpdate})
-      : super(key: key);
+class MainWrapper extends StatefulWidget {
+  const MainWrapper({Key? key, this.skipUpdate}) : super(key: key);
 
-  final String? version;
-  final bool hasError;
   final VoidCallback? skipUpdate;
 
   @override
-  _UpdatePageState createState() => _UpdatePageState();
+  _MainWrapperState createState() => _MainWrapperState();
 }
 
-class _UpdatePageState extends State<UpdatePage> {
-  double? _progress;
-  late String _path;
+class _MainWrapperState extends State<MainWrapper> {
+  late double? _progress;
+  late String? _version;
+  bool _skipUpdate = false;
 
   @override
   void initState() {
-    _progress = 0;
-
-    _initDownload();
-
     super.initState();
   }
 
@@ -39,11 +33,52 @@ class _UpdatePageState extends State<UpdatePage> {
   Widget build(BuildContext context) {
     return Material(
       color: CustomColors.black,
-      child: widget.hasError ? _buildErrorWidget() : _buildUpdateWidget(),
+      child: _skipUpdate
+          ? const TabView()
+          : FutureBuilder<String>(
+              future: Utils.isUpdated(),
+              builder: (context, isUpdatedSnapshot) {
+                if (isUpdatedSnapshot.hasError) {
+                  return _buildErrorWidget();
+                }
+
+                if (isUpdatedSnapshot.hasData) {
+                  if (isUpdatedSnapshot.data == Utils.notToBeUpdated) {
+                    return const TabView();
+                  } else {
+                    _version = isUpdatedSnapshot.data!;
+                    return _buildUpdateWidget();
+                  }
+                } else {
+                  return Material(
+                    color: CustomColors.black,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: const [
+                        CircularProgressIndicator(color: Colors.white),
+                        Padding(
+                          padding: EdgeInsets.only(top: 10, bottom: 30),
+                          child: Text(
+                            "Ricerca di aggiornamenti",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }
+              },
+            ),
     );
   }
 
   Widget _buildUpdateWidget() {
+    _initDownload();
+
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -59,7 +94,7 @@ class _UpdatePageState extends State<UpdatePage> {
           ),
         ),
         Text(
-          widget.version!,
+          _version!,
           style: const TextStyle(color: CustomColors.grey, fontSize: 18.0),
         ),
         Padding(
@@ -97,7 +132,9 @@ class _UpdatePageState extends State<UpdatePage> {
         ),
         OutlinedButton(
           onPressed: () {
-            widget.skipUpdate;
+            setState(() {
+              _skipUpdate = true;
+            });
           },
           style: OutlinedButton.styleFrom(
             side: const BorderSide(color: CustomColors.darkGrey),
@@ -130,21 +167,21 @@ class _UpdatePageState extends State<UpdatePage> {
           _progress = (current / total);
         });
       },
-      file: File('$path/cosa-abbiamo-dopo-${widget.version}.apk'),
+      file: File('$path/cosa-abbiamo-dopo-$_version.apk'),
       progress: ProgressImplementation(),
       onDone: () async {
         if (!(await Permission.requestInstallPackages.isGranted)) {
           await _showInstructionDialog();
         }
 
-        OpenFile.open('$path/cosa-abbiamo-dopo-${widget.version}.apk');
+        OpenFile.open('$path/cosa-abbiamo-dopo-$_version.apk');
 
         SystemNavigator.pop();
       },
       deleteOnCancel: true,
     );
 
-    Utils.downloadUpdate(options, widget.version);
+    Utils.downloadUpdate(options, _version);
   }
 
   Future<Directory> _setPath() async {

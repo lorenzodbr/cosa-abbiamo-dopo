@@ -1,7 +1,5 @@
 import 'package:cosa_abbiamo_dopo/globals/custom_colors.dart';
 import 'package:cosa_abbiamo_dopo/globals/utils.dart';
-import 'package:cosa_abbiamo_dopo/pages/main_wrapper.dart';
-import 'package:cosa_abbiamo_dopo/pages/tab_view.dart';
 import 'package:cosa_abbiamo_dopo/pages/update_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
@@ -13,18 +11,16 @@ void main() async {
   Utils.setPortrait();
   Utils.setOptimalDisplayMode();
 
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  MyApp({Key? key}) : super(key: key);
-
-  bool _skipUpdate = false;
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: MainWrapper(),
+      home: const MainWrapper(),
       theme: ThemeData(
         textTheme: GoogleFonts.workSansTextTheme(
           Theme.of(context).textTheme,

@@ -1,8 +1,7 @@
 import 'package:clean_settings/clean_settings.dart';
-import 'package:cosa_abbiamo_dopo/globals/marconi_lesson.dart';
 import 'package:cosa_abbiamo_dopo/globals/utils.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class Settings extends StatefulWidget {
   const Settings({Key? key}) : super(key: key);
@@ -13,6 +12,16 @@ class Settings extends StatefulWidget {
 
 class _SettingsState extends State<Settings> {
   int easterEggCounter = 0;
+  late bool wasEasterEggUnlocked;
+
+  @override
+  void initState() {
+    //Utils.lockEasterEgg();
+
+    wasEasterEggUnlocked = Utils.wasEasterEggUnlocked();
+
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,26 +55,73 @@ class _SettingsState extends State<Settings> {
                     displayValue: getAppVersionSnapshot.hasData
                         ? getAppVersionSnapshot.data
                         : 'Caricamento...',
-                    onTap: () async {
-                      if (easterEggCounter < 9) {
+                    onTap: () {
+                      if (!wasEasterEggUnlocked &&
+                          easterEggCounter < Utils.easterEggUpperLimit) {
                         easterEggCounter++;
 
-                        Fluttertoast.showToast(
-                          msg: 'Mancano ${9 - easterEggCounter} tocchi',
-                          toastLength: Toast.LENGTH_LONG,
-                          gravity: ToastGravity.CENTER,
-                          timeInSecForIosWeb: 0,
-                        );
+                        print(easterEggCounter);
+
+                        int difference =
+                            Utils.easterEggUpperLimit - easterEggCounter;
+
+                        if (difference <= Utils.easterEggStartingLimit &&
+                            difference != 0) {
+                          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                difference == 1
+                                    ? 'Manca $difference tocco per sbloccare un Easter Egg'
+                                    : 'Mancano $difference tocchi per sbloccare un Easter Egg',
+                              ),
+                              duration: const Duration(milliseconds: 500),
+                            ),
+                          );
+                        }
+                      }
+
+                      if (easterEggCounter == Utils.easterEggUpperLimit) {
+                        if (!wasEasterEggUnlocked) {
+                          print('unlocked');
+                          setState(() {
+                            Utils.unlockEasterEgg();
+                            wasEasterEggUnlocked = true;
+                          });
+                        }
                       }
                     },
                   );
                 },
               ),
+              ...addEasterEgg(),
             ],
           ),
         ],
       ),
     );
+  }
+
+  List<SettingItem> addEasterEgg() {
+    if (wasEasterEggUnlocked) {
+      return [
+        SettingItem(
+          title: 'Easter Egg',
+          displayValue:
+              'Hai sbloccato un Easter Egg! Clicca per riscattare il premio',
+          onTap: () async {
+            String url = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
+
+            if (await canLaunch(url)) {
+              await launch(url);
+            }
+          },
+        )
+      ];
+    } else {
+      return [];
+    }
   }
 
   Widget _buildClassesWheel() {

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 class OutOfRangeCarouselCard extends StatelessWidget {
   final int hourRange;
 
-  const OutOfRangeCarouselCard(this.hourRange);
+  const OutOfRangeCarouselCard(this.hourRange, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

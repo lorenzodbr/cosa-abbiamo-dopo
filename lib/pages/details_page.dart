@@ -12,15 +12,16 @@ class DetailsPage extends StatelessWidget {
 
   final VoidCallback closeContainer;
 
-  const DetailsPage({
-    required this.subject,
-    required this.teachers,
-    required this.room,
-    required this.hourIndex,
-    required this.endHour,
-    required this.startHour,
-    required this.closeContainer,
-  });
+  const DetailsPage(
+      {required this.subject,
+      required this.teachers,
+      required this.room,
+      required this.hourIndex,
+      required this.endHour,
+      required this.startHour,
+      required this.closeContainer,
+      Key? key})
+      : super(key: key);
 
   static const hours = [
     "Prima",
