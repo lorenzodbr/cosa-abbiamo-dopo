@@ -26,7 +26,7 @@ class UpdatePage extends StatefulWidget {
 }
 
 class _UpdatePageState extends State<UpdatePage> {
-  late double _progress;
+  double? _progress;
   late String _path;
 
   @override
