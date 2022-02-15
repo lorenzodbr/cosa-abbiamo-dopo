@@ -29,9 +29,6 @@ class _TabViewState extends State<TabView> {
   void initState() {
     super.initState();
 
-    Utils.setPortrait();
-    Utils.setOptimalDisplayMode();
-
     _pageController = PageController(
       initialPage: _pageIndex,
     );

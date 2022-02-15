@@ -9,11 +9,16 @@ import 'package:google_fonts/google_fonts.dart';
 void main() async {
   await GetStorage.init();
 
-  runApp(const MyApp());
+  Utils.setPortrait();
+  Utils.setOptimalDisplayMode();
+
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  MyApp({Key? key}) : super(key: key);
+
+  bool _skipUpdate = false;
 
   @override
   Widget build(BuildContext context) {
@@ -21,9 +26,23 @@ class MyApp extends StatelessWidget {
       home: FutureBuilder<String>(
         future: Utils.isUpdated(),
         builder: (context, isUpdatedSnapshot) {
-          if (isUpdatedSnapshot.hasData) {
+          if (isUpdatedSnapshot.hasError) {
+            return UpdatePage(
+              version: '0',
+              hasError: true,
+              skipUpdate: () {
+                _skipUpdate = true;
+              },
+            );
+          }
+
+          if (isUpdatedSnapshot.hasData || _skipUpdate) {
             if (isUpdatedSnapshot.data != Utils.toBeUpdated) {
-              return UpdatePage(version: isUpdatedSnapshot.data!);
+              return UpdatePage(
+                version: isUpdatedSnapshot.data!,
+                hasError: false,
+                skipUpdate: null,
+              );
             } else {
               return const TabView();
             }
@@ -38,7 +57,7 @@ class MyApp extends StatelessWidget {
                   Padding(
                     padding: EdgeInsets.only(top: 10, bottom: 30),
                     child: Text(
-                      "Ricerca aggiornamenti...",
+                      "Ricerca di aggiornamenti",
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 20,

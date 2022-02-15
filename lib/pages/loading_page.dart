@@ -18,13 +18,13 @@ class _LoadingPageState extends State<LoadingPage>
   @override
   void initState() {
     _animationController = AnimationController(
-      duration: const Duration(seconds: 8),
+      duration: const Duration(seconds: 10),
       vsync: this,
     )..forward();
 
     _animation = CurvedAnimation(
       parent: _animationController,
-      curve: const Interval(0.9, 1.0, curve: Curves.easeIn),
+      curve: const Interval(0.97, 1.0, curve: Curves.easeIn),
     );
 
     super.initState();
@@ -34,9 +34,11 @@ class _LoadingPageState extends State<LoadingPage>
   Widget build(BuildContext context) {
     return Material(
       color: CustomColors.black,
-      child: Stack(
-        alignment: Alignment.center,
+      child: Column(
         children: [
+          const Spacer(
+            flex: 5,
+          ),
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -54,38 +56,46 @@ class _LoadingPageState extends State<LoadingPage>
               ),
             ],
           ),
-          Positioned(
-            bottom: 150,
-            child: FadeTransition(
-              opacity: _animation,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  const Text(
-                    'Ci sta volendo\npiù tempo del previsto',
+          const Spacer(flex: 2),
+          FadeTransition(
+            opacity: _animation,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const Text(
+                  'Ci sta volendo\npiù tempo del previsto',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 12,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const Padding(
+                  padding: EdgeInsets.all(2),
+                ),
+                OutlinedButton(
+                  onPressed: () {
+                    setState;
+                  },
+                  style: OutlinedButton.styleFrom(
+                    side: const BorderSide(
+                      color: CustomColors.darkGrey,
+                    ),
+                    primary: CustomColors.white,
+                  ),
+                  child: const Text(
+                    "Mostra dati salvati",
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 12,
                     ),
-                    textAlign: TextAlign.center,
                   ),
-                  const Padding(padding: EdgeInsets.all(2)),
-                  OutlinedButton(
-                    onPressed: () {
-                      setState;
-                    },
-                    style: OutlinedButton.styleFrom(
-                      side: const BorderSide(color: CustomColors.darkGrey),
-                      primary: CustomColors.white,
-                    ),
-                    child: const Text(
-                      "Mostra dati salvati",
-                      style: TextStyle(color: Colors.white, fontSize: 12),
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
+          ),
+          const Spacer(
+            flex: 2,
           ),
         ],
       ),

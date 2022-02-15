@@ -3,6 +3,7 @@ import 'package:cosa_abbiamo_dopo/globals/marconi_hour.dart';
 import 'package:cosa_abbiamo_dopo/globals/marconi_lesson.dart';
 import 'package:cosa_abbiamo_dopo/globals/marconi_teacher.dart';
 import 'package:flowder/flowder.dart';
+import 'package:path_provider/path_provider.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -605,6 +606,12 @@ class Utils {
       return _decodedVersion;
     } else {
       return toBeUpdated;
+    }
+  }
+
+  static Future<void> deleteCacheDir(cacheDir) async {
+    if (cacheDir.existsSync()) {
+      cacheDir.deleteSync(recursive: true);
     }
   }
 

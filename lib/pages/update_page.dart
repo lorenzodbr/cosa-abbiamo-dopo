@@ -10,9 +10,16 @@ import 'package:flowder/flowder.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class UpdatePage extends StatefulWidget {
-  const UpdatePage({Key? key, required this.version}) : super(key: key);
+  const UpdatePage(
+      {Key? key,
+      required this.version,
+      required this.hasError,
+      this.skipUpdate})
+      : super(key: key);
 
   final String version;
+  final bool hasError;
+  final VoidCallback? skipUpdate;
 
   @override
   _UpdatePageState createState() => _UpdatePageState();
@@ -20,7 +27,7 @@ class UpdatePage extends StatefulWidget {
 
 class _UpdatePageState extends State<UpdatePage> {
   late double _progress;
-  late String path;
+  late String _path;
 
   @override
   void initState() {
@@ -35,40 +42,90 @@ class _UpdatePageState extends State<UpdatePage> {
   Widget build(BuildContext context) {
     return Material(
       color: CustomColors.black,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          const Padding(
-            padding: EdgeInsets.only(bottom: 7),
-            child: Text(
-              "Aggiornamento disponibile",
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 20,
-              ),
+      child: widget.hasError ? _buildErrorWidget() : _buildUpdateWidget(),
+    );
+  }
+
+  Widget _buildUpdateWidget() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        const Padding(
+          padding: EdgeInsets.only(bottom: 7),
+          child: Text(
+            "Aggiornamento",
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 20,
             ),
           ),
-          Text(
-            widget.version,
-            style: const TextStyle(color: CustomColors.grey, fontSize: 18.0),
+        ),
+        Text(
+          widget.version,
+          style: const TextStyle(color: CustomColors.grey, fontSize: 18.0),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
+          child: LinearProgressIndicator(
+              value: _progress,
+              backgroundColor: CustomColors.darkGrey,
+              color: CustomColors.white),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildErrorWidget() {
+    return Column(
+      children: [
+        const Spacer(
+          flex: 5,
+        ),
+        const Icon(
+          Icons.wifi_off,
+          size: 80,
+          color: CustomColors.grey,
+        ),
+        const Text(
+          "Nessuna connessione a internet.",
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 20,
           ),
-          Padding(
-            padding:
-                const EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
-            child: LinearProgressIndicator(
-                value: _progress,
-                backgroundColor: CustomColors.darkGrey,
-                color: CustomColors.white),
+        ),
+        const Spacer(
+          flex: 2,
+        ),
+        OutlinedButton(
+          onPressed: () {
+            widget.skipUpdate;
+          },
+          style: OutlinedButton.styleFrom(
+            side: const BorderSide(color: CustomColors.darkGrey),
+            primary: CustomColors.white,
           ),
-        ],
-      ),
+          child: const Text(
+            "Mostra dati salvati",
+            style: TextStyle(color: Colors.white, fontSize: 12),
+          ),
+        ),
+        const Spacer(
+          flex: 2,
+        ),
+      ],
     );
   }
 
   Future<void> _initDownload() async {
-    path = (await _setPath()).path;
+    Directory cacheDir = (await _setPath());
+
+    String path = cacheDir.path;
+
     if (!mounted) return;
+
+    await Utils.deleteCacheDir(cacheDir);
 
     var options = DownloaderUtils(
       progressCallback: (current, total) {
@@ -79,7 +136,7 @@ class _UpdatePageState extends State<UpdatePage> {
       file: File('$path/cosa-abbiamo-dopo-${widget.version}.apk'),
       progress: ProgressImplementation(),
       onDone: () async {
-        if (await Permission.requestInstallPackages.isRestricted) {
+        if (!(await Permission.requestInstallPackages.isGranted)) {
           await _showInstructionDialog();
         }
 
@@ -103,12 +160,16 @@ class _UpdatePageState extends State<UpdatePage> {
       barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
+          backgroundColor: CustomColors.darkGrey,
           title: const Text('Attenzione'),
           content: SingleChildScrollView(
             child: ListBody(
               children: const [
                 Text(
                   "Concedi il permesso per installare l'aggiornamento.",
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
                 ),
               ],
             ),
