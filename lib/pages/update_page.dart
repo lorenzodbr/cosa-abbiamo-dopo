@@ -11,13 +11,10 @@ import 'package:permission_handler/permission_handler.dart';
 
 class UpdatePage extends StatefulWidget {
   const UpdatePage(
-      {Key? key,
-      required this.version,
-      required this.hasError,
-      this.skipUpdate})
+      {Key? key, this.version, required this.hasError, this.skipUpdate})
       : super(key: key);
 
-  final String version;
+  final String? version;
   final bool hasError;
   final VoidCallback? skipUpdate;
 
@@ -62,7 +59,7 @@ class _UpdatePageState extends State<UpdatePage> {
           ),
         ),
         Text(
-          widget.version,
+          widget.version!,
           style: const TextStyle(color: CustomColors.grey, fontSize: 18.0),
         ),
         Padding(

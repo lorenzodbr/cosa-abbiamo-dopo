@@ -286,17 +286,25 @@ class Utils {
   }
 
   static Future<String> getRawClasses() async {
-    return await fetchClasses();
+    try {
+      return await fetchClasses();
+    } catch (_) {
+      rethrow;
+    }
   }
 
   static Future<List<String>> getClasses() async {
-    String _rawClassesString = await getRawClasses();
+    try {
+      String _rawClassesString = await getRawClasses();
 
-    if (_rawClassesString == empty) {
-      return [];
+      if (_rawClassesString == empty) {
+        return [];
+      }
+
+      return decodeClasses(_rawClassesString);
+    } catch (_) {
+      rethrow;
     }
-
-    return decodeClasses(_rawClassesString);
   }
 
   static bool isFirstGroup(List<MarconiLesson> lessons) {
@@ -632,11 +640,17 @@ class Utils {
   }
 
   static String decodeVersion(String data) {
-    String splitted = data.split('"tag_name":')[1];
+    String tempSplitted = data.split('"tag_name":')[1];
 
-    String version = splitted.substring(1, splitted.indexOf('",'));
+    if (tempSplitted.startsWith('"')) {
+      String splitted = tempSplitted;
 
-    return version;
+      String version = splitted.substring(1, splitted.indexOf('",'));
+
+      return version;
+    } else {
+      return '';
+    }
   }
 
   static Future downloadUpdate(options, version) async {

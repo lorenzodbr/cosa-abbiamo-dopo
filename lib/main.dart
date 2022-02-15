@@ -28,7 +28,6 @@ class MyApp extends StatelessWidget {
         builder: (context, isUpdatedSnapshot) {
           if (isUpdatedSnapshot.hasError) {
             return UpdatePage(
-              version: '0',
               hasError: true,
               skipUpdate: () {
                 _skipUpdate = true;

@@ -11,6 +11,7 @@ import 'package:cosa_abbiamo_dopo/widgets/cards/out_of_range_carousel_card.dart'
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:http/http.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
@@ -160,35 +161,45 @@ class _HomePageState extends State<HomePage> {
                 FutureBuilder<List<String>>(
                   future: Utils.getClasses(),
                   builder: (context, getClassesSnapshot) {
+                    if (getClassesSnapshot.hasError) {
+                      return const Expanded(
+                        child: Text('Nessuna connessione'),
+                      );
+                    }
+
                     if (getClassesSnapshot.hasData) {
                       _classes = getClassesSnapshot.data ?? [];
 
-                      _initialValueIndex =
-                          getClassesSnapshot.data!.indexOf(_savedClass);
+                      if (_classes.isNotEmpty) {
+                        _initialValueIndex = _classes.indexOf(_savedClass);
 
-                      _selectedValueIndex = _initialValueIndex;
-                      return Expanded(
-                        child: CupertinoPicker(
-                          scrollController: FixedExtentScrollController(
-                              initialItem: _selectedValueIndex),
-                          itemExtent: 50.0,
-                          onSelectedItemChanged: (int value) {
-                            _selectedValueIndex = value;
-                          },
-                          children: getClassesSnapshot.data!
-                              .map(
-                                (e) => Center(
-                                  child: Text(
-                                    e.toString(),
-                                    style: GoogleFonts.workSans(
-                                      textStyle: kWheelPickerItem,
+                        _selectedValueIndex = _initialValueIndex;
+                        return Expanded(
+                          child: CupertinoPicker(
+                            scrollController: FixedExtentScrollController(
+                                initialItem: _selectedValueIndex),
+                            itemExtent: 50.0,
+                            onSelectedItemChanged: (int value) {
+                              _selectedValueIndex = value;
+                            },
+                            children: getClassesSnapshot.data!
+                                .map(
+                                  (e) => Center(
+                                    child: Text(
+                                      e.toString(),
+                                      style: GoogleFonts.workSans(
+                                        textStyle: kWheelPickerItem,
+                                      ),
                                     ),
                                   ),
-                                ),
-                              )
-                              .toList(),
-                        ),
-                      );
+                                )
+                                .toList(),
+                          ),
+                        );
+                      }
+                      return const Expanded(
+                          child: Text(
+                              "Impossibile caricare l'elenco delle classi"));
                     } else {
                       return const CircularProgressIndicator();
                     }
