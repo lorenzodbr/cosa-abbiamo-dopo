@@ -25,6 +25,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      title: 'Cosa abbiamo dopo?',
       home: const MainWrapper(),
       theme: ThemeData(
         textTheme: GoogleFonts.workSansTextTheme(

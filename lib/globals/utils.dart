@@ -672,16 +672,20 @@ class Utils {
   }
 
   static String decodeVersion(String data) {
-    String tempSplitted = data.split('"tag_name":')[1];
+    try {
+      String tempSplitted = data.split('"tag_name":')[1];
 
-    if (tempSplitted.startsWith('"')) {
-      String splitted = tempSplitted;
+      if (tempSplitted.startsWith('"')) {
+        String splitted = tempSplitted;
 
-      String version = splitted.substring(1, splitted.indexOf('",'));
+        String version = splitted.substring(1, splitted.indexOf('",'));
 
-      return version;
-    } else {
-      return '';
+        return version;
+      } else {
+        return notToBeUpdated;
+      }
+    } catch (_) {
+      return notToBeUpdated;
     }
   }
 

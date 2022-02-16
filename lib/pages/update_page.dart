@@ -19,7 +19,7 @@ class UpdatePage extends StatefulWidget {
 }
 
 class _UpdatePageState extends State<UpdatePage> {
-  late double? _progress;
+  double _progress = 0;
   late String? _version;
 
   @override
