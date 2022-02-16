@@ -1,6 +1,8 @@
 import 'package:cosa_abbiamo_dopo/globals/custom_colors.dart';
 import 'package:cosa_abbiamo_dopo/globals/custom_icons_icons.dart';
 import 'package:cosa_abbiamo_dopo/globals/item_model.dart';
+import 'package:cosa_abbiamo_dopo/globals/utils.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -21,10 +23,10 @@ class _InfoPageState extends State<InfoPage> {
       ],
       button: [
         ElevatedButton.icon(
-          icon: const Icon(CustomIcons.telegram_plane),
+          icon: const Icon(CustomIcons.telegramPlane),
           label: const Text("Telegram"),
           onPressed: () async {
-            String url = "https://t.me/lorenzodiberardino";
+            String url = Utils.telegramUrl;
 
             if (await canLaunch(url)) {
               await launch(url);
@@ -38,7 +40,7 @@ class _InfoPageState extends State<InfoPage> {
           icon: const Icon(Icons.email),
           label: const Text("Email"),
           onPressed: () async {
-            String url = "mailto:lorenzo.diberardino03@gmail.com";
+            String url = Utils.emailUrl;
 
             if (await canLaunch(url)) {
               await launch(url);
@@ -68,7 +70,6 @@ class _InfoPageState extends State<InfoPage> {
           "È richiesta una connessione a Internet attiva per utilizzare l'app?",
       body: [
         "L'app controlla la presenza di aggiornamenti all'avvio per mantenere sempre un'esperienza ottimale. Nel caso non fosse disponibile una connessione, sarà possibile mostrare i dati salvati precedentemente.",
-        "L'app scarica gli orari al primo avvio e li memorizza. Nelle volte successive, l'app tenterà di aggiornare i dati, ma, se non fosse disponibile una connessione a Internet, mostrerà quelli memorizzati precedentemente."
       ],
     ),
     ItemModel(
@@ -82,7 +83,48 @@ class _InfoPageState extends State<InfoPage> {
           icon: const Icon(CustomIcons.github),
           label: const Text("Progetto"),
           onPressed: () async {
-            String url = "https://github.com/lorenzodbr/cosa-abbiamo-dopo";
+            String url = Utils.baseProjectUrl;
+
+            if (await canLaunch(url)) {
+              await launch(url);
+            }
+          },
+          style: ElevatedButton.styleFrom(
+            primary: Colors.black,
+          ),
+        ),
+      ],
+    ),
+    ItemModel(
+      isPlaformDependent: true,
+      headers: [
+        "Quest'app è disponibile su un'altra piattaforma?",
+        "Questa WebApp è disponibile su un'altra piattaforma?"
+      ],
+      body: [
+        "È disponibile anche una WebApp. Puoi accedervi con il pulsante qui sotto.",
+        "È disponibile anche un'app per Android. Puoi scaricarla con il pulsante qui sotto."
+      ],
+      button: [
+        ElevatedButton.icon(
+          icon: const Icon(Icons.open_in_browser),
+          label: const Text("WebApp"),
+          onPressed: () async {
+            String url = Utils.baseWebAppUrl;
+
+            if (await canLaunch(url)) {
+              await launch(url);
+            }
+          },
+          style: ElevatedButton.styleFrom(
+            primary: Colors.black,
+          ),
+        ),
+        ElevatedButton.icon(
+          icon: const Icon(Icons.open_in_browser),
+          label: const Text("App"),
+          onPressed: () async {
+            String url = Utils.baseProjectDownloadUrl;
 
             if (await canLaunch(url)) {
               await launch(url);
@@ -149,7 +191,9 @@ class _InfoPageState extends State<InfoPage> {
             padding: const EdgeInsets.all(5),
             child: ListTile(
               title: Text(
-                item.header,
+                item.isPlaformDependent
+                    ? item.headers[kIsWeb ? 1 : 0]
+                    : item.header,
                 style: TextStyle(
                     fontWeight:
                         isExpanded ? FontWeight.bold : FontWeight.normal),
@@ -167,16 +211,28 @@ class _InfoPageState extends State<InfoPage> {
   Widget _buildExpansionBody(ItemModel item) {
     List<Widget> body = [];
 
-    for (String bodyLine in item.body) {
+    if (item.isPlaformDependent) {
       body.add(
         Padding(
           padding: const EdgeInsets.only(left: 15, right: 15, bottom: 5),
           child: Text(
-            bodyLine,
+            item.body[kIsWeb ? 1 : 0],
             textAlign: TextAlign.justify,
           ),
         ),
       );
+    } else {
+      for (String bodyLine in item.body) {
+        body.add(
+          Padding(
+            padding: const EdgeInsets.only(left: 15, right: 15, bottom: 5),
+            child: Text(
+              bodyLine,
+              textAlign: TextAlign.justify,
+            ),
+          ),
+        );
+      }
     }
 
     List<Widget> widgets = [
@@ -193,15 +249,26 @@ class _InfoPageState extends State<InfoPage> {
     if (item.button != null) {
       List<Widget> buttons = [];
 
-      for (ElevatedButton button in item.button!) {
+      if (item.isPlaformDependent) {
         buttons.add(
           Expanded(
             child: Padding(
               padding: const EdgeInsets.all(3),
-              child: button,
+              child: item.button![kIsWeb ? 1 : 0],
             ),
           ),
         );
+      } else {
+        for (ElevatedButton button in item.button!) {
+          buttons.add(
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(3),
+                child: button,
+              ),
+            ),
+          );
+        }
       }
 
       widgets.add(Padding(

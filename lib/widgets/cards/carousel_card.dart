@@ -20,7 +20,7 @@ class CarouselCard extends StatelessWidget {
         shape: BoxShape.rectangle,
         borderRadius: BorderRadius.circular(30),
       ),
-      width: 500,
+      width: 400,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,

@@ -3,76 +3,67 @@ import 'dart:io';
 import 'package:cosa_abbiamo_dopo/globals/custom_colors.dart';
 import 'package:cosa_abbiamo_dopo/globals/utils.dart';
 import 'package:cosa_abbiamo_dopo/pages/tab_view.dart';
+import 'package:flowder/flowder.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:open_file/open_file.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:flowder/flowder.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-class MainWrapper extends StatefulWidget {
-  const MainWrapper({Key? key, this.skipUpdate}) : super(key: key);
+class UpdatePage extends StatefulWidget {
+  const UpdatePage({Key? key, required this.refresh}) : super(key: key);
 
-  final VoidCallback? skipUpdate;
+  final VoidCallback refresh;
 
   @override
-  _MainWrapperState createState() => _MainWrapperState();
+  _UpdatePageState createState() => _UpdatePageState();
 }
 
-class _MainWrapperState extends State<MainWrapper> {
+class _UpdatePageState extends State<UpdatePage> {
   late double? _progress;
   late String? _version;
-  bool _skipUpdate = false;
-
-  @override
-  void initState() {
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
     return Material(
       color: CustomColors.black,
-      child: _skipUpdate
-          ? const TabView()
-          : FutureBuilder<String>(
-              future: Utils.isUpdated(),
-              builder: (context, isUpdatedSnapshot) {
-                if (isUpdatedSnapshot.hasError) {
-                  return _buildErrorWidget();
-                }
+      child: FutureBuilder<String>(
+        future: Utils.isUpdated(),
+        builder: (context, isUpdatedSnapshot) {
+          if (isUpdatedSnapshot.hasError) {
+            return _buildErrorWidget();
+          }
 
-                if (isUpdatedSnapshot.hasData) {
-                  if (isUpdatedSnapshot.data == Utils.notToBeUpdated) {
-                    return const TabView();
-                  } else {
-                    _version = isUpdatedSnapshot.data!;
-                    return _buildUpdateWidget();
-                  }
-                } else {
-                  return Material(
-                    color: CustomColors.black,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: const [
-                        CircularProgressIndicator(color: Colors.white),
-                        Padding(
-                          padding: EdgeInsets.only(top: 10, bottom: 30),
-                          child: Text(
-                            "Ricerca di aggiornamenti",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 20,
-                            ),
-                          ),
-                        ),
-                      ],
+          if (isUpdatedSnapshot.hasData) {
+            if (isUpdatedSnapshot.data == Utils.notToBeUpdated) {
+              return const TabView();
+            } else {
+              _version = isUpdatedSnapshot.data!;
+              return _buildUpdateWidget();
+            }
+          } else {
+            return Material(
+              color: CustomColors.black,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: const [
+                  CircularProgressIndicator(color: Colors.white),
+                  Padding(
+                    padding: EdgeInsets.only(top: 10, bottom: 30),
+                    child: Text(
+                      "Ricerca aggiornamenti",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                      ),
                     ),
-                  );
-                }
-              },
-            ),
+                  ),
+                ],
+              ),
+            );
+          }
+        },
+      ),
     );
   }
 
@@ -131,11 +122,7 @@ class _MainWrapperState extends State<MainWrapper> {
           flex: 2,
         ),
         OutlinedButton(
-          onPressed: () {
-            setState(() {
-              _skipUpdate = true;
-            });
-          },
+          onPressed: widget.refresh,
           style: OutlinedButton.styleFrom(
             side: const BorderSide(color: CustomColors.darkGrey),
             primary: CustomColors.white,
@@ -170,7 +157,9 @@ class _MainWrapperState extends State<MainWrapper> {
       file: File('$path/cosa-abbiamo-dopo-$_version.apk'),
       progress: ProgressImplementation(),
       onDone: () async {
-        if (!(await Permission.requestInstallPackages.isGranted)) {
+        bool permission = await Permission.requestInstallPackages.isGranted;
+
+        if (!permission) {
           await _showInstructionDialog();
         }
 

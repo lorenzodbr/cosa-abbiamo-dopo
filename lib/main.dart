@@ -1,6 +1,8 @@
 import 'package:cosa_abbiamo_dopo/globals/custom_colors.dart';
 import 'package:cosa_abbiamo_dopo/globals/utils.dart';
-import 'package:cosa_abbiamo_dopo/pages/update_page.dart';
+import 'package:cosa_abbiamo_dopo/pages/main_wrapper.dart';
+import 'package:cosa_abbiamo_dopo/pages/tab_view.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -8,9 +10,11 @@ import 'package:google_fonts/google_fonts.dart';
 void main() async {
   await GetStorage.init();
 
-  Utils.setPortrait();
-  Utils.setOptimalDisplayMode();
-  Utils.deleteCacheDir();
+  if (!kIsWeb) {
+    Utils.setPortrait();
+    Utils.setOptimalDisplayMode();
+    Utils.deleteCacheDir();
+  }
 
   runApp(const MyApp());
 }
@@ -27,7 +31,7 @@ class MyApp extends StatelessWidget {
           Theme.of(context).textTheme,
         ),
         colorScheme: ThemeData().colorScheme.copyWith(
-              secondary: CustomColors.black,
+              secondary: CustomColors.white,
               primary: CustomColors.black,
             ),
       ),

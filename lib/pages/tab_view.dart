@@ -61,11 +61,13 @@ class _TabViewState extends State<TabView> {
             ),
           );
         } else {
-          return LoadingPage(setState: () {
-            setState(() {
-              _skipLoading = true;
-            });
-          });
+          return LoadingPage(
+            refresh: () {
+              setState(() {
+                _skipLoading = true;
+              });
+            },
+          );
         }
       },
     );

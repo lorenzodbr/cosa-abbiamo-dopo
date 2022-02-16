@@ -34,11 +34,13 @@ class _SettingsState extends State<Settings> {
                 title: 'Ultimo aggiornamento degli orari',
                 displayValue: Utils.getLastUpdate(),
                 onTap: () {},
+                onLongPress: () {},
               ),
               SettingItem(
                 title: 'Ultima ricerca di aggiornamenti degli orari',
                 displayValue: Utils.getLastFetch(),
                 onTap: () {},
+                onLongPress: () {},
               ),
             ],
           ),
@@ -58,38 +60,41 @@ class _SettingsState extends State<Settings> {
                           easterEggCounter < Utils.easterEggUpperLimit) {
                         easterEggCounter++;
 
-                        print(easterEggCounter);
-
                         int difference =
                             Utils.easterEggUpperLimit - easterEggCounter;
 
                         if (difference <= Utils.easterEggStartingLimit &&
-                            difference != 0) {
+                            difference > 0) {
                           ScaffoldMessenger.of(context).hideCurrentSnackBar();
 
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text(
                                 difference == 1
-                                    ? 'Manca $difference tocco per sbloccare un Easter Egg'
-                                    : 'Mancano $difference tocchi per sbloccare un Easter Egg',
+                                    ? 'Manca $difference tocco per sbloccare un easter egg'
+                                    : 'Mancano $difference tocchi per sbloccare un easter egg',
                               ),
                               duration: const Duration(milliseconds: 500),
                             ),
                           );
                         }
+
+                        if (difference == 0) {
+                          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                        }
                       }
 
                       if (easterEggCounter == Utils.easterEggUpperLimit) {
                         if (!wasEasterEggUnlocked) {
-                          print('unlocked');
+                          Utils.unlockEasterEgg();
+
                           setState(() {
-                            Utils.unlockEasterEgg();
                             wasEasterEggUnlocked = true;
                           });
                         }
                       }
                     },
+                    onLongPress: () {},
                   );
                 },
               ),
@@ -105,17 +110,34 @@ class _SettingsState extends State<Settings> {
     if (wasEasterEggUnlocked) {
       return [
         SettingItem(
-          title: 'Easter Egg',
-          displayValue:
-              'Hai sbloccato un Easter Egg! Clicca per riscattare il premio',
-          onTap: () async {
-            String url = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
+            title: 'Easter Egg',
+            displayValue: 'Riscatta il premio',
+            onTap: () async {
+              String url = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
 
-            if (await canLaunch(url)) {
-              await launch(url);
-            }
-          },
-        )
+              if (await canLaunch(url)) {
+                await launch(url);
+              }
+            },
+            onLongPress: () {
+              setState(() {
+                Utils.lockEasterEgg();
+
+                setState(() {
+                  wasEasterEggUnlocked = false;
+                  easterEggCounter = 0;
+                });
+
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text(
+                      'Easter Egg nascosto',
+                    ),
+                    duration: Duration(milliseconds: 500),
+                  ),
+                );
+              });
+            })
       ];
     } else {
       return [];
@@ -127,12 +149,12 @@ class _SettingsState extends State<Settings> {
       future: Utils.getClasses(),
       builder: (context, getClassesSnapshot) {
         if (getClassesSnapshot.hasError) {
-          return SettingRadioItem<String>(
+          return SettingWheelPickerItem(
             title: 'Seleziona classe',
-            priority: ItemPriority.disabled,
+            displayValue: 'Connettiti a Internet per cambiare classe',
             items: const [],
             onChanged: (_) {},
-            displayValue: 'Impossibile caricare la lista delle classi',
+            priority: ItemPriority.disabled,
           );
         }
 
@@ -180,12 +202,12 @@ class _SettingsState extends State<Settings> {
               },
             );
           } else {
-            return SettingWheelPickerItem(
+            return SettingRadioItem<String>(
               title: 'Seleziona classe',
-              displayValue: 'Connettiti a Internet per cambiare classe',
+              priority: ItemPriority.disabled,
               items: const [],
               onChanged: (_) {},
-              priority: ItemPriority.disabled,
+              displayValue: 'Impossibile caricare la lista delle classi',
             );
           }
         } else {

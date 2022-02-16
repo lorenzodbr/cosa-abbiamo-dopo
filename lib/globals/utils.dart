@@ -6,6 +6,7 @@ import 'package:cosa_abbiamo_dopo/globals/marconi_lesson.dart';
 import 'package:cosa_abbiamo_dopo/globals/marconi_teacher.dart';
 import 'package:flowder/flowder.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -24,7 +25,11 @@ class Utils {
   static const int beforeSchoolTime = -1;
   static const int afterSchoolTime = -2;
   static const int noSchoolDay = -3;
+  static const int schoolEndedOrYetToStart = -4;
   static const int inSchoolTime = 0;
+
+  static DateTime firstDayOfSchool = DateTime(2021, 9, 16, 0, 0, 0);
+  static DateTime lastDayOfSchool = DateTime(2022, 6, 10, 23, 59, 59);
 
   static const int easterEggUpperLimit = 15;
   static const int easterEggStartingLimit = 10;
@@ -36,13 +41,17 @@ class Utils {
   static const String easterEgg = 'easterEgg';
 
   static const String baseUrl = 'https://apps.marconivr.it/orario/api.php';
-  static const String baseProjectUrl = '';
-
+  static const String baseProjectUrl =
+      'https://github.com/lorenzodbr/cosa-abbiamo-dopo';
   static const String baseProjectAPIUrl =
       'https://api.github.com/repos/lorenzodbr/cosa-abbiamo-dopo/releases/latest';
-
   static const String baseProjectDownloadUrl =
       'https://github.com/lorenzodbr/cosa-abbiamo-dopo/releases/download';
+  static const String baseWebAppUrl =
+      'https://lorenzodbr.github.io/cosa-abbiamo-dopo';
+
+  static const String telegramUrl = 'https://t.me/lorenzodiberardino';
+  static const String emailUrl = 'mailto:lorenzo.diberardino03@gmail.com';
 
   static const String empty = '';
   static const String notToBeUpdated = '0';
@@ -457,6 +466,10 @@ class Utils {
 
     DateTime _maxHour;
 
+    if (_now.isBefore(firstDayOfSchool) || _now.isAfter(lastDayOfSchool)) {
+      return false;
+    }
+
     if (isFirstGroup) {
       _maxHour = _now.weekday == 5
           ? Utils.hoursListFriFirstGroup.last.startingTime.toDateTime()
@@ -477,8 +490,7 @@ class Utils {
 
   static int getCurrentHourIndex(isFirstGroup) {
     DateTime _nowDateTime = DateTime.now();
-    TimeOfDay _now =
-        TimeOfDay(hour: _nowDateTime.hour, minute: _nowDateTime.minute);
+    TimeOfDay _now = TimeOfDay.fromDateTime(_nowDateTime);
 
     if (isInDayRange(isFirstGroup)) {
       if (_now.isBefore(const TimeOfDay(hour: 7, minute: 0))) {
@@ -525,6 +537,10 @@ class Utils {
       return inSchoolTime;
     }
 
+    if (_nowDateTime.isBefore(firstDayOfSchool) ||
+        _nowDateTime.isAfter(lastDayOfSchool)) {
+      return schoolEndedOrYetToStart;
+    }
     return noSchoolDay;
   }
 

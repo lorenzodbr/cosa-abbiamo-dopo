@@ -2,9 +2,9 @@ import 'package:cosa_abbiamo_dopo/globals/custom_colors.dart';
 import 'package:flutter/material.dart';
 
 class LoadingPage extends StatefulWidget {
-  const LoadingPage({Key? key, required this.setState}) : super(key: key);
+  const LoadingPage({Key? key, required this.refresh}) : super(key: key);
 
-  final VoidCallback setState;
+  final VoidCallback refresh;
 
   @override
   State<LoadingPage> createState() => _LoadingPageState();
@@ -47,7 +47,7 @@ class _LoadingPageState extends State<LoadingPage>
               Padding(
                 padding: EdgeInsets.only(top: 10, bottom: 30),
                 child: Text(
-                  "Caricamento...",
+                  "Caricamento",
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 20,

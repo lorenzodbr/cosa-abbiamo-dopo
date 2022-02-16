@@ -32,6 +32,8 @@ class _HomePageState extends State<HomePage> {
   late List<MarconiLesson> _savedData;
   late bool _isFirstGroup;
 
+  late Function refresh;
+
   @override
   void initState() {
     super.initState();
@@ -39,7 +41,7 @@ class _HomePageState extends State<HomePage> {
     initializeDateFormatting();
 
     DateTime _now = DateTime.now();
-    DateFormat _formatter = DateFormat('EEEE dd MMMM yyyy', 'it');
+    DateFormat _formatter = DateFormat("EEE'.' dd MMMM yyyy", 'it');
     _formattedDate = _formatter.format(_now);
 
     _savedClass = Utils.getSavedClass();
@@ -69,9 +71,10 @@ class _HomePageState extends State<HomePage> {
       backgroundColor: CustomColors.white,
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Container(
-            margin: const EdgeInsets.all(20),
+          Padding(
+            padding: const EdgeInsets.all(20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -161,10 +164,24 @@ class _HomePageState extends State<HomePage> {
                   future: Utils.getClasses(),
                   builder: (context, getClassesSnapshot) {
                     if (getClassesSnapshot.hasError) {
-                      return const Expanded(
-                        child: Text(
-                          'Nessuna connessione',
-                          textAlign: TextAlign.center,
+                      return Expanded(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: const [
+                            Icon(
+                              Icons.wifi_off,
+                              size: 50,
+                              color: CustomColors.grey,
+                            ),
+                            Text(
+                              'Nessuna connessione',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: CustomColors.grey,
+                              ),
+                            ),
+                          ],
                         ),
                       );
                     }
@@ -200,8 +217,9 @@ class _HomePageState extends State<HomePage> {
                         );
                       }
                       return const Expanded(
-                        child:
-                            Text("Impossibile caricare l'elenco delle classi"),
+                        child: Text(
+                          "Impossibile caricare l'elenco delle classi",
+                        ),
                       );
                     } else {
                       return const CircularProgressIndicator();
@@ -233,6 +251,10 @@ class _HomePageState extends State<HomePage> {
 
           Utils.showErrorDialog(context, 1);
         } else {
+          setState(() {
+            _savedData = Utils.getSavedData();
+          });
+
           Navigator.pop(context);
         }
       } catch (ex) {
