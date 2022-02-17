@@ -5,8 +5,8 @@ import 'package:cosa_abbiamo_dopo/globals/marconi_hour.dart';
 import 'package:cosa_abbiamo_dopo/globals/marconi_lesson.dart';
 import 'package:cosa_abbiamo_dopo/globals/marconi_teacher.dart';
 import 'package:flowder/flowder.dart';
+import 'package:http/http.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -22,17 +22,19 @@ import 'dart:async';
 import 'dart:convert';
 
 class Utils {
+  static const int inSchoolTime = 0;
   static const int beforeSchoolTime = -1;
   static const int afterSchoolTime = -2;
   static const int noSchoolDay = -3;
   static const int schoolEndedOrYetToStart = -4;
-  static const int inSchoolTime = 0;
 
   static DateTime firstDayOfSchool = DateTime(2021, 9, 16, 0, 0, 0);
   static DateTime lastDayOfSchool = DateTime(2022, 6, 10, 23, 59, 59);
 
   static const int easterEggUpperLimit = 15;
   static const int easterEggStartingLimit = 10;
+
+  static const double goldenRatio = 1.618;
 
   static const String savedClass = 'class';
   static const String savedData = 'data';
@@ -46,12 +48,16 @@ class Utils {
   static const String baseProjectAPIUrl =
       'https://api.github.com/repos/lorenzodbr/cosa-abbiamo-dopo/releases/latest';
   static const String baseProjectDownloadUrl =
-      'https://github.com/lorenzodbr/cosa-abbiamo-dopo/releases/download';
+      'https://github.com/lorenzodbr/cosa-abbiamo-dopo/releases/latest';
   static const String baseWebAppUrl =
       'https://lorenzodbr.github.io/cosa-abbiamo-dopo';
 
+  static const String apkFileName = 'app-release.apk';
+
   static const String telegramUrl = 'https://t.me/lorenzodiberardino';
   static const String emailUrl = 'mailto:lorenzo.diberardino03@gmail.com';
+  static const String rickRollUrl =
+      'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
 
   static const String empty = '';
   static const String notToBeUpdated = '0';
@@ -633,7 +639,9 @@ class Utils {
 
       String _decodedVersion = decodeVersion(_rawVersion);
 
-      if (_currentVersion.compareTo(_decodedVersion) < 0) {
+      bool _needsToBeUpdated = _currentVersion.compareTo(_decodedVersion) < 0;
+
+      if (_needsToBeUpdated) {
         return _decodedVersion;
       } else {
         return notToBeUpdated;
@@ -643,11 +651,13 @@ class Utils {
     }
   }
 
-  static Future<void> deleteCacheDir() async {
+  static Future<void> deleteCachedApk() async {
     Directory cacheDir = await getCachePath();
 
-    if (cacheDir.existsSync()) {
-      cacheDir.deleteSync(recursive: true);
+    File cachedApk = File('$cacheDir/$apkFileName');
+
+    if (cachedApk.existsSync()) {
+      cachedApk.deleteSync();
     }
   }
 
@@ -656,13 +666,15 @@ class Utils {
   }
 
   static Future<String> fetchVersion() async {
-    Uri _uri = Uri.parse(baseProjectAPIUrl);
+    Uri _uri = Uri.parse(baseProjectDownloadUrl);
 
     try {
-      final _response = await http.get(_uri);
+      Request req = http.Request("Get", _uri)..followRedirects = false;
+      Client baseClient = http.Client();
+      StreamedResponse _response = await baseClient.send(req);
 
-      if (_response.statusCode == 200) {
-        return _response.body;
+      if (_response.statusCode == 302) {
+        return _response.headers['location'] ?? empty;
       } else {
         return empty;
       }
@@ -673,14 +685,16 @@ class Utils {
 
   static String decodeVersion(String data) {
     try {
-      String tempSplitted = data.split('"tag_name":')[1];
+      int startingIndex;
 
-      if (tempSplitted.startsWith('"')) {
-        String splitted = tempSplitted;
+      for (startingIndex = data.length - 1;
+          startingIndex >= 0 && data[startingIndex] != 'v';
+          startingIndex--) {}
 
-        String version = splitted.substring(1, splitted.indexOf('",'));
+      String splitted = data.substring(startingIndex);
 
-        return version;
+      if (splitted.startsWith('v')) {
+        return splitted;
       } else {
         return notToBeUpdated;
       }
@@ -691,7 +705,7 @@ class Utils {
 
   static Future downloadUpdate(options, version) async {
     return await Flowder.download(
-      Utils.baseProjectDownloadUrl + '/$version/app-release.apk',
+      Utils.baseProjectDownloadUrl + '/$version/$apkFileName',
       options,
     );
   }

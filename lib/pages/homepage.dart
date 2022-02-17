@@ -18,26 +18,24 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
 
+  static const double carouselHeight = 200;
+  static const double dotIndicatorsSize = 10;
+
   @override
   _HomePageState createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
   int _hourIndex = 0;
-
   int _carouselIndex = -1;
-  late String _formattedDate;
 
+  late String _formattedDate;
   late String _savedClass;
   late List<MarconiLesson> _savedData;
   late bool _isFirstGroup;
 
-  late Function refresh;
-
   @override
   void initState() {
-    super.initState();
-
     initializeDateFormatting();
 
     DateTime _now = DateTime.now();
@@ -59,6 +57,8 @@ class _HomePageState extends State<HomePage> {
 
       _hourIndex = 0;
     }
+
+    super.initState();
   }
 
   @override
@@ -70,23 +70,28 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       backgroundColor: CustomColors.white,
       body: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildClassAndDateRow(),
-                const Text(
-                  'Cosa abbiamo dopo?',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w900,
-                    fontSize: 50,
+            padding: const EdgeInsets.all(50),
+            child: Container(
+              constraints: const BoxConstraints(
+                  maxWidth: HomePage.carouselHeight * Utils.goldenRatio),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  _buildClassAndDateRow(),
+                  const Text(
+                    'Cosa abbiamo dopo?',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w900,
+                      fontSize: 50,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
           _buildCarousel(),
@@ -274,6 +279,9 @@ class _HomePageState extends State<HomePage> {
           children: [
             CarouselSlider.builder(
               itemBuilder: (context, index, realIndex) {
+                bool isCurrentHourCard =
+                    index == (_isFirstGroup ? _hourIndex : _hourIndex - 2);
+
                 return OpenContainer<String>(
                   openBuilder: (_, closeContainer) => DetailsPage(
                     subject: _savedData[index].name,
@@ -287,13 +295,21 @@ class _HomePageState extends State<HomePage> {
                         : _savedData[index].hourIndex - 2,
                   ),
                   closedBuilder: (_, openContainer) => CarouselCard(
-                      openContainer,
-                      _savedData[index].name,
-                      _savedData[index].room,
-                      startingHour:
-                          index == (_isFirstGroup ? _hourIndex : _hourIndex - 2)
-                              ? _savedData[index].hours.startingTime
-                              : null),
+                    openContainer: openContainer,
+                    lessonName: _savedData[index].name,
+                    room: _savedData[index].room,
+                    startingHour: isCurrentHourCard
+                        ? _savedData[index].hours.startingTime
+                        : null,
+                    refresh: isCurrentHourCard
+                        ? () {
+                            setState(() {
+                              _hourIndex =
+                                  Utils.getCurrentHourIndex(_isFirstGroup);
+                            });
+                          }
+                        : null,
+                  ),
                   openColor: CustomColors.black,
                   closedShape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
@@ -303,14 +319,15 @@ class _HomePageState extends State<HomePage> {
               },
               itemCount: _savedData.length,
               options: CarouselOptions(
+                height: HomePage.carouselHeight,
                 initialPage: _isFirstGroup ? _hourIndex : _hourIndex - 2,
-                height: 200,
                 enableInfiniteScroll: false,
                 enlargeCenterPage: true,
                 scrollDirection: Axis.horizontal,
                 onPageChanged: (index, reason) {
                   setState(() {
                     _carouselIndex = index;
+                    _hourIndex = Utils.getCurrentHourIndex(_isFirstGroup);
                   });
                 },
               ),
@@ -323,8 +340,8 @@ class _HomePageState extends State<HomePage> {
                 effect: const WormEffect(
                   activeDotColor: CustomColors.black,
                   dotColor: CustomColors.silver,
-                  dotHeight: 10,
-                  dotWidth: 10,
+                  dotHeight: HomePage.dotIndicatorsSize,
+                  dotWidth: HomePage.dotIndicatorsSize,
                 ),
               ),
             )
@@ -337,7 +354,7 @@ class _HomePageState extends State<HomePage> {
           },
           itemCount: 1,
           options: CarouselOptions(
-            height: 200,
+            height: HomePage.carouselHeight,
             enableInfiniteScroll: false,
             enlargeCenterPage: true,
             scrollDirection: Axis.horizontal,
@@ -351,7 +368,7 @@ class _HomePageState extends State<HomePage> {
         },
         itemCount: 1,
         options: CarouselOptions(
-          height: 200,
+          height: HomePage.carouselHeight,
           enableInfiniteScroll: false,
           enlargeCenterPage: true,
           scrollDirection: Axis.horizontal,

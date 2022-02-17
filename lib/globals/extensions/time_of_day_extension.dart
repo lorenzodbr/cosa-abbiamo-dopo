@@ -5,7 +5,7 @@ extension TimeOfDayExtension on TimeOfDay {
     if (hour < t.hour) {
       return false;
     } else if (hour == t.hour) {
-      if (minute < t.minute) {
+      if (minute <= t.minute) {
         return false;
       }
 
@@ -19,7 +19,7 @@ extension TimeOfDayExtension on TimeOfDay {
     if (hour > t.hour) {
       return false;
     } else if (hour == t.hour) {
-      if (minute > t.minute) {
+      if (minute >= t.minute) {
         return false;
       }
 
@@ -29,8 +29,20 @@ extension TimeOfDayExtension on TimeOfDay {
     return true;
   }
 
+  bool isBeforeOrEqual(TimeOfDay t) {
+    return isBefore(t) || this == t;
+  }
+
+  bool isAfterOrEqual(TimeOfDay t) {
+    return isAfter(t) || this == t;
+  }
+
   Duration timeFrom(TimeOfDay t) {
     return toDateTime().difference(t.toDateTime());
+  }
+
+  Duration timeFromDateTime(DateTime t) {
+    return toDateTime().difference(t);
   }
 
   DateTime toDateTime() {

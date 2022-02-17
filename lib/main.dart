@@ -13,7 +13,7 @@ void main() async {
   if (!kIsWeb) {
     Utils.setPortrait();
     Utils.setOptimalDisplayMode();
-    Utils.deleteCacheDir();
+    Utils.deleteCachedApk();
   }
 
   runApp(const MyApp());

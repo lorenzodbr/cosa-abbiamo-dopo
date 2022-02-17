@@ -146,7 +146,7 @@ class _UpdatePageState extends State<UpdatePage> {
 
     if (!mounted) return;
 
-    await Utils.deleteCacheDir();
+    await Utils.deleteCachedApk();
 
     var options = DownloaderUtils(
       progressCallback: (current, total) {
@@ -154,7 +154,7 @@ class _UpdatePageState extends State<UpdatePage> {
           _progress = (current / total);
         });
       },
-      file: File('$path/cosa-abbiamo-dopo-$_version.apk'),
+      file: File('$path/${Utils.apkFileName}'),
       progress: ProgressImplementation(),
       onDone: () async {
         bool permission = await Permission.requestInstallPackages.isGranted;
@@ -163,7 +163,7 @@ class _UpdatePageState extends State<UpdatePage> {
           await _showInstructionDialog();
         }
 
-        OpenFile.open('$path/cosa-abbiamo-dopo-$_version.apk');
+        OpenFile.open('$path/${Utils.apkFileName}');
 
         SystemNavigator.pop();
       },

@@ -1,5 +1,6 @@
 import 'package:cosa_abbiamo_dopo/globals/custom_colors.dart';
 import 'package:flutter/material.dart';
+import 'package:delayed_display/delayed_display.dart';
 
 class LoadingPage extends StatefulWidget {
   const LoadingPage({Key? key, required this.refresh}) : super(key: key);
@@ -10,26 +11,7 @@ class LoadingPage extends StatefulWidget {
   State<LoadingPage> createState() => _LoadingPageState();
 }
 
-class _LoadingPageState extends State<LoadingPage>
-    with TickerProviderStateMixin {
-  late Animation<double> _animation;
-  late AnimationController _animationController;
-
-  @override
-  void initState() {
-    _animationController = AnimationController(
-      duration: const Duration(seconds: 10),
-      vsync: this,
-    )..forward();
-
-    _animation = CurvedAnimation(
-      parent: _animationController,
-      curve: const Interval(0.97, 1.0, curve: Curves.easeIn),
-    );
-
-    super.initState();
-  }
-
+class _LoadingPageState extends State<LoadingPage> {
   @override
   Widget build(BuildContext context) {
     return Material(
@@ -57,13 +39,14 @@ class _LoadingPageState extends State<LoadingPage>
             ],
           ),
           const Spacer(flex: 2),
-          FadeTransition(
-            opacity: _animation,
+          DelayedDisplay(
+            fadingDuration: const Duration(milliseconds: 200),
+            delay: const Duration(seconds: 8),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const Text(
-                  'Ci sta volendo\npiù tempo del previsto',
+                  'Ci sta volendo più tempo del previsto',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 12,
@@ -71,11 +54,11 @@ class _LoadingPageState extends State<LoadingPage>
                   textAlign: TextAlign.center,
                 ),
                 const Padding(
-                  padding: EdgeInsets.all(2),
+                  padding: EdgeInsets.all(5),
                 ),
                 OutlinedButton(
                   onPressed: () {
-                    setState;
+                    widget.refresh.call();
                   },
                   style: OutlinedButton.styleFrom(
                     side: const BorderSide(
@@ -100,11 +83,5 @@ class _LoadingPageState extends State<LoadingPage>
         ],
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    _animationController.dispose();
-    super.dispose();
   }
 }

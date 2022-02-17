@@ -5,6 +5,11 @@ import 'package:cosa_abbiamo_dopo/pages/loading_page.dart';
 import 'package:cosa_abbiamo_dopo/pages/settings_page.dart';
 import 'package:flutter/material.dart';
 
+enum TabViewState {
+  loading,
+  ready,
+}
+
 class TabView extends StatefulWidget {
   const TabView({Key? key}) : super(key: key);
 
@@ -13,6 +18,8 @@ class TabView extends StatefulWidget {
 }
 
 class _TabViewState extends State<TabView> {
+  late TabViewState _state;
+
   int _pageIndex = 0;
   bool _skipLoading = false;
 
@@ -26,11 +33,13 @@ class _TabViewState extends State<TabView> {
 
   @override
   void initState() {
-    super.initState();
+    _state = TabViewState.loading;
 
     _pageController = PageController(
       initialPage: _pageIndex,
     );
+
+    super.initState();
   }
 
   @override
@@ -40,17 +49,17 @@ class _TabViewState extends State<TabView> {
       builder: (context, getRawDataSnapshot) {
         if (getRawDataSnapshot.hasData ||
             getRawDataSnapshot.hasError ||
-            _skipLoading) {
+            _state == TabViewState.ready) {
           return Scaffold(
             body: PageView(
               children: tabPages,
-              onPageChanged: onPageChanged,
+              onPageChanged: _onPageChanged,
               controller: _pageController,
               physics: const NeverScrollableScrollPhysics(),
             ),
             bottomNavigationBar: BottomNavigationBar(
               currentIndex: _pageIndex,
-              onTap: onTabTapped,
+              onTap: _onTabTapped,
               backgroundColor: Colors.white,
               items: const <BottomNavigationBarItem>[
                 BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
@@ -62,30 +71,26 @@ class _TabViewState extends State<TabView> {
           );
         } else {
           return LoadingPage(
-            refresh: () {
-              setState(() {
-                _skipLoading = true;
-              });
-            },
+            refresh: () => _setTabViewState(TabViewState.ready),
           );
         }
       },
     );
   }
 
-  void onPageChanged(int page) {
+  void _setTabViewState(TabViewState state) {
+    setState(() {
+      _state = state;
+    });
+  }
+
+  void _onPageChanged(int page) {
     setState(() {
       _pageIndex = page;
     });
   }
 
-  void onTabTapped(int index) {
+  void _onTabTapped(int index) {
     _pageController.jumpToPage(index);
-  }
-
-  @override
-  dispose() {
-    Utils.unsetPortrait();
-    super.dispose();
   }
 }

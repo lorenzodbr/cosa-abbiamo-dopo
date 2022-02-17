@@ -103,7 +103,7 @@ class _InfoPageState extends State<InfoPage> {
       ],
       body: [
         "È disponibile anche una WebApp. Puoi accedervi con il pulsante qui sotto.",
-        "È disponibile anche un'app per Android. Puoi scaricarla con il pulsante qui sotto."
+        "È disponibile anche un'app per Android, per un'esperienza più fluida. Puoi scaricarla con il pulsante qui sotto."
       ],
       button: [
         ElevatedButton.icon(
@@ -121,7 +121,7 @@ class _InfoPageState extends State<InfoPage> {
           ),
         ),
         ElevatedButton.icon(
-          icon: const Icon(Icons.open_in_browser),
+          icon: const Icon(Icons.download),
           label: const Text("App"),
           onPressed: () async {
             String url = Utils.baseProjectDownloadUrl;
@@ -225,7 +225,7 @@ class _InfoPageState extends State<InfoPage> {
       for (String bodyLine in item.body) {
         body.add(
           Padding(
-            padding: const EdgeInsets.only(left: 15, right: 15, bottom: 5),
+            padding: const EdgeInsets.only(left: 20, right: 20, bottom: 5),
             child: Text(
               bodyLine,
               textAlign: TextAlign.justify,
@@ -283,6 +283,7 @@ class _InfoPageState extends State<InfoPage> {
     return Padding(
       padding: const EdgeInsets.only(bottom: 15.0),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: widgets,
       ),
     );

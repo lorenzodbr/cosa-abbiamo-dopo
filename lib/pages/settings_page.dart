@@ -89,7 +89,7 @@ class _SettingsState extends State<Settings> {
                           Utils.unlockEasterEgg();
 
                           setState(() {
-                            wasEasterEggUnlocked = true;
+                            wasEasterEggUnlocked = Utils.wasEasterEggUnlocked();
                           });
                         }
                       }
@@ -113,7 +113,7 @@ class _SettingsState extends State<Settings> {
             title: 'Easter Egg',
             displayValue: 'Riscatta il premio',
             onTap: () async {
-              String url = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
+              String url = Utils.rickRollUrl;
 
               if (await canLaunch(url)) {
                 await launch(url);
@@ -124,7 +124,7 @@ class _SettingsState extends State<Settings> {
                 Utils.lockEasterEgg();
 
                 setState(() {
-                  wasEasterEggUnlocked = false;
+                  wasEasterEggUnlocked = Utils.wasEasterEggUnlocked();
                   easterEggCounter = 0;
                 });
 
@@ -133,7 +133,6 @@ class _SettingsState extends State<Settings> {
                     content: Text(
                       'Easter Egg nascosto',
                     ),
-                    duration: Duration(milliseconds: 500),
                   ),
                 );
               });

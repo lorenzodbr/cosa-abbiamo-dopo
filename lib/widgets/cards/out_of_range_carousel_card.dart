@@ -1,4 +1,5 @@
 import 'package:cosa_abbiamo_dopo/globals/utils.dart';
+import 'package:cosa_abbiamo_dopo/pages/homepage.dart';
 import 'package:flutter/material.dart';
 
 class OutOfRangeCarouselCard extends StatelessWidget {
@@ -9,7 +10,7 @@ class OutOfRangeCarouselCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 500,
+      width: HomePage.carouselHeight * Utils.goldenRatio,
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(30),
           border: Border.all(
@@ -42,6 +43,8 @@ class OutOfRangeCarouselCard extends StatelessWidget {
         return "Lezioni finite,\nripassa domani";
       case Utils.noSchoolDay:
         return "Lezioni finite,\nripassa lunedì";
+      case Utils.schoolEndedOrYetToStart:
+        return "Lezioni finite,\nripassa a Settembre";
       default:
         return "Nessun orario da mostrare";
     }

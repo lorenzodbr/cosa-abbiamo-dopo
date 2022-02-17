@@ -1,3 +1,5 @@
+import 'package:cosa_abbiamo_dopo/globals/utils.dart';
+import 'package:cosa_abbiamo_dopo/pages/homepage.dart';
 import 'package:flutter/material.dart';
 
 class NoDataCarouselCard extends StatelessWidget {
@@ -6,7 +8,7 @@ class NoDataCarouselCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 500,
+      width: HomePage.carouselHeight * Utils.goldenRatio,
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(30),
           border: Border.all(

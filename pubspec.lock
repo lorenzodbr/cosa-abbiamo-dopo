@@ -85,6 +85,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.4"
+  delayed_display:
+    dependency: "direct main"
+    description:
+      name: delayed_display
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.0"
   dio:
     dependency: transitive
     description:
@@ -483,6 +490,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.4.8"
+  timer_builder:
+    dependency: "direct main"
+    description:
+      name: timer_builder
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.0"
   typed_data:
     dependency: transitive
     description:
