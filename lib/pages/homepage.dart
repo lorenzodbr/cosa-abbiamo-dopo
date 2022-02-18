@@ -1,5 +1,4 @@
 import 'package:animations/animations.dart';
-import 'package:clean_settings/clean_settings.dart';
 import 'package:cosa_abbiamo_dopo/globals/custom_colors.dart';
 import 'package:cosa_abbiamo_dopo/globals/marconi_lesson.dart';
 import 'package:cosa_abbiamo_dopo/globals/utils.dart';
@@ -8,17 +7,20 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cosa_abbiamo_dopo/widgets/cards/carousel_card.dart';
 import 'package:cosa_abbiamo_dopo/widgets/cards/no_data_carousel_card.dart';
 import 'package:cosa_abbiamo_dopo/widgets/cards/out_of_range_carousel_card.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:flutter_picker/flutter_picker.dart';
+
+enum FetchingClassesState { loading, ready, error }
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
 
   static const double carouselHeight = 200;
+  static const double carouselWidth =
+      HomePage.carouselHeight * Utils.goldenRatio;
   static const double dotIndicatorsSize = 10;
 
   @override
@@ -33,16 +35,21 @@ class _HomePageState extends State<HomePage> {
   late String _savedClass;
   late List<MarconiLesson> _savedData;
   late bool _isFirstGroup;
+  late CarouselController _carouselController;
+  late FetchingClassesState _fetchingClasses;
 
   @override
   void initState() {
     initializeDateFormatting();
+
+    _carouselController = CarouselController();
 
     DateTime _now = DateTime.now();
     DateFormat _formatter = DateFormat("EEE'.' dd MMMM yyyy", 'it');
     _formattedDate = _formatter.format(_now);
 
     _savedClass = Utils.getSavedClass();
+    _fetchingClasses = FetchingClassesState.ready;
 
     try {
       _savedData = Utils.getSavedData();
@@ -74,10 +81,11 @@ class _HomePageState extends State<HomePage> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Padding(
-            padding: const EdgeInsets.all(50),
+            padding: const EdgeInsets.only(bottom: 50),
             child: Container(
               constraints: const BoxConstraints(
-                  maxWidth: HomePage.carouselHeight * Utils.goldenRatio),
+                maxWidth: HomePage.carouselWidth,
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -113,13 +121,23 @@ class _HomePageState extends State<HomePage> {
             ? [
                 TextButton.icon(
                   onPressed: () async {
-                    await _showClassSelector();
-
-                    setState(() {
-                      _savedClass = Utils.getSavedClass();
-                    });
+                    await _showClassPicker();
                   },
-                  icon: const Icon(Icons.edit, color: CustomColors.grey),
+                  icon: _fetchingClasses == FetchingClassesState.loading
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            color: CustomColors.grey,
+                          ),
+                        )
+                      : Icon(
+                          _fetchingClasses == FetchingClassesState.ready
+                              ? Icons.edit
+                              : Icons.wifi_off,
+                          color: CustomColors.grey,
+                          size: 20,
+                        ),
                   label: Text(
                     _savedClass,
                     style:
@@ -135,151 +153,95 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Future<void> _showClassSelector() async {
-    String _savedClass = Utils.getSavedClass();
+  Future<void> _showClassPicker() async {
+    setState(() {
+      _fetchingClasses = FetchingClassesState.loading;
+    });
 
-    int _initialValueIndex = 0;
-    int _selectedValueIndex = 0;
+    try {
+      List<String> _classes = await Utils.getClasses();
 
-    List<String> _classes = [];
+      setState(() {
+        _fetchingClasses = FetchingClassesState.ready;
+      });
 
-    int _changedValueIndex = await showDialog(
-      context: context,
-      builder: (_) {
-        return AlertDialog(
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Annulla'),
-              onPressed: () => Navigator.pop(context),
-            ),
-            TextButton(
-              child: const Text('OK'),
-              onPressed: () => Navigator.pop(context, _selectedValueIndex),
-            )
-          ],
-          title: const Text('Seleziona classe'),
-          content: Container(
-            constraints:
-                const BoxConstraints(minHeight: 100.0, maxHeight: 100.0),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                FutureBuilder<List<String>>(
-                  future: Utils.getClasses(),
-                  builder: (context, getClassesSnapshot) {
-                    if (getClassesSnapshot.hasError) {
-                      return Expanded(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: const [
-                            Icon(
-                              Icons.wifi_off,
-                              size: 50,
-                              color: CustomColors.grey,
-                            ),
-                            Text(
-                              'Nessuna connessione',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: CustomColors.grey,
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    }
+      List<PickerItem> _pickerData = Utils.buildClassesForPicker(_classes);
 
-                    if (getClassesSnapshot.hasData) {
-                      _classes = getClassesSnapshot.data ?? [];
+      int _classYear = int.parse(_savedClass[0]);
 
-                      if (_classes.isNotEmpty) {
-                        _initialValueIndex = _classes.indexOf(_savedClass);
+      String _classSection = _savedClass.substring(1);
 
-                        _selectedValueIndex = _initialValueIndex;
-                        return Expanded(
-                          child: CupertinoPicker(
-                            scrollController: FixedExtentScrollController(
-                                initialItem: _selectedValueIndex),
-                            itemExtent: 50.0,
-                            onSelectedItemChanged: (int value) {
-                              _selectedValueIndex = value;
-                            },
-                            children: getClassesSnapshot.data!
-                                .map(
-                                  (e) => Center(
-                                    child: Text(
-                                      e.toString(),
-                                      style: GoogleFonts.workSans(
-                                        textStyle: kWheelPickerItem,
-                                      ),
-                                    ),
-                                  ),
-                                )
-                                .toList(),
-                          ),
-                        );
-                      }
-                      return const Expanded(
-                        child: Text(
-                          "Impossibile caricare l'elenco delle classi",
-                        ),
-                      );
-                    } else {
-                      return const CircularProgressIndicator();
-                    }
-                  },
-                ),
-              ],
-            ),
+      Picker(
+          adapter: PickerDataAdapter(
+            data: _pickerData,
           ),
-        );
-      },
-    );
+          hideHeader: true,
+          title: const Text('Seleziona classe'),
+          cancelText: 'Annulla',
+          confirmText: 'OK',
+          selecteds: [
+            _classYear - 1,
+            _pickerData[_classYear - 1].children!.indexWhere(((element) {
+              return element.value == _classSection;
+            }))
+          ],
+          onConfirm: (Picker picker, List value) async {
+            String newClass =
+                picker.getSelectedValues()[0] + picker.getSelectedValues()[1];
 
-    if (_changedValueIndex != null &&
-        _changedValueIndex != _initialValueIndex) {
-      Utils.showUpdatingDialog(context);
+            if (newClass != _savedClass) {
+              Utils.showUpdatingDialog(context);
 
-      String previousClass = Utils.getSavedClass();
+              String previousClass = Utils.getSavedClass();
 
-      Utils.setSavedClass(_classes[_changedValueIndex]);
+              Utils.setSavedClass(picker.getSelectedValues()[0] +
+                  picker.getSelectedValues()[1]);
 
-      try {
-        String _data = await Utils.getRawData(context);
+              try {
+                String _data = await Utils.getRawData(context);
 
-        if (_data == Utils.empty) {
-          Utils.setSavedClass(previousClass);
+                if (_data == Utils.empty) {
+                  Utils.setSavedClass(previousClass);
 
-          Navigator.pop(context);
+                  Navigator.pop(context);
 
-          Utils.showErrorDialog(context, 1);
-        } else {
-          setState(() {
-            _savedData = Utils.getSavedData();
-          });
+                  Utils.showErrorDialog(context, 1);
+                } else {
+                  setState(() {
+                    _savedData = Utils.getSavedData();
+                    _savedClass = Utils.getSavedClass();
+                  });
 
-          Navigator.pop(context);
-        }
-      } catch (ex) {
-        Utils.setSavedClass(previousClass);
+                  Navigator.pop(context);
+                }
+              } catch (ex) {
+                Utils.setSavedClass(previousClass);
 
-        Navigator.pop(context);
+                Navigator.pop(context);
 
-        Utils.showErrorDialog(context, 0);
-      }
+                Utils.showErrorDialog(context, 0);
+              }
+            }
+          }).showDialog(context);
+    } catch (_) {
+      setState(
+        () {
+          _fetchingClasses = FetchingClassesState.error;
+        },
+      );
     }
   }
 
   Widget _buildCarousel() {
+    bool _isCurrentHourCard;
+
     if (_hourIndex >= Utils.inSchoolTime) {
       if (_savedData.isNotEmpty) {
         return Column(
           children: [
             CarouselSlider.builder(
               itemBuilder: (context, index, realIndex) {
-                bool isCurrentHourCard =
+                _isCurrentHourCard =
                     index == (_isFirstGroup ? _hourIndex : _hourIndex - 2);
 
                 return OpenContainer<String>(
@@ -298,14 +260,20 @@ class _HomePageState extends State<HomePage> {
                     openContainer: openContainer,
                     lessonName: _savedData[index].name,
                     room: _savedData[index].room,
-                    startingHour: isCurrentHourCard
-                        ? _savedData[index].hours.startingTime
-                        : null,
-                    refresh: isCurrentHourCard
+                    startingHour:
+                        index >= (_isFirstGroup ? _hourIndex : _hourIndex - 2)
+                            ? _savedData[index].hours.startingTime
+                            : null,
+                    refresh: _isCurrentHourCard
                         ? () {
                             setState(() {
                               _hourIndex =
                                   Utils.getCurrentHourIndex(_isFirstGroup);
+
+                              if (_hourIndex >= 0) {
+                                _carouselController.animateToPage(_hourIndex,
+                                    curve: Curves.easeInOut);
+                              }
                             });
                           }
                         : null,
@@ -317,6 +285,7 @@ class _HomePageState extends State<HomePage> {
                   closedColor: CustomColors.black,
                 );
               },
+              carouselController: _carouselController,
               itemCount: _savedData.length,
               options: CarouselOptions(
                 height: HomePage.carouselHeight,
@@ -327,6 +296,8 @@ class _HomePageState extends State<HomePage> {
                 onPageChanged: (index, reason) {
                   setState(() {
                     _carouselIndex = index;
+                    _isCurrentHourCard =
+                        index == (_isFirstGroup ? _hourIndex : _hourIndex - 2);
                     _hourIndex = Utils.getCurrentHourIndex(_isFirstGroup);
                   });
                 },

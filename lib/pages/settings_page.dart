@@ -1,6 +1,7 @@
 import 'package:clean_settings/clean_settings.dart';
 import 'package:cosa_abbiamo_dopo/globals/utils.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_picker/flutter_picker.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class Settings extends StatefulWidget {
@@ -29,7 +30,7 @@ class _SettingsState extends State<Settings> {
           SettingSection(
             title: 'Dati',
             items: [
-              _buildClassesWheel(),
+              _buildClassesPicker(),
               SettingItem(
                 title: 'Ultimo aggiornamento degli orari',
                 displayValue: Utils.getLastUpdate(),
@@ -143,17 +144,17 @@ class _SettingsState extends State<Settings> {
     }
   }
 
-  Widget _buildClassesWheel() {
+  Widget _buildClassesPicker() {
     return FutureBuilder<List<String>>(
       future: Utils.getClasses(),
       builder: (context, getClassesSnapshot) {
         if (getClassesSnapshot.hasError) {
-          return SettingWheelPickerItem(
+          return SettingItem(
             title: 'Seleziona classe',
             displayValue: 'Connettiti a Internet per cambiare classe',
-            items: const [],
-            onChanged: (_) {},
             priority: ItemPriority.disabled,
+            onTap: () {},
+            onLongPress: () {},
           );
         }
 
@@ -161,64 +162,90 @@ class _SettingsState extends State<Settings> {
           if (getClassesSnapshot.data!.isNotEmpty) {
             String _savedClass = Utils.getSavedClass();
 
-            return SettingWheelPickerItem(
-              title: 'Seleziona classe',
-              initialValueIndex: getClassesSnapshot.data!.indexOf(_savedClass),
-              displayValue: _savedClass,
-              items: getClassesSnapshot.data,
-              onChanged: (v) async {
-                Utils.showUpdatingDialog(context);
-
-                String previousClass = Utils.getSavedClass();
-
-                Utils.setSavedClass(getClassesSnapshot.data![v]);
-
-                try {
-                  String data = await Utils.getRawData(context);
-
-                  if (data == '') {
-                    Utils.setSavedClass(previousClass);
-
-                    Navigator.pop(context);
-
-                    setState(() {});
-
-                    Utils.showErrorDialog(context, 1);
-                  } else {
-                    Navigator.pop(context);
-
-                    setState(() {});
-                  }
-                } catch (ex) {
-                  Utils.setSavedClass(previousClass);
-
-                  Navigator.pop(context);
-
-                  setState(() {});
-
-                  Utils.showErrorDialog(context, 0);
-                }
-              },
-            );
+            return SettingItem(
+                title: 'Seleziona classe',
+                displayValue: _savedClass,
+                onTap: () => _showClassPicker(getClassesSnapshot.data!),
+                onLongPress: () {});
           } else {
-            return SettingRadioItem<String>(
+            return SettingItem(
               title: 'Seleziona classe',
               priority: ItemPriority.disabled,
-              items: const [],
-              onChanged: (_) {},
               displayValue: 'Impossibile caricare la lista delle classi',
+              onTap: () {},
+              onLongPress: () {},
             );
           }
         } else {
-          return SettingRadioItem<String>(
+          return SettingItem(
             title: 'Seleziona classe',
-            items: const [],
-            onChanged: (_) {},
             displayValue: 'Caricamento...',
             priority: ItemPriority.disabled,
+            onTap: () {},
+            onLongPress: () {},
           );
         }
       },
     );
+  }
+
+  Future<void> _showClassPicker(List<String> _classes) async {
+    String _savedClass = Utils.getSavedClass();
+
+    List<PickerItem> _pickerData = Utils.buildClassesForPicker(_classes);
+
+    int _classYear = int.parse(_savedClass[0]);
+
+    String _classSection = _savedClass.substring(1);
+
+    Picker(
+        adapter: PickerDataAdapter(
+          data: _pickerData,
+        ),
+        hideHeader: true,
+        title: const Text('Seleziona classe'),
+        cancelText: 'Annulla',
+        confirmText: 'OK',
+        selecteds: [
+          _classYear - 1,
+          _pickerData[_classYear - 1].children!.indexWhere(((element) {
+            return element.value == _classSection;
+          }))
+        ],
+        onConfirm: (Picker picker, List value) async {
+          String newClass =
+              picker.getSelectedValues()[0] + picker.getSelectedValues()[1];
+
+          if (newClass != _savedClass) {
+            Utils.showUpdatingDialog(context);
+
+            String previousClass = Utils.getSavedClass();
+
+            Utils.setSavedClass(
+                picker.getSelectedValues()[0] + picker.getSelectedValues()[1]);
+
+            try {
+              String _data = await Utils.getRawData(context);
+
+              if (_data == Utils.empty) {
+                Utils.setSavedClass(previousClass);
+
+                Navigator.pop(context);
+
+                Utils.showErrorDialog(context, 1);
+              } else {
+                setState(() {});
+
+                Navigator.pop(context);
+              }
+            } catch (ex) {
+              Utils.setSavedClass(previousClass);
+
+              Navigator.pop(context);
+
+              Utils.showErrorDialog(context, 0);
+            }
+          }
+        }).showDialog(context);
   }
 }

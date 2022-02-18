@@ -2,16 +2,11 @@ import 'package:cosa_abbiamo_dopo/globals/custom_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:delayed_display/delayed_display.dart';
 
-class LoadingPage extends StatefulWidget {
+class LoadingPage extends StatelessWidget {
   const LoadingPage({Key? key, required this.refresh}) : super(key: key);
 
   final VoidCallback refresh;
 
-  @override
-  State<LoadingPage> createState() => _LoadingPageState();
-}
-
-class _LoadingPageState extends State<LoadingPage> {
   @override
   Widget build(BuildContext context) {
     return Material(
@@ -58,7 +53,7 @@ class _LoadingPageState extends State<LoadingPage> {
                 ),
                 OutlinedButton(
                   onPressed: () {
-                    widget.refresh.call();
+                    refresh.call();
                   },
                   style: OutlinedButton.styleFrom(
                     side: const BorderSide(

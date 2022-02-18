@@ -62,14 +62,15 @@ class _InfoPageState extends State<InfoPage> {
     ItemModel(
       header: "Come funziona quest'app?",
       body: [
-        "Il suo funzionamento è rapido e intuitivo: basta aprirla. Verranno ricercati automaticamente aggiornamenti per gli orari, in base a quanto pubblicato dalla scuola, e verranno mostrati con una grafica semplice e minimale."
+        "Il suo funzionamento è rapido e intuitivo: basta aprirla. Verranno ricercati automaticamente aggiornamenti per gli orari, in base a quanto pubblicato dalla scuola, e verranno mostrati questi ultimi con una grafica semplice e minimale."
       ],
     ),
     ItemModel(
       header:
           "È richiesta una connessione a Internet attiva per utilizzare l'app?",
       body: [
-        "L'app controlla la presenza di aggiornamenti all'avvio per mantenere sempre un'esperienza ottimale. Nel caso non fosse disponibile una connessione, sarà possibile mostrare i dati salvati precedentemente.",
+        "Per mantenere un'esperienza sempre ottimale, l'app controlla ad ogni avvio la presenza di aggiornamenti.",
+        "Se non fosse disponibile una connessione ad Internet l'app permetterà di visualizzare (eventuali) orari salvati precedentemente.",
       ],
     ),
     ItemModel(
@@ -124,7 +125,7 @@ class _InfoPageState extends State<InfoPage> {
           icon: const Icon(Icons.download),
           label: const Text("App"),
           onPressed: () async {
-            String url = Utils.baseProjectDownloadUrl;
+            String url = Utils.baseProjectDownloadUrl + '/latest';
 
             if (await canLaunch(url)) {
               await launch(url);

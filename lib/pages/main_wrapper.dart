@@ -1,6 +1,6 @@
 import 'package:cosa_abbiamo_dopo/globals/utils.dart';
 import 'package:cosa_abbiamo_dopo/pages/tab_view.dart';
-import 'package:cosa_abbiamo_dopo/pages/update_page.dart';
+import 'package:cosa_abbiamo_dopo/pages/update/update_wrapper.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -34,7 +34,7 @@ class _MainWrapperState extends State<MainWrapper> {
   Widget build(BuildContext context) {
     switch (_state) {
       case MainWrapperState.update:
-        return UpdatePage(
+        return UpdateWrapper(
           refresh: () => setWrapperState(MainWrapperState.tabview),
         );
       case MainWrapperState.tabview:

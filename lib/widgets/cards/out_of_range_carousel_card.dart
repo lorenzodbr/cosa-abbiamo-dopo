@@ -10,11 +10,14 @@ class OutOfRangeCarouselCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: HomePage.carouselHeight * Utils.goldenRatio,
+      width: HomePage.carouselWidth,
       decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(30),
-          border: Border.all(
-              color: const Color.fromRGBO(192, 192, 192, 1), width: 3)),
+        borderRadius: BorderRadius.circular(30),
+        border: Border.all(
+          color: const Color.fromRGBO(192, 192, 192, 1),
+          width: 3,
+        ),
+      ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,

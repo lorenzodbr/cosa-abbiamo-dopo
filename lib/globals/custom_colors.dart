@@ -10,4 +10,6 @@ class CustomColors {
   static const Color white = Colors.white;
 
   static const Color darkGrey = Color.fromRGBO(105, 105, 105, 1);
+
+  static const Color almostBlack = Color.fromARGB(255, 29, 29, 29);
 }

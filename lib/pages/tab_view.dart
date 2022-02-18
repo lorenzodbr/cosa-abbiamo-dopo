@@ -21,7 +21,6 @@ class _TabViewState extends State<TabView> {
   late TabViewState _state;
 
   int _pageIndex = 0;
-  bool _skipLoading = false;
 
   late PageController _pageController;
 

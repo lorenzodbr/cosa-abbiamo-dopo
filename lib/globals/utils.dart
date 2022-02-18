@@ -5,6 +5,7 @@ import 'package:cosa_abbiamo_dopo/globals/marconi_hour.dart';
 import 'package:cosa_abbiamo_dopo/globals/marconi_lesson.dart';
 import 'package:cosa_abbiamo_dopo/globals/marconi_teacher.dart';
 import 'package:flowder/flowder.dart';
+import 'package:flutter_picker/flutter_picker.dart';
 import 'package:http/http.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -48,7 +49,7 @@ class Utils {
   static const String baseProjectAPIUrl =
       'https://api.github.com/repos/lorenzodbr/cosa-abbiamo-dopo/releases/latest';
   static const String baseProjectDownloadUrl =
-      'https://github.com/lorenzodbr/cosa-abbiamo-dopo/releases/latest';
+      'https://github.com/lorenzodbr/cosa-abbiamo-dopo/releases';
   static const String baseWebAppUrl =
       'https://lorenzodbr.github.io/cosa-abbiamo-dopo';
 
@@ -82,10 +83,6 @@ class Utils {
     MarconiHour(
       const TimeOfDay(hour: 11, minute: 20),
       const TimeOfDay(hour: 12, minute: 10),
-    ),
-    MarconiHour(
-      const TimeOfDay(hour: 12, minute: 10),
-      const TimeOfDay(hour: 13, minute: 00),
     ),
     MarconiHour(
       const TimeOfDay(hour: 12, minute: 10),
@@ -460,11 +457,33 @@ class Utils {
   static List<String> decodeClasses(String data) {
     final List<String> _parsed = data
         .substring(data.indexOf('[') + 2, data.indexOf(']') - 1)
-        .split('","');
+        .split(RegExp('","'));
 
     _parsed.removeWhere((element) => !element.startsWith(RegExp('[1-5]')));
 
     return _parsed;
+  }
+
+  static List<PickerItem> buildClassesForPicker(List<String> classes) {
+    List<PickerItem> wrapper = [
+      PickerItem(value: '1', children: []),
+      PickerItem(value: '2', children: []),
+      PickerItem(value: '3', children: []),
+      PickerItem(value: '4', children: []),
+      PickerItem(value: '5', children: [])
+    ];
+
+    for (String currentClass in classes) {
+      int extractedClass = int.parse(currentClass[0]);
+
+      String extractedSection = currentClass.substring(1);
+
+      wrapper[extractedClass - 1].children!.add(PickerItem(
+            value: extractedSection,
+          ));
+    }
+
+    return wrapper;
   }
 
   static bool isInDayRange(bool isFirstGroup) {
@@ -666,7 +685,7 @@ class Utils {
   }
 
   static Future<String> fetchVersion() async {
-    Uri _uri = Uri.parse(baseProjectDownloadUrl);
+    Uri _uri = Uri.parse(baseProjectDownloadUrl + '/latest');
 
     try {
       Request req = http.Request("Get", _uri)..followRedirects = false;
@@ -704,8 +723,11 @@ class Utils {
   }
 
   static Future downloadUpdate(options, version) async {
+    String url =
+        Utils.baseProjectDownloadUrl + '/download/$version/$apkFileName';
+
     return await Flowder.download(
-      Utils.baseProjectDownloadUrl + '/$version/$apkFileName',
+      url,
       options,
     );
   }
