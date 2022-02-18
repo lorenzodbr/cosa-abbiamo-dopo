@@ -129,6 +129,7 @@ class _HomePageState extends State<HomePage> {
                           height: 20,
                           child: CircularProgressIndicator(
                             color: CustomColors.grey,
+                            strokeWidth: 3,
                           ),
                         )
                       : Icon(
