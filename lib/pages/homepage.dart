@@ -18,11 +18,6 @@ enum ClassesChooserState { fetching, ready, error }
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
 
-  static const double carouselHeight = 200;
-  static const double carouselWidth =
-      HomePage.carouselHeight * Utils.goldenRatio;
-  static const double dotIndicatorsSize = 10;
-
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -56,7 +51,7 @@ class _HomePageState extends State<HomePage> {
 
       _isFirstGroup = Utils.isFirstGroup(_savedData);
 
-      _hourIndex = Utils.getCurrentHourIndex(_isFirstGroup);
+      _hourIndex = Utils.getNextHourIndex(_isFirstGroup);
     } catch (_) {
       _savedData = [];
 
@@ -84,7 +79,7 @@ class _HomePageState extends State<HomePage> {
             padding: const EdgeInsets.only(bottom: 50),
             child: Container(
               constraints: const BoxConstraints(
-                maxWidth: HomePage.carouselWidth,
+                maxWidth: Utils.carouselWidth,
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -217,9 +212,19 @@ class _HomePageState extends State<HomePage> {
                   _classesChooserState = ClassesChooserState.ready;
                   _savedData = Utils.getSavedData();
                   _savedClass = Utils.getSavedClass();
+                  _isFirstGroup = Utils.isFirstGroup(_savedData);
+                  _hourIndex = Utils.getNextHourIndex(_isFirstGroup);
                 });
 
                 Navigator.pop(context);
+
+                if (_hourIndex >= 0) {
+                  _carouselController.animateToPage(
+                    _isFirstGroup ? _hourIndex : _hourIndex - 2,
+                    curve: Curves.elasticOut,
+                    duration: const Duration(milliseconds: 2500),
+                  );
+                }
               }
             } catch (ex) {
               setState(() {
@@ -255,6 +260,7 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildCarousel() {
     bool _isCurrentHourCard;
+    bool _isNextHourCard;
 
     if (_hourIndex >= Utils.inSchoolTime) {
       if (_savedData.isNotEmpty) {
@@ -263,6 +269,9 @@ class _HomePageState extends State<HomePage> {
             CarouselSlider.builder(
               itemBuilder: (context, index, realIndex) {
                 _isCurrentHourCard =
+                    index + 1 == (_isFirstGroup ? _hourIndex : _hourIndex - 2);
+
+                _isNextHourCard =
                     index == (_isFirstGroup ? _hourIndex : _hourIndex - 2);
 
                 return OpenContainer<String>(
@@ -285,19 +294,25 @@ class _HomePageState extends State<HomePage> {
                             (_isFirstGroup ? _hourIndex : _hourIndex - 2) - 1
                         ? _savedData[index].hours.startingTime
                         : null,
-                    refresh: _isCurrentHourCard
+                    refresh: _isNextHourCard
                         ? () {
-                            setState(() {
-                              _hourIndex =
-                                  Utils.getCurrentHourIndex(_isFirstGroup);
+                            setState(
+                              () {
+                                _hourIndex =
+                                    Utils.getNextHourIndex(_isFirstGroup);
 
-                              if (_hourIndex >= 0) {
-                                _carouselController.animateToPage(_hourIndex,
-                                    curve: Curves.elasticIn);
-                              }
-                            });
+                                if (_hourIndex >= 0) {
+                                  _carouselController.animateToPage(
+                                    _hourIndex,
+                                    curve: Curves.elasticOut,
+                                    duration: const Duration(seconds: 2),
+                                  );
+                                }
+                              },
+                            );
                           }
                         : null,
+                    isCurrentHour: _isCurrentHourCard,
                   ),
                   openColor: CustomColors.black,
                   closedShape: RoundedRectangleBorder(
@@ -309,7 +324,7 @@ class _HomePageState extends State<HomePage> {
               carouselController: _carouselController,
               itemCount: _savedData.length,
               options: CarouselOptions(
-                height: HomePage.carouselHeight,
+                height: Utils.carouselHeight,
                 initialPage: _isFirstGroup ? _hourIndex : _hourIndex - 2,
                 enableInfiniteScroll: false,
                 enlargeCenterPage: true,
@@ -319,7 +334,7 @@ class _HomePageState extends State<HomePage> {
                     _carouselIndex = index;
                     _isCurrentHourCard =
                         index == (_isFirstGroup ? _hourIndex : _hourIndex - 2);
-                    _hourIndex = Utils.getCurrentHourIndex(_isFirstGroup);
+                    _hourIndex = Utils.getNextHourIndex(_isFirstGroup);
                   });
                 },
               ),
@@ -332,8 +347,8 @@ class _HomePageState extends State<HomePage> {
                 effect: const WormEffect(
                   activeDotColor: CustomColors.black,
                   dotColor: CustomColors.silver,
-                  dotHeight: HomePage.dotIndicatorsSize,
-                  dotWidth: HomePage.dotIndicatorsSize,
+                  dotHeight: Utils.dotIndicatorsSize,
+                  dotWidth: Utils.dotIndicatorsSize,
                 ),
               ),
             )
@@ -346,7 +361,7 @@ class _HomePageState extends State<HomePage> {
           },
           itemCount: 1,
           options: CarouselOptions(
-            height: HomePage.carouselHeight,
+            height: Utils.carouselHeight,
             enableInfiniteScroll: false,
             enlargeCenterPage: true,
             scrollDirection: Axis.horizontal,
@@ -360,7 +375,7 @@ class _HomePageState extends State<HomePage> {
         },
         itemCount: 1,
         options: CarouselOptions(
-          height: HomePage.carouselHeight,
+          height: Utils.carouselHeight,
           enableInfiniteScroll: false,
           enlargeCenterPage: true,
           scrollDirection: Axis.horizontal,

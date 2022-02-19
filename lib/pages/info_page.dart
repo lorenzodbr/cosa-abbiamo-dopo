@@ -4,6 +4,7 @@ import 'package:cosa_abbiamo_dopo/globals/item_model.dart';
 import 'package:cosa_abbiamo_dopo/globals/utils.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class InfoPage extends StatefulWidget {
@@ -57,12 +58,12 @@ class _InfoPageState extends State<InfoPage> {
       leading: const Icon(Icons.lightbulb_outline),
       header: "Come è nata l'idea per quest'app?",
       body: [
-        "Be', chiunque, almeno una volta nella propria vita scolastica, si è posto o ha posto a qualcuno la domanda nella Homepage.",
+        "Chiunque, almeno una volta nella propria vita scolastica, si è posto, o ha posto a qualcuno, la domanda che dà il titolo a quest'app.",
         "Quest'app, realizzata specificatamente per il nostro istituto (ITI G. Marconi), giunge in supporto a coloro che vogliono avere una risposta a quella domanda in modo semplice e veloce."
       ],
     ),
     ItemModel(
-      leading: const Icon(Icons.settings_outlined),
+      leading: const Icon(MdiIcons.wrenchOutline),
       header: "Come funziona quest'app?",
       body: [
         "Il suo funzionamento è rapido e intuitivo: basta aprirla. Verranno ricercati automaticamente aggiornamenti per gli orari, in base a quanto pubblicato dalla scuola, e verranno mostrati questi ultimi con una grafica semplice e minimale."
@@ -79,7 +80,7 @@ class _InfoPageState extends State<InfoPage> {
     ),
     ItemModel(
       leading: const Icon(
-        Icons.source_outlined,
+        Icons.code_outlined,
       ),
       header: "Dove posso trovare il codice sorgente?",
       body: [
@@ -149,7 +150,7 @@ class _InfoPageState extends State<InfoPage> {
       ],
     ),
     ItemModel(
-      leading: const Icon(Icons.bolt_outlined),
+      leading: const Icon(MdiIcons.virusOffOutline),
       header: "Quest'app contiene un virus?",
       body: [
         "No, fa solo quello per cui è stata pensata. Niente malware, trojan, ransomware o miner di Bitcoin.",

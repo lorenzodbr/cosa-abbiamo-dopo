@@ -6,6 +6,7 @@ import 'package:cosa_abbiamo_dopo/globals/marconi_lesson.dart';
 import 'package:cosa_abbiamo_dopo/globals/marconi_teacher.dart';
 import 'package:flowder/flowder.dart';
 import 'package:flutter_picker/flutter_picker.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -36,6 +37,10 @@ class Utils {
   static const int easterEggStartingLimit = 10;
 
   static const double goldenRatio = 1.618;
+
+  static const double carouselHeight = 200;
+  static const double carouselWidth = carouselHeight * Utils.goldenRatio;
+  static const double dotIndicatorsSize = 10;
 
   static const String savedClass = 'class';
   static const String savedData = 'data';
@@ -221,9 +226,10 @@ class Utils {
           setSavedClass(_savedClass);
 
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
+            SnackBar(
               content: Text(
                 'Ricordati di cambiare classe',
+                style: GoogleFonts.workSans(),
               ),
             ),
           );
@@ -513,7 +519,7 @@ class Utils {
     return false;
   }
 
-  static int getCurrentHourIndex(isFirstGroup) {
+  static int getNextHourIndex(isFirstGroup) {
     DateTime _nowDateTime = DateTime.now();
     TimeOfDay _now = TimeOfDay.fromDateTime(_nowDateTime);
 

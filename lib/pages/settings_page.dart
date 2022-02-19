@@ -82,6 +82,10 @@ class _SettingsState extends State<Settings> {
                               : 'Caricamento...',
                         ),
                         onPressed: (_) {
+                          if (wasEasterEggUnlocked) {
+                            ScaffoldMessenger.of(context).clearSnackBars();
+                          }
+
                           if (!wasEasterEggUnlocked &&
                               easterEggCounter < Utils.easterEggUpperLimit) {
                             easterEggCounter++;
@@ -91,16 +95,15 @@ class _SettingsState extends State<Settings> {
 
                             if (difference <= Utils.easterEggStartingLimit &&
                                 difference > 0) {
-                              ScaffoldMessenger.of(context)
-                                  .hideCurrentSnackBar();
+                              ScaffoldMessenger.of(context).clearSnackBars();
 
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   content: Text(
                                     difference == 1
-                                        ? 'Manca $difference tocco per sbloccare un easter egg'
-                                        : 'Mancano $difference tocchi per sbloccare un easter egg',
-                                    style: GoogleFonts.workSans(fontSize: 12),
+                                        ? '$difference tocco per sbloccare un easter egg'
+                                        : '$difference tocchi per sbloccare un easter egg',
+                                    style: GoogleFonts.workSans(),
                                   ),
                                   duration: const Duration(milliseconds: 500),
                                 ),
@@ -108,8 +111,7 @@ class _SettingsState extends State<Settings> {
                             }
 
                             if (difference == 0) {
-                              ScaffoldMessenger.of(context)
-                                  .hideCurrentSnackBar();
+                              ScaffoldMessenger.of(context).clearSnackBars();
                             }
                           }
 
@@ -137,38 +139,44 @@ class _SettingsState extends State<Settings> {
     );
   }
 
-  List<SettingsTile> addEasterEgg() {
+  List<CustomSettingsTile> addEasterEgg() {
     if (wasEasterEggUnlocked) {
       return [
-        SettingsTile(
-          leading: const Icon(Icons.card_giftcard),
-          title: _buildHeaderText('Easter Egg'),
-          value: _buildValueText('Riscatta il premio'),
-          onPressed: (_) async {
-            String url = Utils.rickRollUrl;
+        CustomSettingsTile(
+          child: GestureDetector(
+            onLongPress: () {
+              setState(() {
+                Utils.lockEasterEgg();
 
-            if (await canLaunch(url)) {
-              await launch(url);
-            }
-          },
-          // onLongPress: () {
-          //   setState(() {
-          //     Utils.lockEasterEgg();
+                setState(() {
+                  wasEasterEggUnlocked = Utils.wasEasterEggUnlocked();
+                  easterEggCounter = 0;
+                });
 
-          //     setState(() {
-          //       wasEasterEggUnlocked = Utils.wasEasterEggUnlocked();
-          //       easterEggCounter = 0;
-          //     });
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      'Easter Egg nascosto',
+                      style: GoogleFonts.workSans(),
+                    ),
+                    duration: const Duration(seconds: 3),
+                  ),
+                );
+              });
+            },
+            child: SettingsTile(
+              leading: const Icon(Icons.card_giftcard),
+              title: _buildHeaderText('Easter Egg'),
+              value: _buildValueText('Riscatta il premio'),
+              onPressed: (_) async {
+                String url = Utils.rickRollUrl;
 
-          //     ScaffoldMessenger.of(context).showSnackBar(
-          //       const SnackBar(
-          //         content: Text(
-          //           'Easter Egg nascosto',
-          //         ),
-          //       ),
-          //     );
-          //   });
-          // },
+                if (await canLaunch(url)) {
+                  await launch(url);
+                }
+              },
+            ),
+          ),
         )
       ];
     } else {
@@ -182,12 +190,14 @@ class _SettingsState extends State<Settings> {
 
   Text _buildHeaderText(String text) {
     return Text(text,
-        style: GoogleFonts.workSans(color: CustomColors.almostBlack));
+        style: GoogleFonts.workSans(
+            color: CustomColors.almostBlack, fontSize: 16));
   }
 
   Text _buildValueText(String text) {
     return Text(text,
-        style: GoogleFonts.workSans(color: CustomColors.darkGrey));
+        style:
+            GoogleFonts.workSans(color: CustomColors.darkGrey, fontSize: 14));
   }
 
   Widget _buildClassesPicker() {
