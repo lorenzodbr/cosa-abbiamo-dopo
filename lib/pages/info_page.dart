@@ -16,7 +16,7 @@ class InfoPage extends StatefulWidget {
 class _InfoPageState extends State<InfoPage> {
   List<ItemModel> itemData = <ItemModel>[
     ItemModel(
-      leading: const Icon(Icons.person),
+      leading: const Icon(Icons.person_outline),
       header: "Chi è il creatore di quest'app?",
       body: [
         "Quest'app è stata realizzata da Lorenzo Di Berardino.",
@@ -54,7 +54,7 @@ class _InfoPageState extends State<InfoPage> {
       ],
     ),
     ItemModel(
-      leading: const Icon(Icons.lightbulb),
+      leading: const Icon(Icons.lightbulb_outline),
       header: "Come è nata l'idea per quest'app?",
       body: [
         "Be', chiunque, almeno una volta nella propria vita scolastica, si è posto o ha posto a qualcuno la domanda nella Homepage.",
@@ -62,14 +62,14 @@ class _InfoPageState extends State<InfoPage> {
       ],
     ),
     ItemModel(
-      leading: const Icon(Icons.settings),
+      leading: const Icon(Icons.settings_outlined),
       header: "Come funziona quest'app?",
       body: [
         "Il suo funzionamento è rapido e intuitivo: basta aprirla. Verranno ricercati automaticamente aggiornamenti per gli orari, in base a quanto pubblicato dalla scuola, e verranno mostrati questi ultimi con una grafica semplice e minimale."
       ],
     ),
     ItemModel(
-      leading: const Icon(Icons.wifi),
+      leading: const Icon(Icons.wifi_outlined),
       header:
           "È richiesta una connessione a Internet attiva per utilizzare l'app?",
       body: [
@@ -79,7 +79,7 @@ class _InfoPageState extends State<InfoPage> {
     ),
     ItemModel(
       leading: const Icon(
-        Icons.source,
+        Icons.source_outlined,
       ),
       header: "Dove posso trovare il codice sorgente?",
       body: [
@@ -105,8 +105,8 @@ class _InfoPageState extends State<InfoPage> {
     ),
     ItemModel(
       leadings: const [
-        Icon(Icons.computer),
-        Icon(Icons.phone_android),
+        Icon(Icons.computer_outlined),
+        Icon(Icons.phone_android_outlined),
       ],
       isPlaformDependent: true,
       headers: [
@@ -149,7 +149,7 @@ class _InfoPageState extends State<InfoPage> {
       ],
     ),
     ItemModel(
-      leading: const Icon(Icons.bolt),
+      leading: const Icon(Icons.bolt_outlined),
       header: "Quest'app contiene un virus?",
       body: [
         "No, fa solo quello per cui è stata pensata. Niente malware, trojan, ransomware o miner di Bitcoin.",
@@ -157,7 +157,7 @@ class _InfoPageState extends State<InfoPage> {
       ],
     ),
     ItemModel(
-      leading: const Icon(Icons.bug_report),
+      leading: const Icon(Icons.bug_report_outlined),
       header: "Posso segnalare un problema?",
       body: [
         "Certamente, cercherò di risolverlo nel minor tempo possibile rilasciando un aggiornamento.",
@@ -175,13 +175,16 @@ class _InfoPageState extends State<InfoPage> {
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 810),
             child: ListView(
+              physics: const BouncingScrollPhysics(
+                parent: AlwaysScrollableScrollPhysics(),
+              ),
               padding: const EdgeInsets.all(10),
               children: [
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Padding(
-                      padding: EdgeInsets.only(top: 10, bottom: 20, left: 7),
+                      padding: EdgeInsets.only(top: 50, bottom: 20, left: 7),
                       child: Text(
                         "Informazioni",
                         style: TextStyle(
@@ -189,6 +192,7 @@ class _InfoPageState extends State<InfoPage> {
                       ),
                     ),
                     ExpansionPanelList(
+                      dividerColor: CustomColors.white,
                       children: _getExpansionPanels(),
                       expansionCallback: (panelIndex, isExpanded) {
                         setState(() {
@@ -212,7 +216,15 @@ class _InfoPageState extends State<InfoPage> {
                             ),
                           ),
                         ),
-                        Image.asset('assets/logo/marconi.png', height: 60),
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            bottom: 30,
+                          ),
+                          child: Image.asset(
+                            'assets/logo/marconi.png',
+                            height: 60,
+                          ),
+                        ),
                       ],
                     ),
                   ],

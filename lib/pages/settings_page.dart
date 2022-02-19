@@ -6,8 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_picker/flutter_picker.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import 'homepage.dart';
-
 class Settings extends StatefulWidget {
   const Settings({Key? key}) : super(key: key);
 
@@ -31,8 +29,13 @@ class _SettingsState extends State<Settings> {
     return SafeArea(
       child: Scaffold(
         body: SettingsList(
+          physics: const BouncingScrollPhysics(
+            parent: AlwaysScrollableScrollPhysics(),
+          ),
+          platform: DevicePlatform.android,
           lightTheme: const SettingsThemeData(
             settingsListBackground: CustomColors.white,
+            leadingIconsColor: CustomColors.grey,
           ),
           sections: [
             SettingsSection(
@@ -249,8 +252,6 @@ class _SettingsState extends State<Settings> {
         data: _pickerData,
       ),
       magnification: 1.2,
-      selectedTextStyle: const TextStyle(color: CustomColors.black),
-      textStyle: HomePage.classPickerTextStyle,
       hideHeader: true,
       title: const Text('Seleziona classe'),
       cancelText: 'Annulla',

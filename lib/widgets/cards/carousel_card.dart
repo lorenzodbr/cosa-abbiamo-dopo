@@ -49,6 +49,8 @@ class CarouselCard extends StatelessWidget {
         String _timeToGoFormatted = '';
 
         if (_timeToGoDuration.inSeconds.isNegative) {
+          _timeToGoFormatted = 'in corso';
+        } else if (_timeToGoDuration.inSeconds == 0) {
           if (refresh != null) {
             WidgetsBinding.instance!
                 .addPostFrameCallback((_) => refresh!.call());

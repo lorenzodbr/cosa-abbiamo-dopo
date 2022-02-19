@@ -13,7 +13,7 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:flutter_picker/flutter_picker.dart';
 
-enum ClassesChooserState { fetching, ready, choosing, error }
+enum ClassesChooserState { fetching, ready, error }
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -22,8 +22,6 @@ class HomePage extends StatefulWidget {
   static const double carouselWidth =
       HomePage.carouselHeight * Utils.goldenRatio;
   static const double dotIndicatorsSize = 10;
-  static const TextStyle classPickerTextStyle =
-      TextStyle(fontWeight: FontWeight.normal, fontSize: 18);
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -137,10 +135,7 @@ class _HomePageState extends State<HomePage> {
                       : Icon(
                           _classesChooserState == ClassesChooserState.ready
                               ? Icons.edit
-                              : _classesChooserState ==
-                                      ClassesChooserState.choosing
-                                  ? Icons.more_horiz
-                                  : Icons.wifi_off,
+                              : Icons.wifi_off,
                           color: CustomColors.grey,
                           size: 20,
                         ),
@@ -168,7 +163,7 @@ class _HomePageState extends State<HomePage> {
       List<String> _classes = await Utils.getClasses();
 
       setState(() {
-        _classesChooserState = ClassesChooserState.choosing;
+        _classesChooserState = ClassesChooserState.ready;
       });
 
       List<PickerItem> _pickerData = Utils.encodeClassesForPicker(_classes);
@@ -178,56 +173,36 @@ class _HomePageState extends State<HomePage> {
       String _classSection = _savedClass.substring(1);
 
       Picker(
-          adapter: PickerDataAdapter(
-            data: _pickerData,
-          ),
-          hideHeader: true,
-          selectedTextStyle: const TextStyle(color: CustomColors.black),
-          title: const Text('Seleziona classe'),
-          cancelText: 'Annulla',
-          confirmText: 'OK',
-          selecteds: [
-            _classYear - 1,
-            _pickerData[_classYear - 1].children!.indexWhere(((element) {
-              return element.value == _classSection;
-            }))
-          ],
-          textStyle: HomePage.classPickerTextStyle,
-          onConfirm: (Picker picker, List value) async {
-            String newClass =
-                picker.getSelectedValues()[0] + picker.getSelectedValues()[1];
+        adapter: PickerDataAdapter(
+          data: _pickerData,
+        ),
+        hideHeader: true,
+        title: const Text('Seleziona classe'),
+        cancelText: 'Annulla',
+        confirmText: 'OK',
+        selecteds: [
+          _classYear - 1,
+          _pickerData[_classYear - 1].children!.indexWhere(((element) {
+            return element.value == _classSection;
+          }))
+        ],
+        magnification: 1.2,
+        onConfirm: (Picker picker, List value) async {
+          String newClass =
+              picker.getSelectedValues()[0] + picker.getSelectedValues()[1];
 
-            if (newClass != _savedClass) {
-              Utils.showUpdatingDialog(context);
+          if (newClass != _savedClass) {
+            Utils.showUpdatingDialog(context);
 
-              String previousClass = Utils.getSavedClass();
+            String previousClass = Utils.getSavedClass();
 
-              Utils.setSavedClass(picker.getSelectedValues()[0] +
-                  picker.getSelectedValues()[1]);
+            Utils.setSavedClass(
+                picker.getSelectedValues()[0] + picker.getSelectedValues()[1]);
 
-              try {
-                String _data = await Utils.getRawData(context);
+            try {
+              String _data = await Utils.getRawData(context);
 
-                if (_data == Utils.empty) {
-                  setState(() {
-                    _classesChooserState = ClassesChooserState.ready;
-                  });
-
-                  Utils.setSavedClass(previousClass);
-
-                  Navigator.pop(context);
-
-                  Utils.showErrorDialog(context, 1);
-                } else {
-                  setState(() {
-                    _classesChooserState = ClassesChooserState.ready;
-                    _savedData = Utils.getSavedData();
-                    _savedClass = Utils.getSavedClass();
-                  });
-
-                  Navigator.pop(context);
-                }
-              } catch (ex) {
+              if (_data == Utils.empty) {
                 setState(() {
                   _classesChooserState = ClassesChooserState.ready;
                 });
@@ -236,19 +211,39 @@ class _HomePageState extends State<HomePage> {
 
                 Navigator.pop(context);
 
-                Utils.showErrorDialog(context, 0);
+                Utils.showErrorDialog(context, 1);
+              } else {
+                setState(() {
+                  _classesChooserState = ClassesChooserState.ready;
+                  _savedData = Utils.getSavedData();
+                  _savedClass = Utils.getSavedClass();
+                });
+
+                Navigator.pop(context);
               }
-            } else {
+            } catch (ex) {
               setState(() {
                 _classesChooserState = ClassesChooserState.ready;
               });
+
+              Utils.setSavedClass(previousClass);
+
+              Navigator.pop(context);
+
+              Utils.showErrorDialog(context, 0);
             }
-          },
-          onCancel: () {
+          } else {
             setState(() {
               _classesChooserState = ClassesChooserState.ready;
             });
-          }).showDialog(context);
+          }
+        },
+        onCancel: () {
+          setState(() {
+            _classesChooserState = ClassesChooserState.ready;
+          });
+        },
+      ).showDialog(context);
     } catch (_) {
       setState(
         () {
@@ -286,10 +281,10 @@ class _HomePageState extends State<HomePage> {
                     openContainer: openContainer,
                     lessonName: _savedData[index].name,
                     room: _savedData[index].room,
-                    startingHour:
-                        index >= (_isFirstGroup ? _hourIndex : _hourIndex - 2)
-                            ? _savedData[index].hours.startingTime
-                            : null,
+                    startingHour: index >=
+                            (_isFirstGroup ? _hourIndex : _hourIndex - 2) - 1
+                        ? _savedData[index].hours.startingTime
+                        : null,
                     refresh: _isCurrentHourCard
                         ? () {
                             setState(() {
@@ -298,7 +293,7 @@ class _HomePageState extends State<HomePage> {
 
                               if (_hourIndex >= 0) {
                                 _carouselController.animateToPage(_hourIndex,
-                                    curve: Curves.easeInOut);
+                                    curve: Curves.elasticIn);
                               }
                             });
                           }
