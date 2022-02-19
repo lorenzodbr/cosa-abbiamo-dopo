@@ -7,6 +7,8 @@ class ItemModel {
   final List<String> body;
   final List<ElevatedButton>? button;
   final bool isPlaformDependent;
+  final Icon? leading;
+  final List<Icon>? leadings;
 
   ItemModel({
     this.expanded = false,
@@ -15,5 +17,7 @@ class ItemModel {
     required this.body,
     this.button,
     this.isPlaformDependent = false,
+    this.leading,
+    this.leadings,
   });
 }

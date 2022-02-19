@@ -13,7 +13,7 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:flutter_picker/flutter_picker.dart';
 
-enum FetchingClassesState { loading, ready, error }
+enum ClassesChooserState { fetching, ready, choosing, error }
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -22,6 +22,8 @@ class HomePage extends StatefulWidget {
   static const double carouselWidth =
       HomePage.carouselHeight * Utils.goldenRatio;
   static const double dotIndicatorsSize = 10;
+  static const TextStyle classPickerTextStyle =
+      TextStyle(fontWeight: FontWeight.normal, fontSize: 18);
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -36,7 +38,7 @@ class _HomePageState extends State<HomePage> {
   late List<MarconiLesson> _savedData;
   late bool _isFirstGroup;
   late CarouselController _carouselController;
-  late FetchingClassesState _fetchingClasses;
+  late ClassesChooserState _classesChooserState;
 
   @override
   void initState() {
@@ -49,7 +51,7 @@ class _HomePageState extends State<HomePage> {
     _formattedDate = _formatter.format(_now);
 
     _savedClass = Utils.getSavedClass();
-    _fetchingClasses = FetchingClassesState.ready;
+    _classesChooserState = ClassesChooserState.ready;
 
     try {
       _savedData = Utils.getSavedData();
@@ -123,7 +125,7 @@ class _HomePageState extends State<HomePage> {
                   onPressed: () async {
                     await _showClassPicker();
                   },
-                  icon: _fetchingClasses == FetchingClassesState.loading
+                  icon: _classesChooserState == ClassesChooserState.fetching
                       ? const SizedBox(
                           width: 20,
                           height: 20,
@@ -133,9 +135,12 @@ class _HomePageState extends State<HomePage> {
                           ),
                         )
                       : Icon(
-                          _fetchingClasses == FetchingClassesState.ready
+                          _classesChooserState == ClassesChooserState.ready
                               ? Icons.edit
-                              : Icons.wifi_off,
+                              : _classesChooserState ==
+                                      ClassesChooserState.choosing
+                                  ? Icons.more_horiz
+                                  : Icons.wifi_off,
                           color: CustomColors.grey,
                           size: 20,
                         ),
@@ -156,17 +161,17 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _showClassPicker() async {
     setState(() {
-      _fetchingClasses = FetchingClassesState.loading;
+      _classesChooserState = ClassesChooserState.fetching;
     });
 
     try {
       List<String> _classes = await Utils.getClasses();
 
       setState(() {
-        _fetchingClasses = FetchingClassesState.ready;
+        _classesChooserState = ClassesChooserState.choosing;
       });
 
-      List<PickerItem> _pickerData = Utils.buildClassesForPicker(_classes);
+      List<PickerItem> _pickerData = Utils.encodeClassesForPicker(_classes);
 
       int _classYear = int.parse(_savedClass[0]);
 
@@ -177,6 +182,7 @@ class _HomePageState extends State<HomePage> {
             data: _pickerData,
           ),
           hideHeader: true,
+          selectedTextStyle: const TextStyle(color: CustomColors.black),
           title: const Text('Seleziona classe'),
           cancelText: 'Annulla',
           confirmText: 'OK',
@@ -186,6 +192,7 @@ class _HomePageState extends State<HomePage> {
               return element.value == _classSection;
             }))
           ],
+          textStyle: HomePage.classPickerTextStyle,
           onConfirm: (Picker picker, List value) async {
             String newClass =
                 picker.getSelectedValues()[0] + picker.getSelectedValues()[1];
@@ -202,6 +209,10 @@ class _HomePageState extends State<HomePage> {
                 String _data = await Utils.getRawData(context);
 
                 if (_data == Utils.empty) {
+                  setState(() {
+                    _classesChooserState = ClassesChooserState.ready;
+                  });
+
                   Utils.setSavedClass(previousClass);
 
                   Navigator.pop(context);
@@ -209,6 +220,7 @@ class _HomePageState extends State<HomePage> {
                   Utils.showErrorDialog(context, 1);
                 } else {
                   setState(() {
+                    _classesChooserState = ClassesChooserState.ready;
                     _savedData = Utils.getSavedData();
                     _savedClass = Utils.getSavedClass();
                   });
@@ -216,18 +228,31 @@ class _HomePageState extends State<HomePage> {
                   Navigator.pop(context);
                 }
               } catch (ex) {
+                setState(() {
+                  _classesChooserState = ClassesChooserState.ready;
+                });
+
                 Utils.setSavedClass(previousClass);
 
                 Navigator.pop(context);
 
                 Utils.showErrorDialog(context, 0);
               }
+            } else {
+              setState(() {
+                _classesChooserState = ClassesChooserState.ready;
+              });
             }
+          },
+          onCancel: () {
+            setState(() {
+              _classesChooserState = ClassesChooserState.ready;
+            });
           }).showDialog(context);
     } catch (_) {
       setState(
         () {
-          _fetchingClasses = FetchingClassesState.error;
+          _classesChooserState = ClassesChooserState.error;
         },
       );
     }

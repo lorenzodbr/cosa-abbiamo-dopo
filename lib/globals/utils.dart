@@ -464,7 +464,7 @@ class Utils {
     return _parsed;
   }
 
-  static List<PickerItem> buildClassesForPicker(List<String> classes) {
+  static List<PickerItem> encodeClassesForPicker(List<String> classes) {
     List<PickerItem> wrapper = [
       PickerItem(value: '1', children: []),
       PickerItem(value: '2', children: []),

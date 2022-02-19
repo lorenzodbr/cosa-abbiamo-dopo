@@ -21,7 +21,7 @@ class _UpdateUpdatingPageState extends State<UpdateUpdatingPage> {
 
   @override
   void initState() {
-    initDownload();
+    _initDownload();
 
     super.initState();
   }
@@ -62,7 +62,7 @@ class _UpdateUpdatingPageState extends State<UpdateUpdatingPage> {
     );
   }
 
-  Future<void> initDownload() async {
+  Future<void> _initDownload() async {
     Directory cacheDir = (await Utils.getCachePath());
 
     String path = cacheDir.path;

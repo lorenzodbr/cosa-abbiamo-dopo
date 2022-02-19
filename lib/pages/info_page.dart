@@ -16,9 +16,10 @@ class InfoPage extends StatefulWidget {
 class _InfoPageState extends State<InfoPage> {
   List<ItemModel> itemData = <ItemModel>[
     ItemModel(
+      leading: const Icon(Icons.person),
       header: "Chi è il creatore di quest'app?",
       body: [
-        "Quest'app è stata realizzata da\nLorenzo Di Berardino.",
+        "Quest'app è stata realizzata da Lorenzo Di Berardino.",
         "Puoi contattarlo con i pulsanti qui sotto."
       ],
       button: [
@@ -53,6 +54,7 @@ class _InfoPageState extends State<InfoPage> {
       ],
     ),
     ItemModel(
+      leading: const Icon(Icons.lightbulb),
       header: "Come è nata l'idea per quest'app?",
       body: [
         "Be', chiunque, almeno una volta nella propria vita scolastica, si è posto o ha posto a qualcuno la domanda nella Homepage.",
@@ -60,12 +62,14 @@ class _InfoPageState extends State<InfoPage> {
       ],
     ),
     ItemModel(
+      leading: const Icon(Icons.settings),
       header: "Come funziona quest'app?",
       body: [
         "Il suo funzionamento è rapido e intuitivo: basta aprirla. Verranno ricercati automaticamente aggiornamenti per gli orari, in base a quanto pubblicato dalla scuola, e verranno mostrati questi ultimi con una grafica semplice e minimale."
       ],
     ),
     ItemModel(
+      leading: const Icon(Icons.wifi),
       header:
           "È richiesta una connessione a Internet attiva per utilizzare l'app?",
       body: [
@@ -74,6 +78,9 @@ class _InfoPageState extends State<InfoPage> {
       ],
     ),
     ItemModel(
+      leading: const Icon(
+        Icons.source,
+      ),
       header: "Dove posso trovare il codice sorgente?",
       body: [
         "L'intero progetto è Open Source ed è disponibile su Github.",
@@ -97,6 +104,10 @@ class _InfoPageState extends State<InfoPage> {
       ],
     ),
     ItemModel(
+      leadings: const [
+        Icon(Icons.computer),
+        Icon(Icons.phone_android),
+      ],
       isPlaformDependent: true,
       headers: [
         "Quest'app è disponibile su un'altra piattaforma?",
@@ -138,6 +149,7 @@ class _InfoPageState extends State<InfoPage> {
       ],
     ),
     ItemModel(
+      leading: const Icon(Icons.bolt),
       header: "Quest'app contiene un virus?",
       body: [
         "No, fa solo quello per cui è stata pensata. Niente malware, trojan, ransomware o miner di Bitcoin.",
@@ -145,6 +157,7 @@ class _InfoPageState extends State<InfoPage> {
       ],
     ),
     ItemModel(
+      leading: const Icon(Icons.bug_report),
       header: "Posso segnalare un problema?",
       body: [
         "Certamente, cercherò di risolverlo nel minor tempo possibile rilasciando un aggiornamento.",
@@ -158,28 +171,56 @@ class _InfoPageState extends State<InfoPage> {
     return SafeArea(
       child: Scaffold(
         backgroundColor: CustomColors.white,
-        body: ListView(padding: const EdgeInsets.all(10), children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Padding(
-                padding: EdgeInsets.only(top: 10, bottom: 20, left: 7),
-                child: Text(
-                  "Informazioni",
-                  style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
+        body: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 810),
+            child: ListView(
+              padding: const EdgeInsets.all(10),
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.only(top: 10, bottom: 20, left: 7),
+                      child: Text(
+                        "Informazioni",
+                        style: TextStyle(
+                            fontSize: 40, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    ExpansionPanelList(
+                      children: _getExpansionPanels(),
+                      expansionCallback: (panelIndex, isExpanded) {
+                        setState(() {
+                          itemData[panelIndex].expanded = !isExpanded;
+                        });
+                      },
+                      expandedHeaderPadding: const EdgeInsets.all(0),
+                    ),
+                    Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 30),
+                          child: Center(
+                            child: Text(
+                              '${DateTime.now().year} \u00a9 Lorenzo Di Berardino\nITI G. Marconi, Verona',
+                              style: const TextStyle(
+                                fontSize: 15,
+                                color: CustomColors.grey,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ),
+                        Image.asset('assets/logo/marconi.png', height: 60),
+                      ],
+                    ),
+                  ],
                 ),
-              ),
-              ExpansionPanelList(
-                children: _getExpansionPanels(),
-                expansionCallback: (panelIndex, isExpanded) {
-                  itemData[panelIndex].expanded = !isExpanded;
-                  setState(() {});
-                },
-                expandedHeaderPadding: const EdgeInsets.all(0),
-              ),
-            ],
+              ],
+            ),
           ),
-        ]),
+        ),
       ),
     );
   }
@@ -191,6 +232,9 @@ class _InfoPageState extends State<InfoPage> {
           return Padding(
             padding: const EdgeInsets.all(5),
             child: ListTile(
+              leading: item.isPlaformDependent
+                  ? item.leadings![kIsWeb ? 1 : 0]
+                  : item.leading,
               title: Text(
                 item.isPlaformDependent
                     ? item.headers[kIsWeb ? 1 : 0]

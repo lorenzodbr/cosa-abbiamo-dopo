@@ -1,3 +1,4 @@
+import 'package:cosa_abbiamo_dopo/globals/custom_colors.dart';
 import 'package:cosa_abbiamo_dopo/globals/utils.dart';
 import 'package:cosa_abbiamo_dopo/pages/homepage.dart';
 import 'package:cosa_abbiamo_dopo/pages/info_page.dart';
@@ -60,11 +61,28 @@ class _TabViewState extends State<TabView> {
               currentIndex: _pageIndex,
               onTap: _onTabTapped,
               backgroundColor: Colors.white,
-              items: const <BottomNavigationBarItem>[
-                BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
+              selectedItemColor: CustomColors.black,
+              items: <BottomNavigationBarItem>[
                 BottomNavigationBarItem(
-                    icon: Icon(Icons.settings), label: "Impostazioni"),
-                BottomNavigationBarItem(icon: Icon(Icons.info), label: "Info"),
+                  icon: Icon(
+                    _pageIndex == 0
+                        ? Icons.access_time_filled
+                        : Icons.access_time,
+                  ),
+                  label: "Orari",
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(
+                    _pageIndex == 1 ? Icons.settings : Icons.settings_outlined,
+                  ),
+                  label: "Impostazioni",
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(
+                    _pageIndex == 2 ? Icons.info : Icons.info_outline,
+                  ),
+                  label: "Informazioni",
+                ),
               ],
             ),
           );
