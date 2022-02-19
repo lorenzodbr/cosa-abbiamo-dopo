@@ -100,7 +100,7 @@ class _SettingsState extends State<Settings> {
                                     difference == 1
                                         ? 'Manca $difference tocco per sbloccare un easter egg'
                                         : 'Mancano $difference tocchi per sbloccare un easter egg',
-                                    style: GoogleFonts.workSans(),
+                                    style: GoogleFonts.workSans(fontSize: 12),
                                   ),
                                   duration: const Duration(milliseconds: 500),
                                 ),
