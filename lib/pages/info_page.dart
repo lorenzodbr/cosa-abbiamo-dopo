@@ -209,7 +209,7 @@ class _InfoPageState extends State<InfoPage> {
                           padding: EdgeInsets.symmetric(vertical: 30),
                           child: Center(
                             child: Text(
-                              'Lorenzo Di Berardino\nITI G. Marconi, Verona\n\nDistribuito sotto Licenza MIT',
+                              'Lorenzo Di Berardino\nITI G. Marconi, Verona\n\nDistribuzione sotto Licenza MIT',
                               style: TextStyle(
                                 fontSize: 15,
                                 color: CustomColors.grey,
