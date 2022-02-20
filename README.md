@@ -1,12 +1,19 @@
-## [ITA :it:](#cosa-abbiamo-dopo) / [ENG :en](#whats-later)
+## [ITA :it:](#cosa-abbiamo-dopo) / [ENG :uk:/:us:](#whats-later)
+
 
 # Cosa abbiamo dopo?
 
-<div align="center">
+<div align="center" style="
+  padding: 20px 0">
     <img src="assets/logo/marconi.png" alt="Logo" height="120">
 </div>
 
-<br/>
+
+<div align="center">
+  <img src="assets/screenshots/main_page.png" width="100"/>
+  <img src="assets/screenshots/details_page.png" width="100"  style="padding: 0 20px"/>
+  <img src="assets/screenshots/settings_page.png" width="100" />
+</div>
 
 <br/>
 
@@ -71,14 +78,6 @@ Quest'app è distribuita sotto la Licenza MIT.
 <br/>
 
 # What's later?
-
-<div align="center">
-    <img src="assets/logo/marconi.png" alt="Logo" height="120">
-</div>
-
-<br/>
-
-<br/>
 
 ## Who's the creator of this app?
 
