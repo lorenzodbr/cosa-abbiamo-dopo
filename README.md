@@ -7,10 +7,11 @@
     <img src="assets/logo/marconi.png" alt="Logo" height="100">
 </div>
 
+<br/>
 
 <div align="center">
   <img src="assets/screenshots/main_page.png" width="100"/>
-  <img src="assets/screenshots/details_page.png" width="100"  style="padding: 0 20px"/>
+  <img src="assets/screenshots/details_page.png" width="100" style="padding: 0 20px"/>
   <img src="assets/screenshots/settings_page.png" width="100" />
 </div>
 
