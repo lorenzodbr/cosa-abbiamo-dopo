@@ -66,7 +66,8 @@ class _InfoPageState extends State<InfoPage> {
       leading: const Icon(MdiIcons.wrenchOutline),
       header: "Come funziona quest'app?",
       body: [
-        "Il suo funzionamento è rapido e intuitivo: basta aprirla. Verranno ricercati automaticamente aggiornamenti per gli orari, in base a quanto pubblicato dalla scuola, e verranno mostrati questi ultimi con una grafica semplice e minimale."
+        "Il suo funzionamento è rapido e intuitivo: basta aprirla.",
+        "Verranno ricercati automaticamente aggiornamenti per gli orari, in base a quanto pubblicato dalla scuola, e verranno mostrati questi ultimi con una grafica semplice e minimale."
       ],
     ),
     ItemModel(
@@ -250,8 +251,8 @@ class _InfoPageState extends State<InfoPage> {
                   : item.leading,
               title: Text(
                 item.isPlaformDependent
-                    ? item.headers[kIsWeb ? 1 : 0]
-                    : item.header,
+                    ? item.headers![kIsWeb ? 1 : 0]
+                    : item.header!,
                 style: TextStyle(
                     fontWeight:
                         isExpanded ? FontWeight.bold : FontWeight.normal),

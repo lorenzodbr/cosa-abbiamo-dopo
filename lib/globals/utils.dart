@@ -547,13 +547,7 @@ class Utils {
         return afterSchoolTime;
       }
 
-      if (isFirstGroup) {
-        _workingLessonsList = hoursListFriFirstGroup;
-      } else {
-        _workingLessonsList = hoursListFriSecondGroup;
-      }
-
-      for (int i = 0; i < _workingLessonsList.length; i++) {
+      for (int i = isFirstGroup ? 0 : 2; i < _workingLessonsList.length; i++) {
         if (_now.isBefore(_workingLessonsList[i].startingTime)) {
           return i;
         }

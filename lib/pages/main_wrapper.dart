@@ -38,7 +38,6 @@ class _MainWrapperState extends State<MainWrapper> {
           refresh: () => setWrapperState(MainWrapperState.tabview),
         );
       case MainWrapperState.tabview:
-      default:
         return const TabView();
     }
   }

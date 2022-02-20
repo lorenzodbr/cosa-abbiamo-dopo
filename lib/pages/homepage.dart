@@ -24,7 +24,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _hourIndex = 0;
-  int _carouselIndex = -1;
+  int _carouselIndex = 0;
 
   late String _formattedDate;
   late String _savedClass;
@@ -65,10 +65,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    if (_carouselIndex < 0) {
-      _carouselIndex = _isFirstGroup ? _hourIndex : _hourIndex - 2;
-    }
-
     return Scaffold(
       backgroundColor: CustomColors.white,
       body: Column(
@@ -301,9 +297,10 @@ class _HomePageState extends State<HomePage> {
                                 _hourIndex =
                                     Utils.getNextHourIndex(_isFirstGroup);
 
-                                if (_hourIndex >= 0) {
+                                if (_hourIndex >= 0 &&
+                                    _hourIndex != _carouselIndex) {
                                   _carouselController.animateToPage(
-                                    _hourIndex,
+                                    _isFirstGroup ? _hourIndex : _hourIndex - 2,
                                     curve: Curves.elasticOut,
                                     duration: const Duration(seconds: 2),
                                   );
