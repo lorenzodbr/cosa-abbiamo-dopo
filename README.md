@@ -17,7 +17,7 @@
 
 <br/>
 
-## Chi è il creatore di quest'app
+## Chi è il creatore di quest'app?
 
 Quest'app è stata realizzata da Lorenzo Di Berardino. Puoi contattarlo [qui](mailto:lorenzo.diberardino03@gmail.com).
 
