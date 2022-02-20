@@ -52,12 +52,12 @@ class _HomePageState extends State<HomePage> {
       _isFirstGroup = Utils.isFirstGroup(_savedData);
 
       _hourIndex = Utils.getNextHourIndex(_isFirstGroup);
+
+      _carouselIndex = _isFirstGroup ? _hourIndex : _hourIndex - 2;
     } catch (_) {
       _savedData = [];
 
       _isFirstGroup = true;
-
-      _hourIndex = 0;
     }
 
     super.initState();
@@ -292,21 +292,21 @@ class _HomePageState extends State<HomePage> {
                         : null,
                     refresh: _isNextHourCard
                         ? () {
-                            setState(
-                              () {
-                                _hourIndex =
-                                    Utils.getNextHourIndex(_isFirstGroup);
+                            setState(() {
+                              _hourIndex =
+                                  Utils.getNextHourIndex(_isFirstGroup);
 
-                                if (_hourIndex >= 0 &&
-                                    _hourIndex != _carouselIndex) {
-                                  _carouselController.animateToPage(
-                                    _isFirstGroup ? _hourIndex : _hourIndex - 2,
-                                    curve: Curves.elasticOut,
-                                    duration: const Duration(seconds: 2),
-                                  );
-                                }
-                              },
-                            );
+                              if (_hourIndex >= 0 &&
+                                  _hourIndex != _carouselIndex) {
+                                _carouselController.animateToPage(
+                                  _isFirstGroup ? _hourIndex : _hourIndex - 2,
+                                  curve: Curves.elasticOut,
+                                  duration: const Duration(seconds: 2),
+                                );
+                              }
+
+                              _carouselIndex = _hourIndex;
+                            });
                           }
                         : null,
                     isCurrentHour: _isCurrentHourCard,
