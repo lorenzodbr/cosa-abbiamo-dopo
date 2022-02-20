@@ -10,9 +10,9 @@
 <br/>
 
 <div align="center">
-  <img src="assets/screenshots/main_page.png" width="100"/>
-  <img src="assets/screenshots/details_page.png" width="100" style="padding: 0 20px"/>
-  <img src="assets/screenshots/settings_page.png" width="100" />
+  <img src="assets/screenshots/main_page.png" width="200"/>
+  <img src="assets/screenshots/details_page.png" width="200" style="padding: 0 20px"/>
+  <img src="assets/screenshots/settings_page.png" width="200" />
 </div>
 
 <br/>
