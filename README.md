@@ -21,10 +21,14 @@
 
 Quest'app è stata realizzata da Lorenzo Di Berardino. Puoi contattarlo [qui](mailto:lorenzo.diberardino03@gmail.com).
 
+<br/>
+
 ## Come è nata l'idea per quest'app?
 Chiunque, almeno una volta nella propria vita scolastica, si è posto, o ha posto a qualcuno, la domanda che dà il titolo a quest'app.
 
 Quest'app, realizzata specificatamente per il nostro istituto (ITI G. Marconi), giunge in supporto a coloro che vogliono avere una risposta a quella domanda in modo semplice e veloce.
+
+<br/>
 
 ## Come funziona quest'app?
 Il suo funzionamento è rapido e intuitivo: basta aprirla.
