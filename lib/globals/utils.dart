@@ -570,20 +570,7 @@ class Utils {
   }
 
   static Future<void> setOptimalDisplayMode() async {
-    final List<DisplayMode> _supported = await FlutterDisplayMode.supported;
-    final DisplayMode _active = await FlutterDisplayMode.active;
-
-    final List<DisplayMode> _sameResolution = _supported
-        .where((DisplayMode m) =>
-            m.width == _active.width && m.height == _active.height)
-        .toList()
-      ..sort((DisplayMode a, DisplayMode b) =>
-          b.refreshRate.compareTo(a.refreshRate));
-
-    final DisplayMode mostOptimalMode =
-        _sameResolution.isNotEmpty ? _sameResolution.first : _active;
-
-    await FlutterDisplayMode.setPreferredMode(mostOptimalMode);
+    await FlutterDisplayMode.setHighRefreshRate();
   }
 
   static Future<void> showUpdatingDialog(BuildContext context) async {
