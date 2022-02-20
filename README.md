@@ -45,7 +45,9 @@ Se non fosse disponibile una connessione ad Internet l'app permetterà di visual
 
 ## Su quali piattaforme è disponibile quest'app?
 
-L'app installabile è disponibile solo su Android. È, tuttavia, disponibile anche una sua versione sotto forma di WebApp (PWA), dunque raggiungibile da qualsiasi dispositivo avente un browser.
+L'app installabile è disponibile solo su Android. 
+
+È, tuttavia, disponibile anche una sua versione sotto forma di WebApp (PWA), dunque raggiungibile da qualsiasi dispositivo avente un browser.
 
 <br/>
 
@@ -109,7 +111,9 @@ If an Internet connection is not available, the app will display (any) previousl
 
 ## What platforms is this app available on?
 
-The installable app is only available on Android. However, a version of the app is also available as a WebApp (PWA), which can be accessed from any device with a browser.
+The installable app is only available on Android. 
+
+However, a version of the app is also available as a WebApp (PWA), which can be accessed from any device with a browser.
 
 <br/>
 
