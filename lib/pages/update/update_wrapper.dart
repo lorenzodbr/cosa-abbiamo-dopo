@@ -28,12 +28,12 @@ class _UpdateWrapperState extends State<UpdateWrapper> {
   @override
   Widget build(BuildContext context) {
     switch (_state) {
+      case UpdateWrapperState.updating:
+        return const UpdateUpdatingPage();
       case UpdateWrapperState.updated:
         WidgetsBinding.instance!
             .addPostFrameCallback((_) => widget.refresh.call());
         return Container();
-      case UpdateWrapperState.updating:
-        return const UpdateUpdatingPage();
       case UpdateWrapperState.loading:
         return UpdateLoadingPage(
           refresh: (state) => setWrapperState(state),

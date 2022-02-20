@@ -41,7 +41,7 @@ class CarouselCard extends StatelessWidget {
   }
 
   List<Widget> _buildCardContent() {
-    List<Widget> _res = [];
+    List<Widget> res = [];
 
     if (startingHour != null) {
       var _timeToGoWidget = TimerBuilder.periodic(
@@ -93,7 +93,7 @@ class CarouselCard extends StatelessWidget {
       );
 
       if (isCurrentHour) {
-        _res.add(Row(
+        res.add(Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -108,11 +108,11 @@ class CarouselCard extends StatelessWidget {
           ],
         ));
       } else {
-        _res.add(_timeToGoWidget);
+        res.add(_timeToGoWidget);
       }
     }
 
-    _res.addAll([
+    res.addAll([
       Text(
         lessonName,
         style: const TextStyle(
@@ -131,6 +131,6 @@ class CarouselCard extends StatelessWidget {
       )
     ]);
 
-    return _res;
+    return res;
   }
 }

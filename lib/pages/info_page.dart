@@ -186,7 +186,7 @@ class _InfoPageState extends State<InfoPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Padding(
-                      padding: EdgeInsets.only(top: 50, bottom: 20, left: 7),
+                      padding: EdgeInsets.only(top: 50, bottom: 15, left: 7),
                       child: Text(
                         "Informazioni",
                         style: TextStyle(
@@ -244,7 +244,7 @@ class _InfoPageState extends State<InfoPage> {
       return ExpansionPanel(
         headerBuilder: (BuildContext context, bool isExpanded) {
           return Padding(
-            padding: const EdgeInsets.all(5),
+            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
             child: ListTile(
               leading: item.isPlaformDependent
                   ? item.leadings![kIsWeb ? 1 : 0]
