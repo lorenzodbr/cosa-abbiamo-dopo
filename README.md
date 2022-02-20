@@ -1,9 +1,9 @@
 # Cosa abbiamo dopo?
 
 
-<img src="assets/logo/marconi.png" alt="Logo" height="120" style="display: block;
-  margin-left: auto;
-  margin-right: auto;">
+<div align="center">
+    <img src="assets/logo/marconi.png" alt="Logo" height="120">
+</div>
 
 <br/>
 
