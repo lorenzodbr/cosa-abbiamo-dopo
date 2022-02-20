@@ -15,7 +15,7 @@ class InfoPage extends StatefulWidget {
 }
 
 class _InfoPageState extends State<InfoPage> {
-  List<ItemModel> itemData = <ItemModel>[
+  final List<ItemModel> _sections = <ItemModel>[
     ItemModel(
       leading: const Icon(Icons.person_outline),
       header: "Chi è il creatore di quest'app?",
@@ -172,16 +172,16 @@ class _InfoPageState extends State<InfoPage> {
     return SafeArea(
       child: Scaffold(
         backgroundColor: CustomColors.white,
-        body: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 810),
-            child: ListView(
-              physics: const BouncingScrollPhysics(
-                parent: AlwaysScrollableScrollPhysics(),
-              ),
-              padding: const EdgeInsets.all(10),
-              children: [
-                Column(
+        body: ListView(
+          physics: const BouncingScrollPhysics(
+            parent: AlwaysScrollableScrollPhysics(),
+          ),
+          padding: const EdgeInsets.all(10),
+          children: [
+            Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 810),
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Padding(
@@ -197,7 +197,7 @@ class _InfoPageState extends State<InfoPage> {
                       children: _getExpansionPanels(),
                       expansionCallback: (panelIndex, isExpanded) {
                         setState(() {
-                          itemData[panelIndex].expanded = !isExpanded;
+                          _sections[panelIndex].expanded = !isExpanded;
                         });
                       },
                       expandedHeaderPadding: const EdgeInsets.all(0),
@@ -230,16 +230,16 @@ class _InfoPageState extends State<InfoPage> {
                     ),
                   ],
                 ),
-              ],
+              ),
             ),
-          ),
+          ],
         ),
       ),
     );
   }
 
   List<ExpansionPanel> _getExpansionPanels() {
-    return itemData.map<ExpansionPanel>((ItemModel item) {
+    return _sections.map<ExpansionPanel>((ItemModel item) {
       return ExpansionPanel(
         headerBuilder: (BuildContext context, bool isExpanded) {
           return Padding(

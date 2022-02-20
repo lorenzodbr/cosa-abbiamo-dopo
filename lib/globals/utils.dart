@@ -7,7 +7,6 @@ import 'package:cosa_abbiamo_dopo/globals/marconi_teacher.dart';
 import 'package:flowder/flowder.dart';
 import 'package:flutter_picker/flutter_picker.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:http/http.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
@@ -519,7 +518,7 @@ class Utils {
     return false;
   }
 
-  static int getNextHourIndex(isFirstGroup) {
+  static int getNextHourIndex(bool isFirstGroup) {
     DateTime _nowDateTime = DateTime.now();
     TimeOfDay _now = TimeOfDay.fromDateTime(_nowDateTime);
 
@@ -528,40 +527,35 @@ class Utils {
         return beforeSchoolTime;
       }
 
+      List<MarconiHour> _workingLessonsList;
+
       if (_nowDateTime.weekday != 5) {
         if (isFirstGroup) {
-          if (_now.isAfter(Utils.hoursListMonThuFirstGroup.last.startingTime)) {
-            return afterSchoolTime;
-          }
+          _workingLessonsList = hoursListMonThuFirstGroup;
         } else {
-          if (_now
-              .isAfter(Utils.hoursListMonThuSecondGroup.last.startingTime)) {
-            return afterSchoolTime;
-          }
+          _workingLessonsList = hoursListMonThuSecondGroup;
         }
       } else {
         if (isFirstGroup) {
-          if (_now.isAfter(Utils.hoursListFriFirstGroup.last.startingTime)) {
-            return afterSchoolTime;
-          }
+          _workingLessonsList = hoursListFriFirstGroup;
         } else {
-          if (_now.isAfter(Utils.hoursListFriSecondGroup.last.startingTime)) {
-            return afterSchoolTime;
-          }
+          _workingLessonsList = hoursListFriSecondGroup;
         }
       }
 
+      if (_now.isAfter(_workingLessonsList.last.startingTime)) {
+        return afterSchoolTime;
+      }
+
       if (isFirstGroup) {
-        for (int i = 0; i < Utils.hoursListFriFirstGroup.length; i++) {
-          if (_now.isBefore(Utils.hoursListFriFirstGroup[i].startingTime)) {
-            return i;
-          }
-        }
+        _workingLessonsList = hoursListFriFirstGroup;
       } else {
-        for (int i = 0; i < Utils.hoursListFriSecondGroup.length; i++) {
-          if (_now.isBefore(Utils.hoursListFriSecondGroup[i].startingTime)) {
-            return i;
-          }
+        _workingLessonsList = hoursListFriSecondGroup;
+      }
+
+      for (int i = 0; i < _workingLessonsList.length; i++) {
+        if (_now.isBefore(_workingLessonsList[i].startingTime)) {
+          return i;
         }
       }
 
@@ -691,15 +685,13 @@ class Utils {
   }
 
   static Future<String> fetchVersion() async {
-    Uri _uri = Uri.parse(baseProjectDownloadUrl + '/latest');
+    Uri _uri = Uri.parse(baseProjectAPIUrl);
 
     try {
-      Request req = http.Request("Get", _uri)..followRedirects = false;
-      Client baseClient = http.Client();
-      StreamedResponse _response = await baseClient.send(req);
+      final _response = await http.get(_uri);
 
-      if (_response.statusCode == 302) {
-        return _response.headers['location'] ?? empty;
+      if (_response.statusCode == 200) {
+        return _response.body;
       } else {
         return empty;
       }
@@ -709,22 +701,16 @@ class Utils {
   }
 
   static String decodeVersion(String data) {
-    try {
-      int startingIndex;
+    String tempSplitted = data.split('"tag_name":')[1];
 
-      for (startingIndex = data.length - 1;
-          startingIndex >= 0 && data[startingIndex] != 'v';
-          startingIndex--) {}
+    if (tempSplitted.startsWith('"')) {
+      String splitted = tempSplitted;
 
-      String splitted = data.substring(startingIndex);
+      String version = splitted.substring(1, splitted.indexOf('",'));
 
-      if (splitted.startsWith('v')) {
-        return splitted;
-      } else {
-        return notToBeUpdated;
-      }
-    } catch (_) {
-      return notToBeUpdated;
+      return version;
+    } else {
+      return '';
     }
   }
 
