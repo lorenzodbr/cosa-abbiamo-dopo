@@ -4,7 +4,7 @@
 
 <div align="center" style="
   padding: 20px 0">
-    <img src="assets/logo/marconi.png" alt="Logo" height="120">
+    <img src="assets/logo/marconi.png" alt="Logo" height="100">
 </div>
 
 
