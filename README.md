@@ -1,5 +1,4 @@
-## [ITA :it:](#cosa-abbiamo-dopo) / [ENG :uk:/:us:](#whats-later)
-
+### ([ENG version](#whats-later))
 
 # Cosa abbiamo dopo?
 
@@ -76,6 +75,8 @@ Quest'app è distribuita sotto la Licenza MIT.
 ---
 
 <br/>
+
+### ([versione ITA](#cosa-abbiamo-dopo))
 
 # What's later?
 
