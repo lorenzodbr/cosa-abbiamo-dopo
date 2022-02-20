@@ -205,12 +205,12 @@ class _InfoPageState extends State<InfoPage> {
                     ),
                     Column(
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 30),
+                        const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 30),
                           child: Center(
                             child: Text(
-                              '${DateTime.now().year} \u00a9 Lorenzo Di Berardino\nITI G. Marconi, Verona',
-                              style: const TextStyle(
+                              'Lorenzo Di Berardino\nITI G. Marconi, Verona\n\nDistribuito sotto Licenza MIT',
+                              style: TextStyle(
                                 fontSize: 15,
                                 color: CustomColors.grey,
                               ),
