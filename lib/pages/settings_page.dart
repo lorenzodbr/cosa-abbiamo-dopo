@@ -28,6 +28,16 @@ class _SettingsState extends State<Settings> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        appBar: AppBar(
+          elevation: 2,
+          shadowColor: Colors.white,
+          title: const Text(
+            "Impostazioni",
+            style: TextStyle(color: Colors.black),
+          ),
+          centerTitle: true,
+          backgroundColor: Colors.grey[200],
+        ),
         body: SettingsList(
           physics: const BouncingScrollPhysics(
             parent: AlwaysScrollableScrollPhysics(),
@@ -101,8 +111,8 @@ class _SettingsState extends State<Settings> {
                                 SnackBar(
                                   content: Text(
                                     difference == 1
-                                        ? '$difference tocco per sbloccare un easter egg'
-                                        : '$difference tocchi per sbloccare un easter egg',
+                                        ? 'Ancora $difference tocco per sbloccare l\'Easter Egg'
+                                        : 'Ancora $difference tocchi per sbloccare l\'Easter Egg',
                                     style: GoogleFonts.workSans(),
                                   ),
                                   duration: const Duration(milliseconds: 500),
@@ -170,9 +180,10 @@ class _SettingsState extends State<Settings> {
               value: _buildValueText('Riscatta il premio'),
               onPressed: (_) async {
                 String url = Utils.rickRollUrl;
+                Uri uri = Uri.parse(url);
 
-                if (await canLaunch(url)) {
-                  await launch(url);
+                if (await canLaunchUrl(uri)) {
+                  await launchUrl(uri);
                 }
               },
             ),

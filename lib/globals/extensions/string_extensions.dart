@@ -5,4 +5,14 @@ extension StringExtensions on String {
       .split(' ')
       .map((str) => str.toCapitalized())
       .join(' ');
+
+  //camel Case (preserving spaces)
+  String toCamelCase() => [
+        split(' ')[0].toLowerCase(),
+        split(' ')
+            .sublist(1)
+            .map((word) =>
+                word[0].toUpperCase() + word.substring(1).toLowerCase())
+            .join(' ')
+      ].join(' ');
 }

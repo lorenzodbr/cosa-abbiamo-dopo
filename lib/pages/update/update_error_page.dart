@@ -35,7 +35,7 @@ class UpdateErrorPage extends StatelessWidget {
             onPressed: refresh,
             style: OutlinedButton.styleFrom(
               side: const BorderSide(color: CustomColors.darkGrey),
-              primary: CustomColors.white,
+              backgroundColor: CustomColors.white,
             ),
             child: const Text(
               "Mostra dati salvati",

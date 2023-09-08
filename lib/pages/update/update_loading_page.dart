@@ -19,7 +19,7 @@ class UpdateLoadingPage extends StatelessWidget {
         future: Utils.isUpdated(),
         builder: (context, isUpdatedSnapshot) {
           if (isUpdatedSnapshot.hasError) {
-            WidgetsBinding.instance!
+            WidgetsBinding.instance
                 .addPostFrameCallback((_) => refresh(UpdateWrapperState.error));
 
             return Container();
@@ -27,11 +27,11 @@ class UpdateLoadingPage extends StatelessWidget {
 
           if (isUpdatedSnapshot.hasData) {
             if (isUpdatedSnapshot.data == Utils.notToBeUpdated) {
-              WidgetsBinding.instance!.addPostFrameCallback(
+              WidgetsBinding.instance.addPostFrameCallback(
                   (_) => refresh(UpdateWrapperState.updated));
               return Container();
             } else {
-              WidgetsBinding.instance!.addPostFrameCallback((_) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
                 setVersion.call(isUpdatedSnapshot.data!);
                 refresh(UpdateWrapperState.updating);
               });

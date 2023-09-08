@@ -31,7 +31,7 @@ class _UpdateWrapperState extends State<UpdateWrapper> {
       case UpdateWrapperState.updating:
         return const UpdateUpdatingPage();
       case UpdateWrapperState.updated:
-        WidgetsBinding.instance!
+        WidgetsBinding.instance
             .addPostFrameCallback((_) => widget.refresh.call());
         return Container();
       case UpdateWrapperState.loading:

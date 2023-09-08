@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:cosa_abbiamo_dopo/globals/custom_colors.dart';
 import 'package:cosa_abbiamo_dopo/globals/utils.dart';
 import 'package:cosa_abbiamo_dopo/pages/update/update_wrapper.dart';
-import 'package:flowder/flowder.dart';
+import 'package:flowder_v2/flowder.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:open_file/open_file.dart';

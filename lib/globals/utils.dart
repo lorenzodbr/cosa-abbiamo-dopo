@@ -4,7 +4,7 @@ import 'package:cosa_abbiamo_dopo/globals/extensions/time_of_day_extension.dart'
 import 'package:cosa_abbiamo_dopo/globals/marconi_hour.dart';
 import 'package:cosa_abbiamo_dopo/globals/marconi_lesson.dart';
 import 'package:cosa_abbiamo_dopo/globals/marconi_teacher.dart';
-import 'package:flowder/flowder.dart';
+import 'package:flowder_v2/flowder.dart';
 import 'package:flutter_picker/flutter_picker.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:path_provider/path_provider.dart';
@@ -29,8 +29,8 @@ class Utils {
   static const int noSchoolDay = -3;
   static const int schoolEndedOrYetToStart = -4;
 
-  static DateTime firstDayOfSchool = DateTime(2021, 9, 16, 0, 0, 0);
-  static DateTime lastDayOfSchool = DateTime(2022, 6, 10, 23, 59, 59);
+  static DateTime firstDayOfSchool = DateTime(2023, 9, 13, 0, 0, 0);
+  static DateTime lastDayOfSchool = DateTime(2024, 6, 7, 23, 59, 59);
 
   static const int easterEggUpperLimit = 15;
   static const int easterEggStartingLimit = 10;
@@ -443,6 +443,8 @@ class Utils {
 
       for (int i = 0; i < lessons.length; i++) {
         lessons[i].hours = hours[lessons[i].hourIndex - 1];
+        lessons[i].name =
+            lessons[i].name.replaceAll(RegExp(r' - $'), Utils.empty);
       }
     }
 

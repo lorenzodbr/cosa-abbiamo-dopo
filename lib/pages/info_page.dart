@@ -29,13 +29,14 @@ class _InfoPageState extends State<InfoPage> {
           label: const Text("Telegram"),
           onPressed: () async {
             String url = Utils.telegramUrl;
+            Uri uri = Uri.parse(url);
 
-            if (await canLaunch(url)) {
-              await launch(url);
+            if (await canLaunchUrl(uri)) {
+              await launchUrl(uri);
             }
           },
           style: ElevatedButton.styleFrom(
-            primary: Colors.black,
+            backgroundColor: Colors.black,
           ),
         ),
         ElevatedButton.icon(
@@ -43,31 +44,31 @@ class _InfoPageState extends State<InfoPage> {
           label: const Text("Email"),
           onPressed: () async {
             String url = Utils.emailUrl;
+            Uri uri = Uri.parse(url);
 
-            if (await canLaunch(url)) {
-              await launch(url);
+            if (await canLaunchUrl(uri)) {
+              await launchUrl(uri);
             }
           },
           style: ElevatedButton.styleFrom(
-            primary: Colors.black,
+            backgroundColor: Colors.black,
           ),
         ),
       ],
     ),
     ItemModel(
       leading: const Icon(Icons.lightbulb_outline),
-      header: "Come è nata l'idea per quest'app?",
+      header: "Come è nata l'idea per quest'applicazione?",
       body: [
-        "Chiunque, almeno una volta nella propria vita scolastica, si è posto, o ha posto a qualcuno, la domanda che dà il titolo a quest'app.",
-        "Quest'app, realizzata specificatamente per il nostro istituto (ITI G. Marconi), giunge in supporto a coloro che vogliono avere una risposta a quella domanda in modo semplice e veloce."
+        "Almeno una volta durante la propria carriera scolastica, chiunque si è posto o ha rivolto a qualcuno la domanda che dà il titolo a questa applicazione.",
+        "Sviluppata appositamente per l'ITI G. Marconi, quest'applicazione offre un valido supporto a coloro che desiderano ottenere una risposta a quella domanda in modo rapido e intuitivo."
       ],
     ),
     ItemModel(
       leading: const Icon(MdiIcons.wrenchOutline),
       header: "Come funziona quest'app?",
       body: [
-        "Il suo funzionamento è rapido e intuitivo: basta aprirla.",
-        "Verranno ricercati automaticamente aggiornamenti per gli orari, in base a quanto pubblicato dalla scuola, e verranno mostrati questi ultimi con una grafica semplice e minimale."
+        "La procedura è semplice: all'apertura, l'applicazione effettuerà automaticamente una ricerca degli aggiornamenti sugli orari, basandosi sulle informazioni pubblicate dalla scuola, e li presenterà con un'interfaccia grafica essenziale e minimalista."
       ],
     ),
     ItemModel(
@@ -75,8 +76,8 @@ class _InfoPageState extends State<InfoPage> {
       header:
           "È richiesta una connessione a Internet attiva per utilizzare l'app?",
       body: [
-        "Per mantenere un'esperienza sempre ottimale, l'app controlla ad ogni avvio la presenza di aggiornamenti.",
-        "Se non fosse disponibile una connessione ad Internet l'app permetterà di visualizzare (eventuali) orari salvati precedentemente.",
+        "Al fine di garantire un'esperienza sempre ottimale, l'applicazione verifica la disponibilità di aggiornamenti ad ogni avvio, connettendosi a Internet.",
+        "Se questa non fosse disponibile, l'app permetterà di visualizzare (eventuali) orari memorizzati precedentemente, che potrebbero però non essere aggiornati.",
       ],
     ),
     ItemModel(
@@ -94,13 +95,14 @@ class _InfoPageState extends State<InfoPage> {
           label: const Text("Progetto"),
           onPressed: () async {
             String url = Utils.baseProjectUrl;
+            Uri uri = Uri.parse(url);
 
-            if (await canLaunch(url)) {
-              await launch(url);
+            if (await canLaunchUrl(uri)) {
+              await launchUrl(uri);
             }
           },
           style: ElevatedButton.styleFrom(
-            primary: Colors.black,
+            backgroundColor: Colors.black,
           ),
         ),
       ],
@@ -125,13 +127,14 @@ class _InfoPageState extends State<InfoPage> {
           label: const Text("WebApp"),
           onPressed: () async {
             String url = Utils.baseWebAppUrl;
+            Uri uri = Uri.parse(url);
 
-            if (await canLaunch(url)) {
-              await launch(url);
+            if (await canLaunchUrl(uri)) {
+              await launchUrl(uri);
             }
           },
           style: ElevatedButton.styleFrom(
-            primary: Colors.black,
+            backgroundColor: Colors.black,
           ),
         ),
         ElevatedButton.icon(
@@ -139,13 +142,14 @@ class _InfoPageState extends State<InfoPage> {
           label: const Text("App"),
           onPressed: () async {
             String url = Utils.baseProjectDownloadUrl + '/latest';
+            Uri uri = Uri.parse(url);
 
-            if (await canLaunch(url)) {
-              await launch(url);
+            if (await canLaunchUrl(uri)) {
+              await launchUrl(uri);
             }
           },
           style: ElevatedButton.styleFrom(
-            primary: Colors.black,
+            backgroundColor: Colors.black,
           ),
         ),
       ],
@@ -172,6 +176,16 @@ class _InfoPageState extends State<InfoPage> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        appBar: AppBar(
+          elevation: 2,
+          shadowColor: Colors.white,
+          title: const Text(
+            "Informazioni",
+            style: TextStyle(color: Colors.black),
+          ),
+          centerTitle: true,
+          backgroundColor: Colors.grey[200],
+        ),
         backgroundColor: CustomColors.white,
         body: ListView(
           physics: const BouncingScrollPhysics(
@@ -185,14 +199,6 @@ class _InfoPageState extends State<InfoPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Padding(
-                      padding: EdgeInsets.only(top: 50, bottom: 15, left: 7),
-                      child: Text(
-                        "Informazioni",
-                        style: TextStyle(
-                            fontSize: 40, fontWeight: FontWeight.bold),
-                      ),
-                    ),
                     ExpansionPanelList(
                       dividerColor: CustomColors.white,
                       children: _getExpansionPanels(),

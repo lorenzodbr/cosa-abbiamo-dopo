@@ -1,5 +1,6 @@
 import 'package:animations/animations.dart';
 import 'package:cosa_abbiamo_dopo/globals/custom_colors.dart';
+import 'package:cosa_abbiamo_dopo/globals/extensions/string_extensions.dart';
 import 'package:cosa_abbiamo_dopo/globals/marconi_lesson.dart';
 import 'package:cosa_abbiamo_dopo/globals/utils.dart';
 import 'package:cosa_abbiamo_dopo/pages/details_page.dart';
@@ -40,7 +41,7 @@ class _HomePageState extends State<HomePage> {
     _carouselController = CarouselController();
 
     DateTime _now = DateTime.now();
-    DateFormat _formatter = DateFormat("EEE'.' dd MMMM yyyy", 'it');
+    DateFormat _formatter = DateFormat("EEE'.' d MMMM yyyy", 'it');
     _formattedDate = _formatter.format(_now);
 
     _savedClass = Utils.getSavedClass();
@@ -67,6 +68,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: CustomColors.white,
+      appBar: _buildAppbar(),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -80,9 +82,8 @@ class _HomePageState extends State<HomePage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  _buildClassAndDateRow(),
-                  const Text(
+                children: const [
+                  Text(
                     'Cosa abbiamo dopo?',
                     style: TextStyle(
                       fontWeight: FontWeight.w900,
@@ -99,49 +100,40 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildClassAndDateRow() {
-    Text _formattedDateText = Text(
-      '| ' + _formattedDate,
-      style: const TextStyle(fontSize: 18, color: CustomColors.grey),
-    );
-
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 20),
-      child: Row(
-        children: _savedClass != Utils.empty
-            ? [
-                TextButton.icon(
-                  onPressed: () async {
-                    await _showClassPicker();
-                  },
-                  icon: _classesChooserState == ClassesChooserState.fetching
-                      ? const SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(
-                            color: CustomColors.grey,
-                            strokeWidth: 3,
-                          ),
-                        )
-                      : Icon(
-                          _classesChooserState == ClassesChooserState.ready
-                              ? Icons.edit
-                              : Icons.wifi_off,
-                          color: CustomColors.grey,
-                          size: 20,
-                        ),
-                  label: Text(
-                    _savedClass,
-                    style:
-                        const TextStyle(fontSize: 18, color: CustomColors.grey),
-                  ),
+  AppBar _buildAppbar() {
+    return AppBar(
+      backgroundColor: Colors.grey[200],
+      elevation: 2,
+      shadowColor: Colors.white,
+      leadingWidth: 100,
+      leading: TextButton.icon(
+        onPressed: () async {
+          await _showClassPicker();
+        },
+        icon: _classesChooserState == ClassesChooserState.fetching
+            ? const SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(
+                  strokeWidth: 3,
                 ),
-                _formattedDateText,
-              ]
-            : [
-                _formattedDateText,
-              ],
+              )
+            : Icon(
+                _classesChooserState == ClassesChooserState.ready
+                    ? Icons.edit
+                    : Icons.wifi_off,
+                size: 20,
+              ),
+        label: Text(
+          _savedClass,
+          style: const TextStyle(fontSize: 18),
+        ),
       ),
+      title: Text(
+        _formattedDate.toString().toTitleCase(),
+        style: const TextStyle(fontSize: 18, color: CustomColors.black),
+      ),
+      centerTitle: true,
     );
   }
 
@@ -337,7 +329,7 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(top: 50),
+              padding: const EdgeInsets.only(top: 40),
               child: AnimatedSmoothIndicator(
                 activeIndex: _carouselIndex,
                 count: _savedData.length,

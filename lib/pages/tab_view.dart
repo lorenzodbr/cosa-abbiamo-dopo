@@ -57,13 +57,15 @@ class _TabViewState extends State<TabView> {
               controller: _pageController,
               physics: const NeverScrollableScrollPhysics(),
             ),
-            bottomNavigationBar: BottomNavigationBar(
-              currentIndex: _pageIndex,
-              onTap: _onTabTapped,
-              backgroundColor: Colors.white,
-              selectedItemColor: CustomColors.black,
-              items: <BottomNavigationBarItem>[
-                BottomNavigationBarItem(
+            bottomNavigationBar: NavigationBar(
+              selectedIndex: _pageIndex,
+              onDestinationSelected: _onTabTapped,
+              backgroundColor: Colors.grey[200],
+              // selectedItemColor: CustomColors.black,
+              shadowColor: CustomColors.black,
+              elevation: 10,
+              destinations: <Widget>[
+                NavigationDestination(
                   icon: Icon(
                     _pageIndex == 0
                         ? Icons.access_time_filled
@@ -71,13 +73,13 @@ class _TabViewState extends State<TabView> {
                   ),
                   label: "Orari",
                 ),
-                BottomNavigationBarItem(
+                NavigationDestination(
                   icon: Icon(
                     _pageIndex == 1 ? Icons.settings : Icons.settings_outlined,
                   ),
                   label: "Impostazioni",
                 ),
-                BottomNavigationBarItem(
+                NavigationDestination(
                   icon: Icon(
                     _pageIndex == 2 ? Icons.info : Icons.info_outline,
                   ),

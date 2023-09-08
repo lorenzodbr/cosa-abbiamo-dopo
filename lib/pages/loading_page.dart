@@ -59,7 +59,7 @@ class LoadingPage extends StatelessWidget {
                     side: const BorderSide(
                       color: CustomColors.darkGrey,
                     ),
-                    primary: CustomColors.white,
+                    backgroundColor: CustomColors.white,
                   ),
                   child: const Text(
                     "Mostra dati salvati",
