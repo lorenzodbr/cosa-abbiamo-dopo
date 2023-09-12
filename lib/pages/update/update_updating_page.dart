@@ -69,7 +69,7 @@ class _UpdateUpdatingPageState extends State<UpdateUpdatingPage> {
 
     if (!mounted) return;
 
-    await Utils.deleteCachedApk();
+    await Utils.deleteCachedApks();
 
     var options = DownloaderUtils(
       progressCallback: (current, total) {
@@ -80,9 +80,7 @@ class _UpdateUpdatingPageState extends State<UpdateUpdatingPage> {
       file: File('$path/${Utils.apkFileName}'),
       progress: ProgressImplementation(),
       onDone: () async {
-        bool permission = await Permission.requestInstallPackages.isGranted;
-
-        if (!permission) {
+        if (!await Permission.requestInstallPackages.isGranted) {
           await _showInstructionDialog();
         }
 
@@ -113,7 +111,7 @@ class _UpdateUpdatingPageState extends State<UpdateUpdatingPage> {
             child: ListBody(
               children: const [
                 Text(
-                  "Concedi il permesso per installare l'aggiornamento.",
+                  "Concedi il permesso di installazione per aggiornare l'applicazione.",
                   style: TextStyle(
                     color: Colors.white,
                   ),
@@ -129,8 +127,12 @@ class _UpdateUpdatingPageState extends State<UpdateUpdatingPage> {
                   color: Colors.white,
                 ),
               ),
-              onPressed: () {
-                Navigator.of(context).pop();
+              onPressed: () async {
+                if (await Permission.requestInstallPackages
+                    .request()
+                    .isGranted) {
+                  Navigator.of(context).pop();
+                }
               },
             ),
           ],

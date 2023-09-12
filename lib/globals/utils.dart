@@ -467,7 +467,7 @@ class Utils {
               children: [
                 Text(errorCode == 1
                     ? 'Si è verificato un errore nello scaricamento degli orari.\n\nRiprova.'
-                    : "Connettiti a Internet per scaricare i nuovi orari."),
+                    : "Connettiti a Internet per scaricare gli orari."),
               ],
             ),
           ),
@@ -504,14 +504,14 @@ class Utils {
     }
   }
 
-  static Future<void> deleteCachedApk() async {
+  static Future<void> deleteCachedApks() async {
     Directory cacheDir = await getCachePath();
 
-    File cachedApk = File('$cacheDir/$apkFileName');
-
-    if (cachedApk.existsSync()) {
-      cachedApk.deleteSync();
-    }
+    cacheDir.listSync().forEach((element) {
+      if (element.path.endsWith('.apk')) {
+        element.deleteSync();
+      }
+    });
   }
 
   static Future<Directory> getCachePath() async {

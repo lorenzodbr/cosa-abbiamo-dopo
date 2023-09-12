@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:cosa_abbiamo_dopo/globals/utils.dart';
 import 'package:cosa_abbiamo_dopo/pages/tab_view.dart';
 import 'package:cosa_abbiamo_dopo/pages/update/update_wrapper.dart';
@@ -8,6 +11,8 @@ enum MainWrapperState {
   update,
   tabview,
 }
+
+late StreamSubscription<ConnectivityResult> _subscription;
 
 class MainWrapper extends StatefulWidget {
   const MainWrapper({Key? key}) : super(key: key);
@@ -28,6 +33,16 @@ class _MainWrapperState extends State<MainWrapper> {
     }
 
     super.initState();
+
+    if (!kIsWeb) {
+      _subscription = Connectivity()
+          .onConnectivityChanged
+          .listen((ConnectivityResult result) {
+        if (result != ConnectivityResult.none) {
+          setWrapperState(MainWrapperState.update);
+        }
+      });
+    }
   }
 
   @override
@@ -52,6 +67,8 @@ class _MainWrapperState extends State<MainWrapper> {
   void dispose() {
     if (!kIsWeb) {
       Utils.unsetPortrait();
+
+      _subscription.cancel();
     }
 
     super.dispose();

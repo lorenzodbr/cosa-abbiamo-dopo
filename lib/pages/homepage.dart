@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:animations/animations.dart';
 import 'package:cosa_abbiamo_dopo/globals/custom_colors.dart';
 import 'package:cosa_abbiamo_dopo/globals/extensions/string_extensions.dart';
@@ -44,7 +46,6 @@ class _HomePageState extends State<HomePage> {
     _formattedDate = _formatter.format(_now);
 
     _savedClass = Utils.getSavedClass();
-    _classesChooserState = ClassesChooserState.ready;
 
     try {
       _savedData = Utils.getSavedData();
@@ -52,8 +53,12 @@ class _HomePageState extends State<HomePage> {
       _hourIndex = Utils.getNextHourIndex();
 
       _carouselIndex = _hourIndex;
+
+      _classesChooserState = ClassesChooserState.ready;
     } catch (_) {
       _savedData = [];
+
+      _classesChooserState = ClassesChooserState.error;
     }
 
     super.initState();
@@ -102,9 +107,11 @@ class _HomePageState extends State<HomePage> {
       shadowColor: Colors.white,
       leadingWidth: 100,
       leading: TextButton.icon(
-        onPressed: () async {
-          await _showClassPicker();
-        },
+        onPressed: _classesChooserState == ClassesChooserState.error
+            ? null
+            : () async {
+                await _showClassPicker();
+              },
         icon: _classesChooserState == ClassesChooserState.fetching
             ? const SizedBox(
                 width: 20,
@@ -358,5 +365,10 @@ class _HomePageState extends State<HomePage> {
         ),
       );
     }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 }
