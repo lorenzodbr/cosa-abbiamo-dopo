@@ -27,7 +27,8 @@ class Utils {
   static const int beforeSchoolTime = -1;
   static const int afterSchoolTime = -2;
   static const int noSchoolDay = -3;
-  static const int schoolEndedOrYetToStart = -4;
+  static const int schoolEnded = -4;
+  static const int schoolYetToStart = -5;
 
   static DateTime firstDayOfSchool = DateTime(2023, 9, 13, 0, 0, 0);
   static DateTime lastDayOfSchool = DateTime(2024, 6, 7, 23, 59, 59);
@@ -67,147 +68,30 @@ class Utils {
   static const String empty = '';
   static const String notToBeUpdated = '0';
 
-  static List<MarconiHour> hoursListMonThuFirstGroup = [
+  static List<MarconiHour> hoursList = [
     MarconiHour(
       const TimeOfDay(hour: 8, minute: 0),
-      const TimeOfDay(hour: 8, minute: 45),
+      const TimeOfDay(hour: 8, minute: 50),
     ),
     MarconiHour(
-      const TimeOfDay(hour: 8, minute: 45),
-      const TimeOfDay(hour: 9, minute: 30),
+      const TimeOfDay(hour: 8, minute: 50),
+      const TimeOfDay(hour: 9, minute: 50),
     ),
     MarconiHour(
-      const TimeOfDay(hour: 9, minute: 30),
-      const TimeOfDay(hour: 10, minute: 20),
+      const TimeOfDay(hour: 9, minute: 50),
+      const TimeOfDay(hour: 10, minute: 50),
     ),
     MarconiHour(
-      const TimeOfDay(hour: 10, minute: 20),
-      const TimeOfDay(hour: 11, minute: 10),
+      const TimeOfDay(hour: 10, minute: 50),
+      const TimeOfDay(hour: 11, minute: 50),
     ),
     MarconiHour(
-      const TimeOfDay(hour: 11, minute: 20),
-      const TimeOfDay(hour: 12, minute: 10),
+      const TimeOfDay(hour: 11, minute: 50),
+      const TimeOfDay(hour: 12, minute: 50),
     ),
     MarconiHour(
-      const TimeOfDay(hour: 12, minute: 10),
-      const TimeOfDay(hour: 13, minute: 00),
-    ),
-    MarconiHour(
-      const TimeOfDay(hour: 12, minute: 10),
-      const TimeOfDay(hour: 13, minute: 00),
-    ),
-  ];
-
-  static List<MarconiHour> hoursListFriFirstGroup = [
-    MarconiHour(
-      const TimeOfDay(hour: 8, minute: 0),
-      const TimeOfDay(hour: 8, minute: 45),
-    ),
-    MarconiHour(
-      const TimeOfDay(hour: 8, minute: 45),
-      const TimeOfDay(hour: 9, minute: 30),
-    ),
-    MarconiHour(
-      const TimeOfDay(hour: 9, minute: 30),
-      const TimeOfDay(hour: 10, minute: 20),
-    ),
-    MarconiHour(
-      const TimeOfDay(hour: 10, minute: 20),
-      const TimeOfDay(hour: 11, minute: 10),
-    ),
-    MarconiHour(
-      const TimeOfDay(hour: 11, minute: 20),
-      const TimeOfDay(hour: 12, minute: 10),
-    ),
-    MarconiHour(
-      const TimeOfDay(hour: 12, minute: 10),
-      const TimeOfDay(hour: 12, minute: 55),
-    ),
-    MarconiHour(
-      const TimeOfDay(hour: 13, minute: 05),
-      const TimeOfDay(hour: 13, minute: 55),
-    ),
-    MarconiHour(
-      const TimeOfDay(hour: 13, minute: 55),
-      const TimeOfDay(hour: 14, minute: 45),
-    ),
-  ];
-
-  static List<MarconiHour> hoursListFriSecondGroup = [
-    MarconiHour(
-      const TimeOfDay(hour: 8, minute: 0),
-      const TimeOfDay(hour: 8, minute: 45),
-    ),
-    MarconiHour(
-      const TimeOfDay(hour: 8, minute: 45),
-      const TimeOfDay(hour: 9, minute: 30),
-    ),
-    MarconiHour(
-      const TimeOfDay(hour: 9, minute: 30),
-      const TimeOfDay(hour: 10, minute: 20),
-    ),
-    MarconiHour(
-      const TimeOfDay(hour: 10, minute: 20),
-      const TimeOfDay(hour: 11, minute: 10),
-    ),
-    MarconiHour(
-      const TimeOfDay(hour: 11, minute: 20),
-      const TimeOfDay(hour: 12, minute: 10),
-    ),
-    MarconiHour(
-      const TimeOfDay(hour: 12, minute: 10),
-      const TimeOfDay(hour: 12, minute: 55),
-    ),
-    MarconiHour(
-      const TimeOfDay(hour: 13, minute: 05),
-      const TimeOfDay(hour: 13, minute: 55),
-    ),
-    MarconiHour(
-      const TimeOfDay(hour: 13, minute: 55),
-      const TimeOfDay(hour: 14, minute: 45),
-    ),
-    MarconiHour(
-      const TimeOfDay(hour: 14, minute: 55),
-      const TimeOfDay(hour: 15, minute: 40),
-    ),
-    MarconiHour(
-      const TimeOfDay(hour: 15, minute: 40),
-      const TimeOfDay(hour: 16, minute: 25),
-    ),
-  ];
-
-  static List<MarconiHour> hoursListMonThuSecondGroup = [
-    MarconiHour(
-      const TimeOfDay(hour: 8, minute: 0),
-      const TimeOfDay(hour: 8, minute: 45),
-    ),
-    MarconiHour(
-      const TimeOfDay(hour: 8, minute: 45),
-      const TimeOfDay(hour: 9, minute: 30),
-    ),
-    MarconiHour(
-      const TimeOfDay(hour: 9, minute: 30),
-      const TimeOfDay(hour: 10, minute: 20),
-    ),
-    MarconiHour(
-      const TimeOfDay(hour: 10, minute: 20),
-      const TimeOfDay(hour: 11, minute: 10),
-    ),
-    MarconiHour(
-      const TimeOfDay(hour: 11, minute: 20),
-      const TimeOfDay(hour: 12, minute: 10),
-    ),
-    MarconiHour(
-      const TimeOfDay(hour: 12, minute: 10),
-      const TimeOfDay(hour: 12, minute: 55),
-    ),
-    MarconiHour(
-      const TimeOfDay(hour: 13, minute: 05),
-      const TimeOfDay(hour: 13, minute: 55),
-    ),
-    MarconiHour(
-      const TimeOfDay(hour: 13, minute: 55),
-      const TimeOfDay(hour: 14, minute: 45),
+      const TimeOfDay(hour: 12, minute: 50),
+      const TimeOfDay(hour: 13, minute: 40),
     ),
   ];
 
@@ -330,10 +214,6 @@ class Utils {
     }
   }
 
-  static bool isFirstGroup(List<MarconiLesson> lessons) {
-    return lessons.isNotEmpty ? lessons[0].hourIndex == 1 : true;
-  }
-
   static Future<List<MarconiLesson>> getData(context) async {
     String _data = await getRawData(context);
 
@@ -428,18 +308,7 @@ class Utils {
     if (lessons.isNotEmpty) {
       List<MarconiHour> hours;
 
-      bool _isFirstGroup = Utils.isFirstGroup(lessons);
-
-      if (lessons[0].day != 5) {
-        if (lessons[0].hourIndex == 1) {
-          hours = hoursListMonThuFirstGroup;
-        } else {
-          hours = hoursListMonThuSecondGroup;
-        }
-      } else {
-        hours =
-            _isFirstGroup ? hoursListFriFirstGroup : hoursListFriSecondGroup;
-      }
+      hours = hoursList;
 
       for (int i = 0; i < lessons.length; i++) {
         lessons[i].hours = hours[lessons[i].hourIndex - 1];
@@ -493,7 +362,7 @@ class Utils {
     return wrapper;
   }
 
-  static bool isInDayRange(bool isFirstGroup) {
+  static bool isInDayRange() {
     DateTime _now = DateTime.now();
 
     DateTime _maxHour;
@@ -502,15 +371,7 @@ class Utils {
       return false;
     }
 
-    if (isFirstGroup) {
-      _maxHour = _now.weekday == 5
-          ? Utils.hoursListFriFirstGroup.last.startingTime.toDateTime()
-          : Utils.hoursListMonThuFirstGroup.last.startingTime.toDateTime();
-    } else {
-      _maxHour = _now.weekday == 5
-          ? Utils.hoursListFriSecondGroup.last.startingTime.toDateTime()
-          : Utils.hoursListMonThuSecondGroup.last.startingTime.toDateTime();
-    }
+    _maxHour = Utils.hoursList.last.startingTime.toDateTime();
 
     if ((_now.weekday != 6 && _now.weekday != 7 && _now.weekday != 5) ||
         (_now.weekday == 5 && _now.isBefore(_maxHour))) {
@@ -520,36 +381,22 @@ class Utils {
     return false;
   }
 
-  static int getNextHourIndex(bool isFirstGroup) {
+  static int getNextHourIndex() {
     DateTime _nowDateTime = DateTime.now();
     TimeOfDay _now = TimeOfDay.fromDateTime(_nowDateTime);
 
-    if (isInDayRange(isFirstGroup)) {
+    if (isInDayRange()) {
       if (_now.isBefore(const TimeOfDay(hour: 7, minute: 0))) {
         return beforeSchoolTime;
       }
 
-      List<MarconiHour> _workingLessonsList;
-
-      if (_nowDateTime.weekday != 5) {
-        if (isFirstGroup) {
-          _workingLessonsList = hoursListMonThuFirstGroup;
-        } else {
-          _workingLessonsList = hoursListMonThuSecondGroup;
-        }
-      } else {
-        if (isFirstGroup) {
-          _workingLessonsList = hoursListFriFirstGroup;
-        } else {
-          _workingLessonsList = hoursListFriSecondGroup;
-        }
-      }
+      List<MarconiHour> _workingLessonsList = hoursList;
 
       if (_now.isAfter(_workingLessonsList.last.startingTime)) {
         return afterSchoolTime;
       }
 
-      for (int i = isFirstGroup ? 0 : 2; i < _workingLessonsList.length; i++) {
+      for (int i = 0; i < _workingLessonsList.length; i++) {
         if (_now.isBefore(_workingLessonsList[i].startingTime)) {
           return i;
         }
@@ -558,10 +405,14 @@ class Utils {
       return inSchoolTime;
     }
 
-    if (_nowDateTime.isBefore(firstDayOfSchool) ||
-        _nowDateTime.isAfter(lastDayOfSchool)) {
-      return schoolEndedOrYetToStart;
+    if (_nowDateTime.isAfter(lastDayOfSchool)) {
+      return schoolEnded;
     }
+
+    if (_nowDateTime.isBefore(firstDayOfSchool)) {
+      return schoolYetToStart;
+    }
+
     return noSchoolDay;
   }
 

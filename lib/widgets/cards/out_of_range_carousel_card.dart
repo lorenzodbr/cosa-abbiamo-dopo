@@ -1,5 +1,6 @@
 import 'package:cosa_abbiamo_dopo/globals/utils.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class OutOfRangeCarouselCard extends StatelessWidget {
   final int hourRange;
@@ -45,8 +46,13 @@ class OutOfRangeCarouselCard extends StatelessWidget {
         return "Lezioni finite,\nripassa domani";
       case Utils.noSchoolDay:
         return "Lezioni finite,\nripassa lunedì";
-      case Utils.schoolEndedOrYetToStart:
+      case Utils.schoolEnded:
         return "Lezioni finite,\nripassa a Settembre";
+      case Utils.schoolYetToStart:
+        return "Lezioni finite,\nripassa il " +
+            DateFormat("d MMMM", 'it')
+                .format(Utils.firstDayOfSchool)
+                .toString();
       default:
         return "Nessun orario da mostrare";
     }
