@@ -52,7 +52,8 @@ class OutOfRangeCarouselCard extends StatelessWidget {
         return "Lezioni finite,\nripassa il " +
             DateFormat("d MMMM", 'it')
                 .format(Utils.firstDayOfSchool)
-                .toString();
+                .toString()
+                .toTitleCase();
       default:
         return "Nessun orario da mostrare";
     }
