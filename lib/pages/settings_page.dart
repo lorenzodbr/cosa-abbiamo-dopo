@@ -1,5 +1,4 @@
 import 'package:cosa_abbiamo_dopo/globals/custom_colors.dart';
-import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:settings_ui/settings_ui.dart';
 import 'package:cosa_abbiamo_dopo/globals/utils.dart';
