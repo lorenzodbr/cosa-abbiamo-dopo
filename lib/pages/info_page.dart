@@ -279,7 +279,7 @@ class _InfoPageState extends State<InfoPage> {
     if (item.isPlaformDependent) {
       body.add(
         Padding(
-          padding: const EdgeInsets.only(left: 15, right: 15, bottom: 5),
+          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
           child: Text(
             item.body[kIsWeb ? 1 : 0],
             textAlign: TextAlign.justify,
