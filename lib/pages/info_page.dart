@@ -18,9 +18,9 @@ class _InfoPageState extends State<InfoPage> {
   final List<ItemModel> _sections = <ItemModel>[
     ItemModel(
       leading: const Icon(Icons.person_outline),
-      header: "Chi è il creatore di quest'app?",
+      header: "Chi è il creatore di quest'applicazione?",
       body: [
-        "Quest'app è stata realizzata da Lorenzo Di Berardino.",
+        "Quest'applicazione è stata realizzata da Lorenzo Di Berardino.",
         "Puoi contattarlo con i pulsanti qui sotto."
       ],
       button: [
@@ -66,7 +66,7 @@ class _InfoPageState extends State<InfoPage> {
     ),
     ItemModel(
       leading: const Icon(MdiIcons.wrenchOutline),
-      header: "Come funziona quest'app?",
+      header: "Come funziona quest'applicazione?",
       body: [
         "La procedura è semplice: all'apertura, l'applicazione effettuerà automaticamente una ricerca degli aggiornamenti sugli orari, basandosi sulle informazioni pubblicate dalla scuola, e li presenterà con un'interfaccia grafica essenziale e minimalista."
       ],
@@ -74,10 +74,10 @@ class _InfoPageState extends State<InfoPage> {
     ItemModel(
       leading: const Icon(Icons.wifi_outlined),
       header:
-          "È richiesta una connessione a Internet attiva per utilizzare l'app?",
+          "È richiesta una connessione a Internet attiva per utilizzare l'applicazione?",
       body: [
         "Al fine di garantire un'esperienza sempre ottimale, l'applicazione verifica la disponibilità di aggiornamenti ad ogni avvio, connettendosi a Internet.",
-        "Se questa non fosse disponibile, l'app permetterà di visualizzare (eventuali) orari memorizzati precedentemente, che potrebbero però non essere aggiornati.",
+        "Se non fosse disponibile una connessione, l'applicazione permetterà di visualizzare (eventuali) orari memorizzati precedentemente, che potrebbero però non essere aggiornati.",
       ],
     ),
     ItemModel(
@@ -114,12 +114,12 @@ class _InfoPageState extends State<InfoPage> {
       ],
       isPlaformDependent: true,
       headers: [
-        "Quest'app è disponibile su un'altra piattaforma?",
+        "Quest'applicazione è disponibile su un'altra piattaforma?",
         "Questa WebApp è disponibile su un'altra piattaforma?"
       ],
       body: [
         "È disponibile anche una WebApp. Puoi accedervi con il pulsante qui sotto.",
-        "È disponibile anche un'app per Android, per un'esperienza più fluida. Puoi scaricarla con il pulsante qui sotto."
+        "È disponibile anche un'applicazione per Android, per un'esperienza più fluida. Puoi scaricarla con il pulsante qui sotto."
       ],
       button: [
         ElevatedButton.icon(
@@ -156,7 +156,7 @@ class _InfoPageState extends State<InfoPage> {
     ),
     ItemModel(
       leading: const Icon(MdiIcons.virusOffOutline),
-      header: "Quest'app contiene un virus?",
+      header: "Quest'applicazione contiene un virus?",
       body: [
         "No, fa solo quello per cui è stata pensata. Niente malware, trojan, ransomware o miner di Bitcoin.",
         "Ma se vuoi controllare personalmente, puoi aprire la pagina del progetto e navigare nel codice."

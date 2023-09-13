@@ -17,30 +17,28 @@
 
 <br/>
 
-## Chi è il creatore di quest'app?
+## Chi è il creatore di quest'applicazione?
 
-Quest'app è stata realizzata da Lorenzo Di Berardino. Puoi contattarlo [qui](mailto:lorenzo.diberardino03@gmail.com).
-
-<br/>
-
-## Come è nata l'idea per quest'app?
-Chiunque, almeno una volta nella propria vita scolastica, si è posto, o ha posto a qualcuno, la domanda che dà il titolo a quest'app.
-
-Quest'app, realizzata specificatamente per il nostro istituto (ITI G. Marconi), giunge in supporto a coloro che vogliono avere una risposta a quella domanda in modo semplice e veloce.
+Quest'applicazione è stata realizzata da Lorenzo Di Berardino. Puoi contattarlo [qui](mailto:lorenzo.diberardino03@gmail.com).
 
 <br/>
 
-## Come funziona quest'app?
-Il suo funzionamento è rapido e intuitivo: basta aprirla.
+## Come è nata l'idea per quest'applicazione?
+Almeno una volta durante la propria carriera scolastica, chiunque si è posto o ha rivolto a qualcuno la domanda che dà il titolo a questa applicazione.
 
-Verranno ricercati automaticamente aggiornamenti per gli orari, in base a quanto pubblicato dalla scuola, e verranno mostrati questi ultimi con una grafica semplice e minimale.
+Sviluppata appositamente per l'ITI G. Marconi, quest'applicazione offre un valido supporto a coloro che desiderano ottenere una risposta a quella domanda in modo rapido e intuitivo.
+
+<br/>
+
+## Come funziona quest'applicazione?
+La procedura è semplice: all'apertura, l'applicazione effettuerà automaticamente una ricerca degli aggiornamenti sugli orari, basandosi sulle informazioni pubblicate dalla scuola, e li presenterà con un'interfaccia grafica essenziale e minimalista.
 
 <br/>
 
 ## È richiesta una connessione a Internet attiva per utilizzare l'app?
-Per mantenere un'esperienza sempre ottimale, l'app controlla ad ogni avvio la presenza di aggiornamenti. 
+Al fine di garantire un'esperienza sempre ottimale, l'applicazione verifica la disponibilità di aggiornamenti ad ogni avvio, connettendosi a Internet.
 
-Se non fosse disponibile una connessione ad Internet l'app permetterà di visualizzare (eventuali) orari salvati precedentemente.
+Se non fosse disponibile una connessione, l'applicazione permetterà di visualizzare (eventuali) orari memorizzati precedentemente, che potrebbero però non essere aggiornati.
 
 <br/>
 
